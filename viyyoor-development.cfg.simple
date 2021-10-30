@@ -1,0 +1,2 @@
+MONGODB_DB = "viyyoordb"
+SECRET_KEY = "viyyoor-secret-key"

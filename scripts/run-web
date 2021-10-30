@@ -1,0 +1,3 @@
+#!/bin/sh
+
+FLASK_ENV=development VIYYOOR_SETTINGS=$(pwd)/viyyoor-development.cfg DEBUG=1 viyyoor-web -H 0.0.0.0 -d

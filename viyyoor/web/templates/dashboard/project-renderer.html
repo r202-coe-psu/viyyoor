@@ -1,0 +1,74 @@
+{% import '/base/project-material-renderer.html' as pm_renderer %}
+
+
+{% macro render_project_section(projects, current_user, advisees, committees) -%}
+  {%- if advisees | count > 0 or committees | count > 0 %}
+  <div class="ui segment row">
+  {%- if advisees | count > 0 %}
+    <h4>Advisee Project</h4>
+    {{ render_project_table(advisees, current_user) }}
+  {%- endif %}
+  {%- if committees | count > 0 %}
+    <h4>Examination Project</h4>
+    {{ render_project_table(committees, current_user) }}
+  {%- endif %}
+  </div>
+  {%- endif %}
+{% endmacro -%}
+
+{% macro render_project_table(projects, current_user=None) -%}
+<table class="ui compact celled table">
+  <thead>
+    <tr>
+      <th>Project</th>
+      <th>Student</th>
+      <th>Advisor</th>
+      <th>Public</th>
+      <th>Document</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for project in projects %}
+    <tr>
+      <td>{{ project.name }}</td>
+      <td class="right aligned collapsing">
+        {%- for s in project.students %}
+        <a target="_blank" href="{{ url_for('accounts.profile', user_id=s.id) }}">
+          {{ s.first_name }} {{ s.last_name }}
+        </a>
+        {% if not loop.last %}<br>{% endif %}
+        {% endfor -%}
+      </td>
+      <td class="right aligned collapsing">{{ project.advisor.first_name }} {{ project.advisor.last_name }}</td>
+      <td class="right aligned collapsing">{{ project.public.title() }}</td>
+      <td class="right aligned collapsing">
+        {{ pm_renderer.render_project_material(project) }}
+      </td>
+      <td class="right aligned collapsing">
+        {% if current_user and project.is_approval(current_user) %}
+          <i class="large blue check icon"></i>
+          <a class="ui disabled button" href="{{ url_for('projects.approve', project_id=project.id) }}">Approve</a>
+        {% elif current_user %}
+          <i class="large check icon disabled"></i>
+          <a class="ui primary button" href="{{ url_for('projects.approve', project_id=project.id) }}">Approve</a>
+        {% else %}
+        {% endif %}
+
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+  <script type="text/javascript">
+  $('.icon.link.pop')
+  .popup({
+    delay: {
+    show: 50,
+    hide: 70
+    }
+  });
+  </script>
+{%- endmacro %}
+

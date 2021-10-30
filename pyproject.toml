@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "viyyoor"
+version = "0.0.1"
+description = ""
+authors = ["Thanathip Limna <boatkrap@gmail.com>"]
+
+[tool.poetry.dependencies]
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+viyyoor-web = "viyyoor.cmd.web:main"
+
+[build-system]

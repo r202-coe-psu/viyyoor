@@ -1,0 +1,72 @@
+{% extends '/base/default-dashboard.html' %}
+{% import '/base/project-material-renderer.html' as pm_renderer %}
+
+{% block content %}
+  <div>    
+    <h3>Hello, {{ current_user.first_name }} {{ current_user.last_name }} </h3>
+  </div>
+
+  <div class="row">
+    <div class="ui labeled icon menu">
+      <a class="item" href="{{ url_for('projects.create') }}">
+        <i class="add icon"></i>
+        Create Project
+      </a>
+    </div>
+  </div>
+
+  {%- if projects | count > 0 %}
+  <div class="ui segment row">
+    <h4>Project</h4>
+    <div class="ui grid">
+      <div class="sixteen wide column">
+        <div class="ui middle aligned divided list">
+          {% for project in projects %}
+            <div class="item" style="padding: 10px; 0; 10px; 0;;">
+              <div class="right floated content single line">
+                {{ pm_renderer.render_project_material(project) }}
+
+                <a class="ui primary button" href="{{ url_for('projects.upload', project_id=project.id) }}">Upload</a>
+                <a class="ui primary button" href="{{ url_for('projects.edit', project_id=project.id) }}">Edit</a>
+              </div>
+              <i class="laptop large icon avatar"></i>
+              <div class="content">
+                <div class="header">{{ project.name }}</div>
+                <div>
+                  <i class="user icon"></i>
+                  {%- for s in project.students %}
+                  {{ s.first_name }} {{ s.last_name }}
+                  {% if not loop.last %}, {% endif %}
+                  {% endfor -%}
+                  
+                  <i class="user tie icon"></i> {{ project.advisor.first_name }} {{ project.advisor.last_name }}
+                  {% if project.is_approval(project.advisor) %}
+                    <i class="large blue check icon"></i>
+                  {% else %}
+                    <i class="large check icon disabled"></i>
+                  {% endif %}
+
+                </div>
+                <div>
+
+                  <i class="user cog icon"></i>
+                  {% for committee in project.committees %}
+                    {{ committee.first_name }} {{ committee.last_name }} 
+
+                    {% if project.is_approval(committee) %}
+                      <i class="large blue check icon"></i>
+                    {% else %}
+                      <i class="large check icon disabled"></i>
+                    {% endif %}
+
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {%- endif %}
+{% endblock %}

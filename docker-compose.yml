@@ -1,0 +1,38 @@
+version: '3'
+services:
+    mongodb:
+        image: mongo
+        container_name: viyyoor-mongodb
+        volumes:
+            - ../deployment/viyyoor/mongodb/data/db:/data/db
+            - /etc/localtime:/etc/localtime:ro
+        restart: always
+        networks:
+            - default
+ 
+    web:
+        build: .
+        image: viyyoor-image
+        container_name: viyyoor-web
+        volumes:
+            - ../deployment:/deployment
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - 9000:9000
+        links:
+            - mongodb
+        networks:
+            - default
+        restart: always
+        environment:
+            VIYYOOR_SETTINGS: /app/viyyoor-production.cfg
+        command:
+            uwsgi --lazy-apps --ini scripts/viyyoor-uwsgi.ini
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+    
+
+networks:
+    default:
