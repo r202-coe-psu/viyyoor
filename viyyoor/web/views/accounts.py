@@ -158,9 +158,6 @@ def authorized_engpsu():
     user.save()
 
     login_user(user)
-    identity_changed.send(
-            current_app._get_current_object(),
-            identity=Identity(str(user.id)))
 
     oauth2token = models.OAuth2Token(
             name=client.engpsu.name,

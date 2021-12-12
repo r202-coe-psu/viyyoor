@@ -2,15 +2,17 @@
     <div class="ui inverted vertical center aligned segment">
         <div class="ui container grid row two columns">
           <div class="column">
-            <img width="200px" src="{{ url_for('static', filename='images/lotus-500px.png') }}">
+            <i class="university icon massive"></i>
             <div style="padding-top: 1vh;">
-              ผู้เป็นบัณฑิต ควรพยายามร่ำไป ไม่ควรเบื่อหน่ายในกิจของตน
+              Department of Computer Engineering <br/>
+              Faculty of Engineering <br/>
+              Prince of Songkla University
             </div>
           </div>
           <div class="column">
             <div>
               <h1 class="ui huge inverted header" style="font-size:4em">{{ config.get('APP_TITLE') }} </h1>
-              <h2>CoE Project System, PSU, Please Login.</h2>
+              <h2>CoE Certification System, PSU, Please Login.</h2>
             </div>
             <div style="padding-top: 20px;">
               {% if not current_user.is_authenticated %}
