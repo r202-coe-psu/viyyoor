@@ -1,0 +1,69 @@
+{% extends '/admin/classes/index.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block additional_js %}
+  <script type="text/javascript">
+    $('.ui.dropdown')
+      .dropdown();
+	</script>
+{% endblock %}
+
+{% block dashboard_title %}
+  {% if 'edit' in request.path %}
+    Edit Class: {{ form.name.data }}
+  {% else %}
+    Create Class
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <i class="right angle icon divider"></i>
+  {% if 'edit' in request.path %}
+    <div class="active section">Edit Class: {{ form.name.data }}</div>
+  {% else %}
+    <div class="active section">Create Class</div>
+  {% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <div class="ui segment">
+    <form method="POST" class="ui form">
+      {{ form.csrf_token }}
+
+      <div class="two fields">
+      {{ renderer.render_select(form.position) }}
+      {{ renderer.render_select(form.user) }}
+      </div>
+
+      <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
+    </form>
+  </div>
+</div>
+
+<div class="ui container" style="margin-top: 2em;">
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>Name</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for endorser in class_.endorsers %}
+        <tr>
+          <td>{{ endorser.get_position_display() }}</td>
+          <td>{{ endorser.user.first_name }} {{ endorser.user.last_name }}</td>
+          <td>
+            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, position=endorser.position) }}"><i class="trash icon"></i></a>
+          </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

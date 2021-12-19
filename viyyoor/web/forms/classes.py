@@ -44,9 +44,24 @@ class ClassForm(BaseClassForm):
     )
 
 
-class Participant(FlaskForm):
-    pass
+BaseEndorserForm = model_form(
+    models.Endorser,
+    FlaskForm,
+    exclude=[
+        "user",
+        "updated_date",
+    ],
+    field_args={"position": {"label": "Position"}},
+)
 
 
-class Endorses(FlaskForm):
+class EndorserForm(BaseEndorserForm):
+    user = fields.SelectField()
+
+
+class EndorserGrantForm(FlaskForm):
+    users = fields.SelectMultipleField()
+
+
+class ParticipantForm(FlaskForm):
     pass

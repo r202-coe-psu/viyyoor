@@ -58,6 +58,7 @@
     <div class="ui labeled icon menu">
     {% if class_.owner == current_user %}
       <a class="item" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i>Edit</a>
+      <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorsers', class_id=class_.id) }}"><i class="user tie icon"></i>Add</a>
     {% endif %}
     </div>
 </div>

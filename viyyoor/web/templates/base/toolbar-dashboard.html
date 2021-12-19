@@ -15,6 +15,7 @@
 
 {% if current_user.has_roles(['admin']) %}
   <a class="item" href="{{ url_for('admin.index') }}"><i class="icon users"></i>Admin</a>
+  <a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon users"></i>Endorses</a>
 {% endif %}
 
 <a class="item" href="{{ url_for('accounts.index') }}"><i class="address book icon"></i>Account</a>
