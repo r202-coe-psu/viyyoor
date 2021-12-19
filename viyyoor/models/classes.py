@@ -6,18 +6,23 @@ class Participant(me.EmbeddedDocument):
     student_id = me.StringField(required=True)
     first_name = me.StringField(required=True)
     last_name = me.StringField(required=True)
-    grade = me.StringField(
+    type = me.StringField(
         required=True,
         choices=[
-            "participator",
-            "achievement",
+            ("participant", "Participant"),
+            ("achievement", "Achievement"),
         ],
+    )
+
+    last_updated_by = me.ReferenceField("User", dbref=True, required=True)
+    updated_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now, auto_now=True
     )
 
 
 class Endorser(me.EmbeddedDocument):
 
-    position = me.StringField(
+    endorser_id = me.StringField(
         required=True,
         choices=[
             ("endorser1", "Endorser 1"),
@@ -27,15 +32,17 @@ class Endorser(me.EmbeddedDocument):
         ],
     )
     user = me.ReferenceField("User", dbref=True, required=True)
+    position = me.StringField(max_length=256)
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+    last_updated_by = me.ReferenceField("User", dbref=True, required=True)
 
 
 class Class(me.Document):
     meta = {"collection": "classes"}
 
-    name = me.StringField(required=True, max_length=255)
+    name = me.StringField(required=True, max_length=256)
     description = me.StringField()
 
     participants = me.EmbeddedDocumentListField(Participant)

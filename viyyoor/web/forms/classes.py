@@ -50,8 +50,12 @@ BaseEndorserForm = model_form(
     exclude=[
         "user",
         "updated_date",
+        "last_updated_by",
     ],
-    field_args={"position": {"label": "Position"}},
+    field_args={
+        "position": {"label": "Position"},
+        "endorse_id": {"label": "Endorse ID"},
+    },
 )
 
 
@@ -61,6 +65,19 @@ class EndorserForm(BaseEndorserForm):
 
 class EndorserGrantForm(FlaskForm):
     users = fields.SelectMultipleField()
+
+
+BaseParticipantForm = model_form(
+    models.Participant,
+    FlaskForm,
+    exclude=[
+        "updated_date",
+    ],
+    field_args={
+        "position": {"label": "Position"},
+        "endorse_id": {"label": "Endorse ID"},
+    },
+)
 
 
 class ParticipantForm(FlaskForm):

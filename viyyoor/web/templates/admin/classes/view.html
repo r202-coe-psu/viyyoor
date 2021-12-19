@@ -43,14 +43,14 @@
 		<div>
 			<b>Tag:</b> {{ class_.tags | join(', ') }}
     </div>
-    {#
+    
     <div>
-      <b>Teaching Assistant</b> 
-      {% for ta in class_.teaching_assistants %}
-        {{ ta.user.first_name }} {{ ta.user.last_name }}, 
+      <b>Endorsers</b> 
+      {% for end in class_.endorsers %}
+        {{ end.user.first_name }} {{ end.user.last_name }}, 
       {% endfor %}
     </div>
-    #}
+    
   </div>
 </div>
 
@@ -58,7 +58,8 @@
     <div class="ui labeled icon menu">
     {% if class_.owner == current_user %}
       <a class="item" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i>Edit</a>
-      <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorsers', class_id=class_.id) }}"><i class="user tie icon"></i>Add</a>
+      <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorsers', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
+      <a class="item" href="{{ url_for('admin.classes.add_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
     {% endif %}
     </div>
 </div>

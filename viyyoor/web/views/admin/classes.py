@@ -72,20 +72,20 @@ def delete(class_id):
 @module.route(
     "/<class_id>/endorsers/add",
     methods=["GET", "POST"],
-    defaults={"position": None},
+    defaults={"endorser_id": None},
 )
-@module.route("/<class_id>/endorsers/<position>/edit", methods=["GET", "POST"])
+@module.route("/<class_id>/endorsers/<endorser_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def add_or_edit_endorsers(class_id, position):
+def add_or_edit_endorsers(class_id, endorser_id):
     form = forms.classes.EndorserForm()
     endorser = None
     class_ = None
     if class_id:
         class_ = models.Class.objects.get(id=class_id)
 
-        if position:
+        if endorser_id:
             for end in class_.endorsers:
-                if end.position == position:
+                if end.endorser_id == endorser_id:
                     endorser = end
                     form = forms.classes.ClassForm(obj=end)
                     break
@@ -102,18 +102,19 @@ def add_or_edit_endorsers(class_id, position):
             class_=class_,
         )
 
-    is_found_position = False
+    is_found_endorser_id = False
     for end in class_.endorsers:
-        if end.position == form.position.data:
+        if end.endorser_id == form.endorser_id.data:
             endorser = end
-            is_found_position = True
+            is_found_endorser_id = True
             break
 
-    if not is_found_position:
-        endorser = models.Endorser(position=form.position.data)
+    if not is_found_endorser_id:
+        endorser = models.Endorser(endorser_id=form.endorser_id.data)
         class_.endorsers.append(endorser)
 
     endorser.user = models.User.objects.get(id=form.user.data)
+    endorser.position = form.position.data
     class_.save()
 
     return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
@@ -134,3 +135,20 @@ def delete_endorser(class_id, position):
     class_.save()
 
     return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
+
+
+@module.route("/<class_id>/paticipants/add", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def add_participant(class_id, endorser_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    endorser = None
+    for end in class_.endorsers:
+        if end.position == position:
+            endorser = end
+            break
+
+    class_.endorsers.remove(endorser)
+    class_.save()
+
+    return redirect(url_for("admin.classes.view", class_id=class_.id))
