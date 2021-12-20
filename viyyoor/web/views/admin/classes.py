@@ -80,15 +80,10 @@ def add_or_edit_endorsers(class_id, endorser_id):
     form = forms.classes.EndorserForm()
     endorser = None
     class_ = None
-    if class_id:
-        class_ = models.Class.objects.get(id=class_id)
+    class_ = models.Class.objects.get(id=class_id)
 
-        if endorser_id:
-            for end in class_.endorsers:
-                if end.endorser_id == endorser_id:
-                    endorser = end
-                    form = forms.classes.ClassForm(obj=end)
-                    break
+    if endorser_id:
+        endorser = class_.get_endorser(endorser_id)
 
     users = models.User.objects(roles="endorser").order_by("first_name")
     form.user.choices = [
@@ -102,53 +97,83 @@ def add_or_edit_endorsers(class_id, endorser_id):
             class_=class_,
         )
 
-    is_found_endorser_id = False
-    for end in class_.endorsers:
-        if end.endorser_id == form.endorser_id.data:
-            endorser = end
-            is_found_endorser_id = True
-            break
+    endorser = class_.get_endorser(form.endorser_id.data)
 
-    if not is_found_endorser_id:
+    if not endorser:
         endorser = models.Endorser(endorser_id=form.endorser_id.data)
         class_.endorsers.append(endorser)
 
     endorser.user = models.User.objects.get(id=form.user.data)
     endorser.position = form.position.data
+    endorser.last_updated_by = current_user._get_current_object()
     class_.save()
 
     return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
 
 
-@module.route("/<class_id>/endorsers/<position>/delete", methods=["GET", "POST"])
+@module.route("/<class_id>/endorsers/<endorser_id>/delete", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def delete_endorser(class_id, position):
+def delete_endorser(class_id, endorser_id):
     class_ = models.Class.objects.get(id=class_id)
 
-    endorser = None
-    for end in class_.endorsers:
-        if end.position == position:
-            endorser = end
-            break
+    endorser = class_.get_endorser(endorser_id)
 
-    class_.endorsers.remove(endorser)
-    class_.save()
+    if endorser:
+        class_.endorsers.remove(endorser)
+        class_.save()
 
     return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
 
 
-@module.route("/<class_id>/paticipants/add", methods=["GET", "POST"])
+@module.route(
+    "/<class_id>/participants/add",
+    methods=["GET", "POST"],
+    defaults={"participant_id": ""},
+)
+@module.route("/<class_id>/participants/<participant_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def add_participant(class_id, endorser_id):
+def add_or_edit_participant(class_id, participant_id):
     class_ = models.Class.objects.get(id=class_id)
 
-    endorser = None
-    for end in class_.endorsers:
-        if end.position == position:
-            endorser = end
-            break
+    form = forms.classes.ParticipantForm()
+    participant = class_.get_participant(participant_id)
+    if participant:
+        form = forms.classes.ParticipantForm(obj=participant)
 
-    class_.endorsers.remove(endorser)
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/classes/add-or-edit-participant.html",
+            form=form,
+            class_=class_,
+        )
+
+    if not participant:
+        participant = class_.get_participant(participant_id)
+
+    if not participant:
+        participant = models.Participant()
+        class_.participants.append(participant)
+
+    form.populate_obj(participant)
+    participant.last_updated_by = current_user._get_current_object()
     class_.save()
 
-    return redirect(url_for("admin.classes.view", class_id=class_.id))
+    return redirect(
+        url_for("admin.classes.add_or_edit_participant", class_id=class_.id)
+    )
+
+
+@module.route("/<class_id>/participants/<participant_id>/delete")
+@acl.roles_required("admin")
+def delete_participant(class_id, participant_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    participant = class_.get_participant(participant_id)
+
+    if participant:
+        class_.participants.remove(participant)
+        class_.save()
+
+    return redirect(
+        url_for("admin.classes.add_or_edit_participant", class_id=class_.id)
+    )

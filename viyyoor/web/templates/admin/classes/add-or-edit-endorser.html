@@ -61,7 +61,7 @@
           <td>{{ endorser.user.first_name }} {{ endorser.user.last_name }}</td>
           <td>{{ endorser.position }}</td>
           <td>
-            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, position=endorser.position) }}"><i class="trash icon"></i></a>
+            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="trash icon"></i></a>
           </td>
       </tr>
       {% endfor %}

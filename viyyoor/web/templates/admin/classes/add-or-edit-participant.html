@@ -10,9 +10,9 @@
 
 {% block dashboard_title %}
   {% if 'edit' in request.path %}
-    Edit Class: {{ form.name.data }}
+    Edit Participant to {{ form.name.data }}
   {% else %}
-    Create Class
+    Add Participant
   {% endif %}
 {% endblock %}
 
@@ -20,9 +20,9 @@
   {{ super() }}
   <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
-    <div class="active section">Edit Class: {{ form.name.data }}</div>
+    <div class="active section">Edit Participant</div>
   {% else %}
-    <div class="active section">Create Class</div>
+    <div class="active section">Add Participant</div>
   {% endif %}
 
 {% endblock %}
@@ -33,10 +33,13 @@
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
 
-      <div class="three fields">
-      {{ renderer.render_select(form.endorser_id) }}
-      {{ renderer.render_select(form.user) }}
-      {{ renderer.render_select(form.position) }}
+      <div class="two fields">
+      {{ renderer.render_select(form.participant_id) }}
+      {{ renderer.render_select(form.group) }}
+      </div>
+      <div class="two fields">
+      {{ renderer.render_select(form.first_name) }}
+      {{ renderer.render_select(form.last_name) }}
       </div>
 
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
@@ -50,18 +53,18 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
-        <th>Position</th>
+        <th>Group</th>
         <th>Operation</th>
       </tr>
     </thead>
     <tbody>
-      {% for endorser in class_.endorsers %}
+      {% for participant in class_.participants %}
         <tr>
-          <td>{{ endorser.get_endorser_id_display() }}</td>
-          <td>{{ endorser.user.first_name }} {{ endorser.user.last_name }}</td>
-          <td>{{ endorser.position }}</td>
+          <td>{{ participant.participant_id }}</td>
+          <td>{{ participant.first_name }} {{ participant.last_name }}</td>
+          <td>{{ participant.get_group_display() }}</td>
           <td>
-            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, position=endorser.position) }}"><i class="trash icon"></i></a>
+            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_participant', class_id=class_.id, participant_id=participant.participant_id) }}"><i class="trash icon"></i></a>
           </td>
       </tr>
       {% endfor %}

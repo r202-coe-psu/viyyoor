@@ -70,15 +70,15 @@ class EndorserGrantForm(FlaskForm):
 BaseParticipantForm = model_form(
     models.Participant,
     FlaskForm,
-    exclude=[
-        "updated_date",
-    ],
+    exclude=["updated_date", "last_updated_by"],
     field_args={
-        "position": {"label": "Position"},
-        "endorse_id": {"label": "Endorse ID"},
+        "participant_id": {"label": "Participant ID"},
+        "first_name": {"label": "First Name"},
+        "last_name": {"label": "Last Name"},
+        "group": {"label": "Group"},
     },
 )
 
 
-class ParticipantForm(FlaskForm):
+class ParticipantForm(BaseParticipantForm):
     pass

@@ -3,10 +3,10 @@ import datetime
 
 
 class Participant(me.EmbeddedDocument):
-    student_id = me.StringField(required=True)
-    first_name = me.StringField(required=True)
-    last_name = me.StringField(required=True)
-    type = me.StringField(
+    participant_id = me.StringField(required=True, max_length=20)
+    first_name = me.StringField(required=True, max_length=256)
+    last_name = me.StringField(required=True, max_length=256)
+    group = me.StringField(
         required=True,
         choices=[
             ("participant", "Participant"),
@@ -58,3 +58,17 @@ class Class(me.Document):
     owner = me.ReferenceField("User", dbref=True, required=True)
 
     status = me.StringField(required=True, default="active")
+
+    def get_participant(self, participant_id: str):
+        for p in self.participants:
+            if p.participant_id == participant_id:
+                return p
+
+        return None
+
+    def get_endorser(self, endorser_id: str):
+        for end in self.endorsers:
+            if end.endorser_id == endorser_id:
+                return end
+
+        return None

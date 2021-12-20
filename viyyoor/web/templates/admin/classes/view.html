@@ -59,7 +59,7 @@
     {% if class_.owner == current_user %}
       <a class="item" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i>Edit</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorsers', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
-      <a class="item" href="{{ url_for('admin.classes.add_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
+      <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
     {% endif %}
     </div>
 </div>
@@ -70,17 +70,17 @@
 			<thead>
 				<tr>
 						<th>Name</th>
-						<th>Grade</th>
+						<th>Group</th>
 						<th>Operation</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for paticipant in class_.paticipants %}
+				{% for participant in class_.participants %}
 					<tr>
             <td>
-                {{ paticipant.first_name }} {{ paticipant.last_name }}
+                {{ participant.first_name }} {{ participant.last_name }}
             </td>
-					<td>  </td>
+            <td> {{ participant.get_group_display() }} </td>
           <td>
             {#
             {% if class_.owner == current_user %}
