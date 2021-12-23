@@ -1,0 +1,44 @@
+{% extends '/admin/classes/index.html' %}
+{% import '/base/error-handler.html' as eh %}
+
+{% block dashboard_title %}Classes: {{ template.name }}{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <i class="right angle icon divider"></i>
+  <div class="active section">{{ template.name }}</div>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="ui container">
+  <div class="ui segment">
+		<div>
+			<b>Name:</b> {{ template.name }}
+    </div>
+		<div>
+			<b>Description:</b> {{ template.description }}
+    </div>
+		<div>
+			<b>Owner:</b> {{ template.owner.first_name }} {{ template.owner.last_name }}
+		</div>
+		<div>
+			<b>Last Updated By:</b> {{ template.last_updated_by.first_name }} {{ template.last_updated_by.last_name }}
+		</div>
+		<div>
+			<b>Updated Date:</b> {{ template.updated_date }}
+    </div>
+		<div>
+			<b>Tag:</b> {{ template.tags | join(', ') }}
+    </div>
+		<div>
+			<b>Filename:</b> {{ template.file.filename }}
+    </div>
+  </div>
+  <div class="ui segment">
+    <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
+  </div>
+
+</div>
+{% endblock %}

@@ -5,6 +5,8 @@ description = ""
 authors = ["Thanathip Limna <boatkrap@gmail.com>"]
 
 [tool.poetry.dependencies]
+loginpass = "^0.5"
+Flask-Login = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 
