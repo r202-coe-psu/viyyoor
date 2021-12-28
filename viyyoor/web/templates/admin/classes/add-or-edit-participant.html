@@ -1,4 +1,4 @@
-{% extends '/admin/classes/index.html' %}
+{% extends '/admin/classes/view.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block additional_js %}
@@ -38,8 +38,8 @@
       {{ renderer.render_select(form.group) }}
       </div>
       <div class="two fields">
-      {{ renderer.render_select(form.first_name) }}
-      {{ renderer.render_select(form.last_name) }}
+      {{ renderer.render_field(form.first_name) }}
+      {{ renderer.render_field(form.last_name) }}
       </div>
 
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>

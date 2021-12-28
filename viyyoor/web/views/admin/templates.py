@@ -1,11 +1,11 @@
 from flask import (
-        Blueprint, 
-        render_template, 
-        redirect, 
-        url_for, 
-        send_file,
-        Response,
-        )
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    send_file,
+    Response,
+)
 from flask_login import current_user
 
 import datetime
@@ -29,7 +29,7 @@ def index():
 @module.route(
     "/create",
     methods=["GET", "POST"],
-    defaults={"template_id": None},
+    defaults={"template_id": ""},
 )
 @module.route("/<template_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
@@ -37,7 +37,7 @@ def create_or_edit(template_id):
     form = forms.templates.TemplateForm()
     if template_id:
         template = models.Class.objects.get(id=template_id)
-        form = forms.templates.ClassForm(obj=template)
+        form = forms.templates.TemplateForm(obj=template)
 
     if not form.validate_on_submit():
         return render_template(
@@ -47,25 +47,25 @@ def create_or_edit(template_id):
 
     if not template_id:
         template = models.Template(
-            owner = current_user._get_current_object(),
-            last_updated_by = current_user._get_current_object(),
-            )
+            owner=current_user._get_current_object(),
+            last_updated_by=current_user._get_current_object(),
+        )
 
     form.populate_obj(template)
 
     if not template_id:
         template.file.put(
-                form.template_file.data,
-                filename=form.template_file.data.filename,
-                content_type=form.template_file.data.content_type,
-                )
-    else: 
+            form.template_file.data,
+            filename=form.template_file.data.filename,
+            content_type=form.template_file.data.content_type,
+        )
+    else:
 
         template.file.replace(
-                form.template_file.data,
-                filename=form.template_file.data.filename,
-                content_type=form.template_file.data.content_type,
-                )
+            form.template_file.data,
+            filename=form.template_file.data.filename,
+            content_type=form.template_file.data.content_type,
+        )
 
     template.save()
 
@@ -92,22 +92,20 @@ def delete(template_id):
     return redirect(url_for("admin.templates.index"))
 
 
-@module.route('/<template_id>/<filename>')
+@module.route("/<template_id>/<filename>")
 @acl.roles_required("admin")
 def download(template_id, filename):
     response = Response()
     response.status_code = 404
 
-
     template = models.Template.objects.get(id=template_id)
 
-        
     if template:
         response = send_file(
             template.file,
             attachment_filename=template.file.filename,
             # as_attachment=True,
-            mimetype=template.file.content_type)
+            mimetype=template.file.content_type,
+        )
 
     return response
-

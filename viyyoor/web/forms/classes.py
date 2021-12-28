@@ -1,6 +1,6 @@
 from flask_mongoengine.wtf import model_form
 from flask_wtf import FlaskForm
-from wtforms import fields, widgets
+from wtforms import fields, widgets, validators
 
 import datetime
 
@@ -17,31 +17,32 @@ BaseClassForm = model_form(
         "owner",
         "participants",
         "endorses",
+        "certificates",
         "status",
     ],
     field_args={
         "name": {"label": "Name"},
-        "description": {"label": "Desctiption"},
-        "started_date": {"label": "Start Date"},
-        "ended_date": {"label": "End Date"},
+        "description": {
+            "label": "Desctiption",
+        },
+        "started_date": {
+            "label": "Start Date",
+            "format": "%Y-%m-%d",
+        },
+        "ended_date": {
+            "label": "End Date",
+            "format": "%Y-%m-%d",
+        },
+        "issued_date": {
+            "label": "Issued Date",
+            "format": "%Y-%m-%d",
+        },
     },
 )
 
 
 class ClassForm(BaseClassForm):
     tags = TagListField("Tags")
-    started_date = fields.DateField(
-        "Started Date",
-        format="%Y-%m-%d",
-        widget=widgets.TextInput(),
-        default=datetime.datetime.today,
-    )
-    ended_date = fields.DateField(
-        "Ended Date",
-        format="%Y-%m-%d",
-        widget=widgets.TextInput(),
-        default=datetime.datetime.today,
-    )
 
 
 BaseEndorserForm = model_form(
@@ -60,11 +61,11 @@ BaseEndorserForm = model_form(
 
 
 class EndorserForm(BaseEndorserForm):
-    user = fields.SelectField()
+    user = fields.SelectField("User")
 
 
 class EndorserGrantForm(FlaskForm):
-    users = fields.SelectMultipleField()
+    users = fields.SelectMultipleField("Users")
 
 
 BaseParticipantForm = model_form(
@@ -82,3 +83,19 @@ BaseParticipantForm = model_form(
 
 class ParticipantForm(BaseParticipantForm):
     pass
+
+
+BaseCertificateTemplateForm = model_form(
+    models.CertificateTemplate,
+    FlaskForm,
+    exclude=["updated_date", "last_updated_by", "template"],
+    field_args={
+        "name": {"label": "Name"},
+        "appreciate_text": {"label": "Appreciate Text"},
+        "group": {"label": "Group"},
+    },
+)
+
+
+class CertificateTemplateForm(BaseCertificateTemplateForm):
+    template = fields.SelectField("Template", validators=[validators.InputRequired()])

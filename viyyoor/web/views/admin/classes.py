@@ -46,7 +46,7 @@ def create_or_edit(class_id):
     form.populate_obj(class_)
     class_.save()
 
-    return redirect(url_for("admin.classes.index"))
+    return redirect(url_for("admin.classes.view", class_id=class_.id))
 
 
 @module.route("/<class_id>")
@@ -176,4 +176,61 @@ def delete_participant(class_id, participant_id):
 
     return redirect(
         url_for("admin.classes.add_or_edit_participant", class_id=class_.id)
+    )
+
+
+@module.route(
+    "/<class_id>/certificate_templates/add",
+    methods=["GET", "POST"],
+    defaults={"certificate_template_id": ""},
+)
+@module.route(
+    "/<class_id>/certificate_templates/<certificate_template_id>/edit",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def add_or_edit_certificate_template(class_id, certificate_template_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    form = forms.classes.CertificateTemplateForm()
+    templates = models.Template.objects(status="active")
+    certificate_template = class_.certificate_templates.get(certificate_template_id)
+
+    if certificate_template_id:
+        form = forms.classes.CertificateTemplateForm(obj=certificate_template)
+
+    form.template.choices = [(str(t.id), t.name) for t in templates]
+
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/classes/add-or-edit-certificate-template.html",
+            form=form,
+            class_=class_,
+        )
+
+    if not certificate_template:
+        certificate_template = models.CertificateTemplate()
+        class_.certificate_templates[form.group.data] = certificate_template
+
+    form.populate_obj(certificate_template)
+    certificate_template.template = models.Template.objects.get(id=form.template.data)
+    certificate_template.last_updated_by = current_user._get_current_object()
+    class_.save()
+
+    return redirect(
+        url_for("admin.classes.add_or_edit_certificate_template", class_id=class_.id)
+    )
+
+
+@module.route("/<class_id>/certificate_templates/<certificate_template_id>/delete")
+@acl.roles_required("admin")
+def delete_certificate_template(class_id, certificate_template_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    if certificate_template_id in class_.certificate_templates:
+        class_.certificate_templates.pop(certificate_template_id)
+        class_.save()
+
+    return redirect(
+        url_for("admin.classes.add_or_edit_certificate_template", class_id=class_.id)
     )

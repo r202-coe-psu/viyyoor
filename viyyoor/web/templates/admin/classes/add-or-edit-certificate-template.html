@@ -10,9 +10,9 @@
 
 {% block dashboard_title %}
   {% if 'edit' in request.path %}
-    Edit Class: {{ form.name.data }}
+    Edit {{ form.name.data }}
   {% else %}
-    Create Class
+    Add Certificate Template
   {% endif %}
 {% endblock %}
 
@@ -20,9 +20,9 @@
   {{ super() }}
   <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
-    <div class="active section">Edit Class: {{ form.name.data }}</div>
+    <div class="active section">Edit Certificate Template</div>
   {% else %}
-    <div class="active section">Create Class</div>
+    <div class="active section">Add Certificate Template</div>
   {% endif %}
 
 {% endblock %}
@@ -33,10 +33,11 @@
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
 
-      <div class="three fields">
-      {{ renderer.render_select(form.endorser_id) }}
-      {{ renderer.render_select(form.user) }}
-      {{ renderer.render_select(form.position) }}
+      {{ renderer.render_field(form.name) }}
+      {{ renderer.render_field(form.appreciate_text) }}
+      <div class="two fields">
+      {{ renderer.render_select(form.group) }}
+      {{ renderer.render_select(form.template) }}
       </div>
 
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
@@ -48,20 +49,22 @@
   <table class="ui celled table">
     <thead>
       <tr>
-        <th>ID</th>
+        <th>Group</th>
         <th>Name</th>
-        <th>Position</th>
+        <th>Appreciate Text</th>
+        <th>Template</th>
         <th>Operation</th>
       </tr>
     </thead>
     <tbody>
-      {% for endorser in class_.endorsers %}
+      {% for k, v in class_.certificate_templates.items() %}
         <tr>
-          <td>{{ endorser.get_endorser_id_display() }}</td>
-          <td>{{ endorser.user.first_name }} {{ endorser.user.last_name }}</td>
-          <td>{{ endorser.position }}</td>
+          <td>{{ v.get_group_display() }}</td>
+          <td>{{ v.name }}</td>
+          <td>{{ v.appreciate_text }}</td>
+          <td>{{ v.template.name }}</td>
           <td>
-            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="trash icon"></i></a>
+            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_certificate_template', class_id=class_.id, certificate_template_id=v.group) }}"><i class="trash icon"></i></a>
           </td>
       </tr>
       {% endfor %}

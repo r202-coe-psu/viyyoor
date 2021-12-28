@@ -27,7 +27,13 @@
       type: 'date',
       formatter: datetime_formatter,
       startCalendar: $('#started_date_calendar')
+        });
+    $('#issued_date_calendar').calendar({
+      type: 'date',
+      formatter: datetime_formatter,
+      startCalendar: $('#ended_date_calendar')
     });
+
 	</script>
 {% endblock %}
 
@@ -63,8 +69,9 @@
         {{ renderer.render_calendar(form.ended_date, calendar_id='ended_date_calendar') }}
       </div>
 
-      <div class="field">
-      {{ renderer.render_field(form.tags) }}
+      <div class="two field">
+        {{ renderer.render_calendar(form.issued_date, calendar_id='issued_date_calendar') }}
+        {{ renderer.render_field(form.tags) }}
       </div>
       <button name="create" type="submit" class="ui button primary">{{ 'Create' if 'create' in request.path else 'Edit' }}</button>
     </form>

@@ -9,26 +9,27 @@ from .fields import TagListField, TextListField
 from viyyoor import models
 
 BaseTemplateForm = model_form(
-    models.Class,
+    models.Template,
     FlaskForm,
     exclude=[
         "created_date",
         "updated_date",
-        "owner",
         "last_updated_by",
+        "owner",
         "status",
-        'file',
+        "file",
     ],
     field_args={
-        "name": {"label": "Name"},
-        "description": {"label": "Desctiption"},
+        "name": {
+            "label": "Name",
+        },
+        "description": {
+            "label": "Desctiption",
+        },
     },
 )
 
 
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
-    template_file = file.FileField('Template File',
-            validators=[file.FileRequired()]
-            )
-
+    template_file = file.FileField("Template File", validators=[file.FileRequired()])

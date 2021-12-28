@@ -1,6 +1,7 @@
 import mongoengine as me
 import datetime
 
+
 class Template(me.Document):
     meta = {"collection": "templates"}
 
