@@ -45,8 +45,8 @@ def enroll(class_id):
     return redirect(url_for("classes.view", class_id=class_.id))
 
 
-@module.route("/<class_id>/certificate/<participant_id>")
-@login_required
+@module.route("/<class_id>/certificate/<participant_id>.svg")
+# @login_required
 def view_certificate(class_id, participant_id):
     response = Response()
     response.status_code = 404
@@ -79,15 +79,18 @@ def view_certificate(class_id, participant_id):
         variables[f"{ endorser.endorser_id }_position"] = endorser.position
 
     print(variables)
-    return template.render(**variables)
+    data = template.render(**variables)
 
-    # x = io.BytesIO()
-    # x.write(data.encode())
-    # response = send_file(
-    #     x,
-    #     attachment_filename=certificate_template.template.file.filename,
-    #     # as_attachment=True,
-    #     mimetype=certificate_template.template.file.content_type,
-    # )
+    import io
 
-    # return response
+    x = io.BytesIO()
+    x.write(data.encode())
+    x.seek(0)
+    response = send_file(
+        x,
+        attachment_filename=f"{participant_id}.svg",
+        # as_attachment=True,
+        mimetype=certificate_template.template.file.content_type,
+    )
+
+    return response
