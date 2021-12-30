@@ -36,7 +36,7 @@ def index():
 def create_or_edit(template_id):
     form = forms.templates.TemplateForm()
     if template_id:
-        template = models.Class.objects.get(id=template_id)
+        template = models.Template.objects.get(id=template_id)
         form = forms.templates.TemplateForm(obj=template)
 
     if not form.validate_on_submit():
