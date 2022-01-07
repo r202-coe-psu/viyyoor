@@ -1,0 +1,24 @@
+{% extends '/base/default-page.html' %}
+
+
+{% block content %}
+<div class="ui container">
+  <div style="background-color: white;">
+    <div class="ui icon message">
+      <i class="certificate icon"></i>
+      <div class="content">
+        <div class="header">
+        {{ class_.name }}
+        </div>
+        <p>{{ class_.description }}</p>
+      </div>
+    </div>
+
+
+    <div>
+      <img src="{{ url_for('classes.generate_certificate', class_id=class_.id, participant_id=participant_id) }}">
+    </div>
+
+  </div>
+</div>
+{% endblock %}

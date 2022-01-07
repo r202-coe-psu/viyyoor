@@ -10,9 +10,9 @@
 
 {% block dashboard_title %}
   {% if 'edit' in request.path %}
-    Edit Class: {{ form.name.data }}
+    Edit {{ form.endorser_id.data }}
   {% else %}
-    Create Class
+    Add Endorser to Class
   {% endif %}
 {% endblock %}
 
@@ -20,7 +20,7 @@
   {{ super() }}
   <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
-    <div class="active section">Edit Class: {{ form.name.data }}</div>
+    <div class="active section">Edit Endorser: {{ form.endorser_id.data }}</div>
   {% else %}
     <div class="active section">Create Class</div>
   {% endif %}
@@ -33,12 +33,12 @@
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
 
-      <div class="three fields">
+      <div class="two fields">
       {{ renderer.render_select(form.endorser_id) }}
       {{ renderer.render_select(form.user) }}
-      {{ renderer.render_select(form.position) }}
       </div>
 
+      {{ renderer.render_field(form.position) }}
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>
   </div>
@@ -61,6 +61,7 @@
           <td>{{ endorser.user.first_name }} {{ endorser.user.last_name }}</td>
           <td>{{ endorser.position }}</td>
           <td>
+            <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="edit icon"></i></a>
             <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="trash icon"></i></a>
           </td>
       </tr>

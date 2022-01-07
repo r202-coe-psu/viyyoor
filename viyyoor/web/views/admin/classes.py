@@ -76,20 +76,21 @@ def delete(class_id):
 )
 @module.route("/<class_id>/endorsers/<endorser_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def add_or_edit_endorsers(class_id, endorser_id):
+def add_or_edit_endorser(class_id, endorser_id):
     form = forms.classes.EndorserForm()
     endorser = None
-    class_ = None
     class_ = models.Class.objects.get(id=class_id)
 
     if endorser_id:
         endorser = class_.get_endorser(endorser_id)
+        form = forms.classes.EndorserForm(obj=endorser)
 
     users = models.User.objects(roles="endorser").order_by("first_name")
     form.user.choices = [
         (str(user.id), f"{user.first_name} {user.last_name}") for user in users
     ]
 
+    print(form.endorser_id.__dict__)
     if not form.validate_on_submit():
         return render_template(
             "/admin/classes/add-or-edit-endorser.html",
@@ -108,7 +109,7 @@ def add_or_edit_endorsers(class_id, endorser_id):
     endorser.last_updated_by = current_user._get_current_object()
     class_.save()
 
-    return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
+    return redirect(url_for("admin.classes.add_or_edit_endorser", class_id=class_.id))
 
 
 @module.route("/<class_id>/endorsers/<endorser_id>/delete", methods=["GET", "POST"])

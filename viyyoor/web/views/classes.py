@@ -1,5 +1,16 @@
-from flask import Blueprint, render_template, url_for, redirect, Response, send_file
+from flask import (
+    Blueprint,
+    render_template,
+    url_for,
+    redirect,
+    Response,
+    send_file,
+    request,
+)
 from flask_login import current_user, login_required
+import io
+import cairosvg
+
 
 from .. import models
 
@@ -47,7 +58,7 @@ def enroll(class_id):
 
 @module.route("/<class_id>/certificate/<participant_id>.svg")
 # @login_required
-def view_certificate(class_id, participant_id):
+def generate_certificate(class_id, participant_id):
     response = Response()
     response.status_code = 404
 
@@ -62,33 +73,49 @@ def view_certificate(class_id, participant_id):
 
     data = certificate_template.template.file.read().decode()
     template = Template(data)
-    # print(template.render(the="variables", go="here"))
 
+    text = [t.strip() for t in certificate_template.appreciate_text.split("\n")]
+
+    appreciate_text = []
+    if len(text) > 0:
+        appreciate_text = [f"<tspan>{text[0]}</tspan>"]
+        appreciate_text.extend(
+            [f'<tspan x="50%" dy="10">{t.strip()}</tspan>' for t in text[1:]]
+        )
+
+    certificate_url = url_for(
+        "certificates.view", class_id=class_id, participant_id=participant_id
+    )
     variables = dict(
         certificate_name=certificate_template.name,
         participant_name=f"{participant.first_name} {participant.last_name}",
-        certification_text=certificate_template.appreciate_text,
+        appreciate_text="".join(appreciate_text),
         module_name=class_.name,
-        issued_date=class_.issued_date,
+        issued_date=class_.issued_date.strftime("%B %Y, %-d"),
+        validation_url=f"{request.host_url}{certificate_url}",
     )
 
     for endorser in class_.endorsers:
         variables[
             f"{ endorser.endorser_id }_name"
         ] = f"{ endorser.user.first_name } { endorser.user.last_name }"
-        variables[f"{ endorser.endorser_id }_position"] = endorser.position
 
-    print(variables)
+        text = [t.strip() for t in endorser.position.split("\n")]
+        position = []
+        if len(text) > 0:
+            position = [f"<tspan>{text[0]}</tspan>"]
+            position.extend([f'<tspan x="50%" dy="5">{t}</tspan>' for t in text[1:]])
+
+        variables[f"{ endorser.endorser_id }_position"] = "".join(position)
+
     data = template.render(**variables)
 
-    import io
-
-    x = io.BytesIO()
-    x.write(data.encode())
-    x.seek(0)
+    image_io = io.BytesIO()
+    image_io.write(data.encode())
+    image_io.seek(0)
     response = send_file(
-        x,
-        attachment_filename=f"{participant_id}.svg",
+        image_io,
+        attachment_filename=f"{class_.id}-{participant_id}.svg",
         # as_attachment=True,
         mimetype=certificate_template.template.file.content_type,
     )

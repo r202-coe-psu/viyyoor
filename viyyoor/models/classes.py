@@ -35,7 +35,7 @@ class Endorser(me.EmbeddedDocument):
     )
     user = me.ReferenceField("User", dbref=True, required=True)
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
-    position = me.StringField(max_length=256)
+    position = me.StringField()
     updated_date = me.DateTimeField(
         required=True, auto_now=True, default=datetime.datetime.now
     )
