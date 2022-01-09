@@ -10,7 +10,7 @@
 
 {% block dashboard_title %}
   {% if 'edit' in request.path %}
-    Edit Participant to {{ form.name.data }}
+    Edit Participant to {{ form.participant_id.data }}
   {% else %}
     Add Participant
   {% endif %}
@@ -64,6 +64,7 @@
           <td>{{ participant.first_name }} {{ participant.last_name }}</td>
           <td>{{ participant.get_group_display() }}</td>
           <td>
+            <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id, participant_id=participant.participant_id) }}"><i class="edit icon"></i></a>
             <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_participant', class_id=class_.id, participant_id=participant.participant_id) }}"><i class="trash icon"></i></a>
           </td>
       </tr>

@@ -22,9 +22,9 @@
 
 {% block dashboard_title %}
   {% if 'edit' in request.path %}
-    Edit Template: {{ form.name.data }}
+    Edit Signature: {{ signature.owner.first_name }} {{ signature.owner.last_name }}
   {% else %}
-    Create Template
+    Create Signature
   {% endif %}
 {% endblock %}
 
@@ -32,9 +32,9 @@
   {{ super() }}
   <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
-    <div class="active section">Edit Template: {{ form.name.data }}</div>
+    <div class="active section">Edit Signature: {{ signature.owner.first_mname }} {{ signature.owner.last_name }}</div>
   {% else %}
-    <div class="active section">Create Template</div>
+    <div class="active section">Create Signature</div>
   {% endif %}
 
 {% endblock %}

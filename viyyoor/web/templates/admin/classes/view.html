@@ -74,6 +74,7 @@
 		<table class="ui celled table">
 			<thead>
 				<tr>
+						<th>ID</th>
 						<th>Name</th>
 						<th>Group</th>
 						<th>Operation</th>
@@ -81,7 +82,10 @@
 			</thead>
 			<tbody>
 				{% for participant in class_.participants %}
-					<tr>
+          <tr>
+            <td>
+              {{ participant.participant_id }}
+            </td>
             <td>
                 {{ participant.first_name }} {{ participant.last_name }}
             </td>

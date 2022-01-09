@@ -212,6 +212,11 @@ def add_or_edit_certificate_template(class_id, certificate_template_id):
         certificate_template = models.CertificateTemplate()
         class_.certificate_templates[form.group.data] = certificate_template
 
+    if certificate_template_id:
+        if certificate_template_id != form.group.data:
+            class_.certificate_templates[form.group.data] = certificate_template
+            class_.certificate_templates.pop(certificate_template_id)
+
     form.populate_obj(certificate_template)
     certificate_template.template = models.Template.objects.get(id=form.template.data)
     certificate_template.last_updated_by = current_user._get_current_object()

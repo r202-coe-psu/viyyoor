@@ -46,11 +46,10 @@ def create_or_edit(signature_id):
     ]
 
     if not form.validate_on_submit():
-        print(form.data)
-        print(form.errors)
         return render_template(
             "/admin/signatures/create-edit.html",
             form=form,
+            signature=signature,
         )
 
     if not signature_id:

@@ -8,6 +8,8 @@ from flask import (
     request,
 )
 from flask_login import current_user, login_required
+from jinja2 import Environment, PackageLoader, select_autoescape, Template
+
 import io
 import cairosvg
 import qrcode
@@ -67,9 +69,7 @@ def generate_certificate(class_id, participant_id):
     participant = class_.get_participant(participant_id)
     certificate_template = class_.certificate_templates.get(participant.group)
 
-    from jinja2 import Environment, PackageLoader, select_autoescape, Template
-
-    if not certificate_template.template:
+    if not certificate_template:
         return response
 
     data = certificate_template.template.file.read().decode()
@@ -113,11 +113,6 @@ def generate_certificate(class_id, participant_id):
         validation_qrcode=f"image/png;base64,{qrcode_encoded}",
     )
 
-    sign_test = open(
-        "/media/tl/storage/online/psu-gdrive/works/curriculum/CoE - AIE/Certification/signed-tl-new.png",
-        "rb",
-    )
-    sign_encoded = base64.b64encode(sign_test.read()).decode("ascii")
     for endorser in class_.endorsers:
         variables[
             f"{ endorser.endorser_id }_name"
@@ -127,6 +122,10 @@ def generate_certificate(class_id, participant_id):
         for i, t in enumerate(text):
             variables[f"{ endorser.endorser_id }_position_{i}"] = t
 
+        signature = models.Signature.objects(owner=endorser.user).first()
+        sign_encoded = ""
+        if signature:
+            sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
         variables[f"{ endorser.endorser_id }_sign"] = f"image/png;base64,{sign_encoded}"
 
     data = template.render(**variables)
