@@ -1,0 +1,6 @@
+qrcode[pil]
+cairosvg
+flask
+flask-login
+flask_mongoengine
+flask_caching

@@ -90,7 +90,6 @@ def add_or_edit_endorser(class_id, endorser_id):
         (str(user.id), f"{user.first_name} {user.last_name}") for user in users
     ]
 
-    print(form.endorser_id.__dict__)
     if not form.validate_on_submit():
         return render_template(
             "/admin/classes/add-or-edit-endorser.html",
@@ -104,8 +103,8 @@ def add_or_edit_endorser(class_id, endorser_id):
         endorser = models.Endorser(endorser_id=form.endorser_id.data)
         class_.endorsers.append(endorser)
 
+    form.populate_obj(endorser)
     endorser.user = models.User.objects.get(id=form.user.data)
-    endorser.position = form.position.data
     endorser.last_updated_by = current_user._get_current_object()
     class_.save()
 

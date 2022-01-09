@@ -1,0 +1,58 @@
+{% extends '/base/default-dashboard.html' %}
+
+{% block breadcrumbs %}
+<a href="{{ url_for('admin.signatures.index') }}" signature="section">Signature</a>
+{% endblock %}
+
+{% block _title %}
+Signature
+{% endblock %}
+
+{% block dashboard_title %}
+Signature
+{% endblock %}
+
+{% block content %}
+  <div class="ui labeled icon menu">
+    <a href="{{ url_for('admin.signatures.create_or_edit') }}" class="item"><i class="add icon"></i>Add</a>
+  </div>
+
+  <div style="margin-top: 1ex;">
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Owner</th>
+          <th>Created Date</th>
+          <th>Updated Date</th>
+          <th>Last Update</th>
+          <th>Operation</th>
+        </tr>
+      </thead>
+      <tbody>
+    {% for signature in signatures %}
+        <tr>
+          <td>
+            {{ signature.owner.first_name }} {{ signature.owner.last_name }}
+          </td>
+          <td>
+            {{ signature.created_date }}
+          </td>
+          <td>
+            {{ signature.updated_date }}
+          </td>
+          <td>
+            {{ signature.last_updated_by.first_name }} {{ signature.last_updated_by.last_name }}
+          </td>
+          <td class="single line">
+            <a class="ui circular button primary icon" href="{{ url_for('admin.signatures.create_or_edit', signature_id=signature.id) }}"><i class="edit icon"></i></a>
+            <a class="ui circular button primary icon" href="{{ url_for('admin.signatures.view', signature_id=signature.id) }}"><i class="eye icon"></i></a>
+            <a class="ui circular button negative icon" href="{{ url_for('admin.signatures.delete', signature_id=signature.id) }}"><i class="trash icon"></i></a>
+          </td>
+        </tr>
+    {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+{% endblock %}

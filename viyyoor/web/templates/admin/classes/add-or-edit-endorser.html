@@ -38,6 +38,12 @@
       {{ renderer.render_select(form.user) }}
       </div>
 
+      <div class="three fields">
+      {{ renderer.render_field(form.title) }}
+      {{ renderer.render_field(form.first_name) }}
+      {{ renderer.render_field(form.last_name) }}
+      </div>
+
       {{ renderer.render_field(form.position) }}
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>

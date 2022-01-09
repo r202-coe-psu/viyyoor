@@ -1,0 +1,57 @@
+{% extends '/admin/classes/index.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block additional_js %}
+  {{ super() }}
+
+  <script type="text/javascript">
+  $('.ui.dropdown')
+      .dropdown();
+
+  $(".attach-file-signature_file").click(function() {
+    $(this).parent().find("#signature_file").click();
+  });
+
+  $('#signature_file')
+    .on('change', function(e) {
+      var name = e.target.files[0].name;
+      $('.attach-file-signature_file', $(e.target).parent()).val(name);
+    });
+	</script>
+{% endblock %}
+
+{% block dashboard_title %}
+  {% if 'edit' in request.path %}
+    Edit Template: {{ form.name.data }}
+  {% else %}
+    Create Template
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <i class="right angle icon divider"></i>
+  {% if 'edit' in request.path %}
+    <div class="active section">Edit Template: {{ form.name.data }}</div>
+  {% else %}
+    <div class="active section">Create Template</div>
+  {% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <div class="ui segment">
+    <form method="POST" class="ui form" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      <div class="two fields">
+      {{ renderer.render_select(form.user) }}
+      {{ renderer.render_fileinput(form.signature_file) }}
+      </div>
+
+      <button name="create" type="submit" class="ui button primary">{{ 'Create' if 'create' in request.path else 'Edit' }}</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

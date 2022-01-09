@@ -16,8 +16,9 @@
 {% if current_user.has_roles(['admin']) %}
   <a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
   <a class="item" href="{{ url_for('admin.classes.index') }}"><i class="icon users"></i>Class</a>
-  <a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon users"></i>Endorses</a>
+  <a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon user edit"></i>Endorses</a>
   <a class="item" href="{{ url_for('admin.templates.index') }}"><i class="icon id card outline"></i>Template</a>
+  <a class="item" href="{{ url_for('admin.signatures.index') }}"><i class="icon signature file"></i>Signature</a>
 {% endif %}
 
 <a class="item" href="{{ url_for('accounts.index') }}"><i class="address book icon"></i>Account</a>
