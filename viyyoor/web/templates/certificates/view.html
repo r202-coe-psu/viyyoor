@@ -1,5 +1,6 @@
 {% extends '/base/default-page.html' %}
 
+{% block title %}{{ class_.name.title() }} certificate{% endblock %}
 
 {% block content %}
 <div class="ui container">
@@ -17,9 +18,13 @@
 
 
     <div>
-      <img src="{{ url_for('classes.generate_certificate', class_id=class_.id, participant_id=participant_id) }}">
+      <img src="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant_id, extension='png') }}">
     </div>
 
+    
+    <div style="padding: 10px;">
+      <a class="ui primary button icon" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant_id, extension='pdf') }}"><i class="pdf file icon"></i>Download</a>
+    </div>
   </div>
 </div>
 {% endblock %}

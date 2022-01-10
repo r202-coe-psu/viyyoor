@@ -16,7 +16,7 @@ BaseClassForm = model_form(
         "updated_date",
         "owner",
         "participants",
-        "endorses",
+        "endorsers",
         "certificates",
         "status",
     ],
@@ -77,6 +77,7 @@ BaseParticipantForm = model_form(
     exclude=["updated_date", "last_updated_by"],
     field_args={
         "participant_id": {"label": "Participant ID"},
+        "title": {"label": "Title"},
         "first_name": {"label": "First Name"},
         "last_name": {"label": "Last Name"},
         "group": {"label": "Group"},

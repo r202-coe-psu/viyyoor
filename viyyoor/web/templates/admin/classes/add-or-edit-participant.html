@@ -37,7 +37,8 @@
       {{ renderer.render_select(form.participant_id) }}
       {{ renderer.render_select(form.group) }}
       </div>
-      <div class="two fields">
+      <div class="three fields">
+      {{ renderer.render_field(form.title) }}
       {{ renderer.render_field(form.first_name) }}
       {{ renderer.render_field(form.last_name) }}
       </div>
@@ -61,7 +62,7 @@
       {% for participant in class_.participants %}
         <tr>
           <td>{{ participant.participant_id }}</td>
-          <td>{{ participant.first_name }} {{ participant.last_name }}</td>
+          <td>{{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}</td>
           <td>{{ participant.get_group_display() }}</td>
           <td>
             <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id, participant_id=participant.participant_id) }}"><i class="edit icon"></i></a>

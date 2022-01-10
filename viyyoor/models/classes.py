@@ -10,6 +10,7 @@ PARTICIPANT_GROUP = [
 
 class Participant(me.EmbeddedDocument):
     participant_id = me.StringField(required=True, max_length=20)
+    title = me.StringField(required=True, default="", max_length=50)
     first_name = me.StringField(required=True, max_length=256)
     last_name = me.StringField(required=True, max_length=256)
     group = me.StringField(
@@ -34,7 +35,7 @@ class Endorser(me.EmbeddedDocument):
         ],
     )
     user = me.ReferenceField("User", dbref=True, required=True)
-    title = me.StringField(max_length=50)
+    title = me.StringField(required=True, default="", max_length=50)
     first_name = me.StringField(required=True, max_length=256)
     last_name = me.StringField(required=True, max_length=256)
 
@@ -100,3 +101,10 @@ class Class(me.Document):
                 return end
 
         return None
+
+    def get_certificate(self, participant_id: str):
+        from viyyoor import models
+
+        return models.Certificate.objects(
+            class_=self, participant_id=participant_id
+        ).first()

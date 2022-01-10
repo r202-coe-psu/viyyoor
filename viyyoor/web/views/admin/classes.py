@@ -239,3 +239,32 @@ def delete_certificate_template(class_id, certificate_template_id):
     return redirect(
         url_for("admin.classes.add_or_edit_certificate_template", class_id=class_.id)
     )
+
+
+@module.route("/<class_id>/release_certificate")
+@acl.roles_required("admin")
+def release_certificate(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    models.Certificate.objects(class_=class_, status="active").update(
+        status="purge",
+        last_updated_by=current_user._get_current_object(),
+        updated_date=datetime.datetime.now(),
+    )
+
+    for participant in class_.participants:
+        certificate = models.Certificate.objects(
+            class_=class_, participant_id=participant.participant_id
+        ).first()
+        if not certificate:
+            certificate = models.Certificate(
+                class_=class_,
+                participant_id=participant.participant_id,
+                issuer=current_user._get_current_object(),
+            )
+
+        certificate.last_updated_by = current_user._get_current_object()
+        certificate.updated_date = datetime.datetime.now()
+        certificate.status = "active"
+        certificate.save()
+
+    return redirect(url_for("admin.classes.view", class_id=class_.id))

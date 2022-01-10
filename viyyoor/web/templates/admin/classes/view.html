@@ -65,6 +65,7 @@
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
+      <a class="item" href="{{ url_for('admin.classes.release_certificate', class_id=class_.id) }}"><i class="certificate file icon"></i>Release Certificate</a>
     {% endif %}
     </div>
 </div>
@@ -87,11 +88,15 @@
               {{ participant.participant_id }}
             </td>
             <td>
-                {{ participant.first_name }} {{ participant.last_name }}
+              {{ participant.title }}  {{ participant.first_name }} {{ participant.last_name }}
             </td>
             <td> {{ participant.get_group_display() }} </td>
           <td>
-            <a class="ui icon button circular primary" href="{{ url_for('certificates.view', class_id=class_.id, participant_id=participant.participant_id) }}" target="_blank"><i class="certificate icon"></i></a>
+            <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.participant_id, extension='png') }}" target="_blank"><i class="certificate icon"></i></a>
+            {% set certificate = class_.get_certificate(participant.participant_id) %}
+            {% if certificate %}
+            <a class="ui icon button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank"><i class="certificate icon"></i></a>
+            {% endif %}
             {#
             {% if class_.owner == current_user %}
               <a class="ui icon button circular primary" href="{{ url_for('admin.classes.set_assignment_time', class_id=class_.id, assignment_id=assignment.id) }}"><i class="clock icon"></i></a>

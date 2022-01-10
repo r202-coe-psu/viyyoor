@@ -59,9 +59,9 @@ def enroll(class_id):
     return redirect(url_for("classes.view", class_id=class_.id))
 
 
-@module.route("/<class_id>/certificate/<participant_id>.png")
+@module.route("/<class_id>/certificate/<participant_id>.<extension>")
 # @login_required
-def generate_certificate(class_id, participant_id):
+def render_certificate(class_id, participant_id, extension):
     response = Response()
     response.status_code = 404
 
@@ -84,9 +84,14 @@ def generate_certificate(class_id, participant_id):
             [f'<tspan x="50%" dy="10">{t.strip()}</tspan>' for t in text[1:]]
         )
 
-    validation_url = request.host_url[:-1] + url_for(
-        "certificates.view", class_id=class_id, participant_id=participant_id
-    )
+    certificate = models.Certificate.objects(
+        class_=class_, participant_id=participant_id
+    ).first()
+    validation_url = ""
+    if certificate:
+        validation_url = request.host_url[:-1] + url_for(
+            "certificates.view", certificate_id=certificate.id
+        )
 
     qr = qrcode.QRCode(
         version=1,
@@ -105,7 +110,9 @@ def generate_certificate(class_id, participant_id):
 
     variables = dict(
         certificate_name=certificate_template.name,
-        participant_name=f"{participant.first_name} {participant.last_name}",
+        participant_name=(
+            f"{participant.title} {participant.first_name} {participant.last_name}"
+        ).strip(),
         appreciate_text="".join(appreciate_text),
         module_name=class_.name,
         issued_date=class_.issued_date.strftime("%B %Y, %-d"),
@@ -114,9 +121,9 @@ def generate_certificate(class_id, participant_id):
     )
 
     for endorser in class_.endorsers:
-        variables[
-            f"{ endorser.endorser_id }_name"
-        ] = f"{endorser.title} { endorser.first_name } { endorser.last_name }"
+        variables[f"{ endorser.endorser_id }_name"] = (
+            f"{endorser.title} { endorser.first_name } { endorser.last_name }"
+        ).strip()
 
         text = [t.strip() for t in endorser.position.split("\n")]
         for i, t in enumerate(text):
@@ -130,16 +137,21 @@ def generate_certificate(class_id, participant_id):
 
     data = template.render(**variables)
 
-    output = cairosvg.svg2png(bytestring=data.encode())
+    if extension == "png":
+        output = cairosvg.svg2png(bytestring=data.encode())
+        mimetype = "image/png"
+    elif extension == "pdf":
+        output = cairosvg.svg2pdf(bytestring=data.encode())
+        mimetype = "application/pdf"
 
     image_io = io.BytesIO()
     image_io.write(output)
     image_io.seek(0)
     response = send_file(
         image_io,
-        attachment_filename=f"{class_.id}-{participant_id}.png",
+        attachment_filename=f"{class_.id}-{participant_id}.{extension}",
         # as_attachment=True,
-        mimetype="image/png",
+        mimetype=mimetype,
     )
 
     return response
