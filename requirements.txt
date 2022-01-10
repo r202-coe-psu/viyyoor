@@ -1,3 +1,4 @@
+poetry
 qrcode[pil]
 cairosvg
 flask

@@ -1,12 +1,16 @@
 [tool.poetry]
 name = "viyyoor"
-version = "0.0.1"
+version = "0.1.0"
 description = ""
-authors = ["Thanathip Limna <boatkrap@gmail.com>"]
+authors = ["Thanathip"]
 
 [tool.poetry.dependencies]
-loginpass = "^0.5"
+python = "^3.9"
+flask-mongoengine = "^1.0.0"
+qrcode = {extras = ["pil"], version = "^7.3.1"}
+CairoSVG = "^2.5.2"
 Flask-Login = "^0.5.0"
+Flask-Caching = "^1.10.1"
 
 [tool.poetry.dev-dependencies]
 
@@ -14,3 +18,5 @@ Flask-Login = "^0.5.0"
 viyyoor-web = "viyyoor.cmd.web:main"
 
 [build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

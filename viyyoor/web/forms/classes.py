@@ -55,7 +55,7 @@ BaseEndorserForm = model_form(
     ],
     field_args={
         "position": {"label": "Position"},
-        "endorse_id": {"label": "Endorse ID"},
+        "endorser_id": {"label": "Endorse ID"},
         "title": {"label": "Title"},
         "first_name": {"label": "First Name"},
         "last_name": {"label": "Last Name"},
