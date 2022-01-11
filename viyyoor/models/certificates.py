@@ -1,6 +1,15 @@
 import mongoengine as me
 import datetime
 
+from flask import request, url_for
+
+
+class Endorsement(me.EmbeddedDocument):
+    endorser = me.ReferenceField("User", dbref=True, required=True)
+    endorsed_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    digital_signature = me.ReferenceField("DigitalSignature", dbref=True, required=True)
+    ip_address = me.StringField(required=True, default="0.0.0.0")
+
 
 class Certificate(me.Document):
     meta = {"collection": "certificates"}
@@ -17,4 +26,13 @@ class Certificate(me.Document):
     issuer = me.ReferenceField("User", dbref=True, required=True)
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
     privacy = me.StringField(required=True, default="public")
-    status = me.StringField(required=True, default="active")
+    status = me.StringField(required=True, default="no-action")
+    endorsements = me.MapField(field=me.EmbeddedDocumentField(Endorsement))
+
+    file = me.FileField(required=True, collection_name="certificate_fs")
+
+    def get_validation_url(self):
+        validation_url = request.host_url[:-1] + url_for(
+            "certificates.view", certificate_id=self.id
+        )
+        return validation_url

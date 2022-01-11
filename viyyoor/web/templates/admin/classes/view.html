@@ -65,7 +65,8 @@
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
-      <a class="item" href="{{ url_for('admin.classes.release_certificate', class_id=class_.id) }}"><i class="certificate file icon"></i>Release Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.prepair_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}"><i class="export file icon"></i>Prepair Certificate</a>
     {% endif %}
     </div>
 </div>

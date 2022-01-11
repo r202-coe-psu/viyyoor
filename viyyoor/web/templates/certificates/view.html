@@ -23,7 +23,7 @@
 
     
     <div style="padding: 10px;">
-      <a class="ui primary button icon" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant_id, extension='pdf') }}"><i class="pdf file icon"></i>Download</a>
+      <a class="ui primary button icon" href="{{ url_for('certificates.download', certificate_id=certificate.id) }}"><i class="pdf file icon"></i>Download</a>
     </div>
   </div>
 </div>

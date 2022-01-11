@@ -22,8 +22,15 @@ module = Blueprint(
 @module.route("/<certificate_id>")
 def view(certificate_id):
     certificate = models.Certificate.objects(
-        id=certificate_id, status="active", privacy="public"
+        id=certificate_id, status="completed", privacy="public"
     ).first()
+
+    if not certificate:
+        if current_user.is_authenticated and "admin" in current_user.roles:
+            certificate = models.Certificate.objects(
+                id=certificate_id, privacy="public"
+            ).first()
+
     if not certificate:
         response = Response()
         response.status_code = 404
@@ -32,5 +39,31 @@ def view(certificate_id):
     class_ = certificate.class_
     participant_id = certificate.participant_id
     return render_template(
-        "/certificates/view.html", class_=class_, participant_id=participant_id
+        "/certificates/view.html",
+        class_=class_,
+        participant_id=participant_id,
+        certificate=certificate,
     )
+
+
+@module.route("/<certificate_id>/certificate.pdf")
+def download(certificate_id):
+    response = Response()
+    response.status_code = 404
+
+    certificate = models.Certificate.objects(
+        id=certificate_id, status="completed", privacy="public"
+    ).first()
+    if not certificate:
+        return response
+
+    mimetype = "application/pdf"
+
+    response = send_file(
+        certificate.file,
+        attachment_filename=f"certificate.pdf",
+        # as_attachment=True,
+        mimetype=mimetype,
+    )
+
+    return response

@@ -241,12 +241,12 @@ def delete_certificate_template(class_id, certificate_template_id):
     )
 
 
-@module.route("/<class_id>/release_certificate")
+@module.route("/<class_id>/prepair_certificate")
 @acl.roles_required("admin")
-def release_certificate(class_id):
+def prepair_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
-    models.Certificate.objects(class_=class_, status="active").update(
-        status="purge",
+    models.Certificate.objects(class_=class_, status="prerelease").update(
+        status="prepair",
         last_updated_by=current_user._get_current_object(),
         updated_date=datetime.datetime.now(),
     )
@@ -262,9 +262,18 @@ def release_certificate(class_id):
                 issuer=current_user._get_current_object(),
             )
 
+        certificate.file.replace(
+            class_.render_certificate(participant.participant_id, "pdf")
+        )
         certificate.last_updated_by = current_user._get_current_object()
         certificate.updated_date = datetime.datetime.now()
-        certificate.status = "active"
+        certificate.status = "prerelease"
         certificate.save()
 
     return redirect(url_for("admin.classes.view", class_id=class_.id))
+
+
+@module.route("/<class_id>/prepair_certificate")
+@acl.roles_required("admin")
+def export_certificate(class_id):
+    return "Export"

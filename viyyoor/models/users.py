@@ -6,6 +6,7 @@ from flask import url_for
 
 
 class User(me.Document, UserMixin):
+    meta = {"collection": "users", "strict": False}
     username = me.StringField(required=True, unique=True)
 
     title = me.StringField(max_length=50)
@@ -21,21 +22,16 @@ class User(me.Document, UserMixin):
 
     picture = me.ImageField(thumbnail_size=(800, 600, True))
 
-    status = me.StringField(required=True, default='disactive')
-    roles = me.ListField(me.StringField(), default=['user'])
+    status = me.StringField(required=True, default="disactive")
+    roles = me.ListField(me.StringField(), default=["user"])
 
-    created_date = me.DateTimeField(required=True,
-                                    default=datetime.datetime.now)
-    updated_date = me.DateTimeField(required=True,
-                                    default=datetime.datetime.now)
-    last_login_date = me.DateTimeField(required=True,
-                                       default=datetime.datetime.now,
-                                       auto_now=True)
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    last_login_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now, auto_now=True
+    )
 
     resources = me.DictField()
-
-    meta = {'collection': 'users',
-            'strict': False}
 
     def has_roles(self, roles):
         for role in roles:
@@ -45,15 +41,14 @@ class User(me.Document, UserMixin):
 
     def get_picture(self):
         if self.picture:
-            return url_for('accounts.picture', user_id=self.id, filename=self.picture.filename)
-        if 'google' in self.resources:
-            return self.resources['google'].get('picture', '')
-        return url_for('static', filename='images/user.png')
+            return url_for(
+                "accounts.picture", user_id=self.id, filename=self.picture.filename
+            )
+        if "google" in self.resources:
+            return self.resources["google"].get("picture", "")
+        return url_for("static", filename="images/user.png")
 
-    def get_project(self):
-        project = Project.objects(students=self).order_by('-id').first()
-        return project
+    def get_signature(self):
+        from .signatures import Signature
 
-    def get_advisee_projects(self):
-        projects = Project.objects(advisor=self).order_by('-id')
-        return projects
+        return Signature.objects(owner=self).first()

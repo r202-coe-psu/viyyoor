@@ -8,12 +8,7 @@ from flask import (
     request,
 )
 from flask_login import current_user, login_required
-from jinja2 import Environment, PackageLoader, select_autoescape, Template
 
-import io
-import cairosvg
-import qrcode
-import base64
 
 from .. import models
 
@@ -72,81 +67,13 @@ def render_certificate(class_id, participant_id, extension):
     if not certificate_template:
         return response
 
-    data = certificate_template.template.file.read().decode()
-    template = Template(data)
-
-    text = [t.strip() for t in certificate_template.appreciate_text.split("\n")]
-
-    appreciate_text = []
-    if len(text) > 0:
-        appreciate_text = [f"<tspan>{text[0]}</tspan>"]
-        appreciate_text.extend(
-            [f'<tspan x="50%" dy="10">{t.strip()}</tspan>' for t in text[1:]]
-        )
-
-    certificate = models.Certificate.objects(
-        class_=class_, participant_id=participant_id
-    ).first()
-    validation_url = ""
-    if certificate:
-        validation_url = request.host_url[:-1] + url_for(
-            "certificates.view", certificate_id=certificate.id
-        )
-
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_M,
-        box_size=5,
-        border=2,
-    )
-    qr.add_data(validation_url)
-    qr.make(fit=True)
-
-    qrcode_image = qr.make_image().convert("RGB")
-
-    qrcode_io = io.BytesIO()
-    qrcode_image.save(qrcode_io, "PNG", quality=100)
-    qrcode_encoded = base64.b64encode(qrcode_io.getvalue()).decode("ascii")
-
-    variables = dict(
-        certificate_name=certificate_template.name,
-        participant_name=(
-            f"{participant.title} {participant.first_name} {participant.last_name}"
-        ).strip(),
-        appreciate_text="".join(appreciate_text),
-        module_name=class_.name,
-        issued_date=class_.issued_date.strftime("%B %Y, %-d"),
-        validation_url=validation_url,
-        validation_qrcode=f"image/png;base64,{qrcode_encoded}",
-    )
-
-    for endorser in class_.endorsers:
-        variables[f"{ endorser.endorser_id }_name"] = (
-            f"{endorser.title} { endorser.first_name } { endorser.last_name }"
-        ).strip()
-
-        text = [t.strip() for t in endorser.position.split("\n")]
-        for i, t in enumerate(text):
-            variables[f"{ endorser.endorser_id }_position_{i}"] = t
-
-        signature = models.Signature.objects(owner=endorser.user).first()
-        sign_encoded = ""
-        if signature:
-            sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
-        variables[f"{ endorser.endorser_id }_sign"] = f"image/png;base64,{sign_encoded}"
-
-    data = template.render(**variables)
+    image_io = class_.render_certificate(participant_id, extension)
 
     if extension == "png":
-        output = cairosvg.svg2png(bytestring=data.encode())
         mimetype = "image/png"
     elif extension == "pdf":
-        output = cairosvg.svg2pdf(bytestring=data.encode())
         mimetype = "application/pdf"
 
-    image_io = io.BytesIO()
-    image_io.write(output)
-    image_io.seek(0)
     response = send_file(
         image_io,
         attachment_filename=f"{class_.id}-{participant_id}.{extension}",
