@@ -1,0 +1,56 @@
+{% extends '/accounts/index.html' %}
+{% import '/base/error-handler.html' as eh %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block title %}
+  {{ current_user.first_name }} {{ current_user.last_name }}
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ super() }}
+<i class="right angle icon divider"></i>
+<div class="active section">Add Signature Image</div>
+{% endblock %}
+
+{% block content %}
+<div class="ui content">
+  <div class="ui segment">
+    <h2>Add Digital Signature</h2>
+    <form method="POST" class="ui form" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      {{ renderer.render_fileinput(form.signature_file) }}
+      <button name="create" type="submit" class="ui primary button">Add</button>
+    </form>
+    {% if form.errors | length > 0 %}
+      <div class="ui message negative">
+        <ul>
+          {% for error, msg in form.errors.items() %}
+            <li>{{ error }} {{ msg | join('') }}</li>
+          {% endfor %}
+        </ul>
+    </div>
+  {% endif %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block additional_js %}
+    <script type="text/javascript">
+      $(".attach-file-signature_file").click(function() {
+        $(this).parent().find("#signature_file").click();
+      });
+
+      $('#signature_file')
+      .on('change', function(e) {
+        var name = e.target.files[0].name;
+        $('.attach-file-signature_file', $(e.target).parent()).val(name);
+      });
+    </script>
+
+{% endblock additional_js %}

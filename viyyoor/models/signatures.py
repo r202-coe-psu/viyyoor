@@ -15,6 +15,8 @@ class Signature(me.Document):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
+    ip_address = me.StringField(required=True, default="0.0.0.0")
+
 
 class DigitalSignature(me.Document):
     meta = {"collection": "digital_signatures"}
@@ -23,4 +25,6 @@ class DigitalSignature(me.Document):
 
     owner = me.ReferenceField("User", dbref=True, required=True)
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
-    status = me.StringField("active")
+    status = me.StringField(required=True, default="active")
+
+    ip_address = me.StringField(required=True, default="0.0.0.0")

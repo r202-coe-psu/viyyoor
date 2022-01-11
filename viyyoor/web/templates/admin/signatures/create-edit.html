@@ -48,9 +48,19 @@
       {{ renderer.render_select(form.user) }}
       {{ renderer.render_fileinput(form.signature_file) }}
       </div>
-
       <button name="create" type="submit" class="ui button primary">{{ 'Create' if 'create' in request.path else 'Edit' }}</button>
     </form>
+    {% if form.errors | length > 0 %}
+      <div class="ui message negative">
+        <ul>
+        {% for error, msg in form.errors.items() %}
+          <li> {{ error }} {{ msg | join('') }}</li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+
   </div>
 </div>
 

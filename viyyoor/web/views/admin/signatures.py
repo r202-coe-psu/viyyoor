@@ -34,11 +34,11 @@ def index():
 @module.route("/<signature_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def create_or_edit(signature_id):
-    form = forms.signatures.SignatureForm()
+    form = forms.signatures.SignatureAdminForm()
 
     if signature_id:
         signature = models.Signature.objects.get(id=signature_id)
-        form = forms.signatures.SignatureForm(obj=signature)
+        form = forms.signatures.SignatureAdminForm(obj=signature)
 
     endorsers = models.User.objects(roles="endorser")
     form.user.choices = [
@@ -81,7 +81,7 @@ def create_or_edit(signature_id):
 
 
 @module.route("/<signature_id>")
-@acl.roles_required("admin")
+@acl.roles_required("admin", "endorser")
 def view(signature_id):
     signature = models.Signature.objects.get(id=signature_id)
     return render_template(
@@ -91,17 +91,18 @@ def view(signature_id):
 
 
 @module.route("/<signature_id>/delete")
-@acl.roles_required("admin")
+@acl.roles_required("admin", "endorser")
 def delete(signature_id):
     signature = models.Signature.objects.get(id=signature_id)
+    signature.last_updated_by = current_user._get_current_object()
     signature.status = "delete"
     signature.save()
 
-    return redirect(url_for("admin.signatures.index"))
+    return redirect(request.referrer)
 
 
 @module.route("/<signature_id>/<filename>")
-@acl.roles_required("admin")
+@acl.roles_required("admin", "endorser")
 def download(signature_id, filename):
     response = Response()
     response.status_code = 404

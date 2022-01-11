@@ -18,11 +18,18 @@ BaseSignatureForm = model_form(
         "last_updated_by",
         "owner",
         "file",
+        "ip_address",
     ],
     field_args={},
 )
 
 
 class SignatureForm(BaseSignatureForm):
-    signature_file = file.FileField("Signature File", validators=[file.FileRequired()])
+    signature_file = file.FileField(
+        "Signature File",
+        validators=[file.FileRequired(), file.FileAllowed(["png"], "allow png")],
+    )
+
+
+class SignatureAdminForm(SignatureForm):
     user = fields.SelectField("User")

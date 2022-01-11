@@ -48,7 +48,12 @@ class User(me.Document, UserMixin):
             return self.resources["google"].get("picture", "")
         return url_for("static", filename="images/user.png")
 
-    def get_signature(self):
+    def get_signatures(self):
         from .signatures import Signature
 
-        return Signature.objects(owner=self).first()
+        return Signature.objects(owner=self)
+
+    def get_digital_signatures(self):
+        from .signatures import DigitalSignature
+
+        return DigitalSignature.objects(owner=self)
