@@ -108,6 +108,13 @@ class Class(me.Document):
 
         return None
 
+    def get_endorser_by_user(self, user):
+        for end in self.endorsers:
+            if end.user == user:
+                return end
+
+        return None
+
     def get_certificate(self, participant_id: str):
         from viyyoor import models
 

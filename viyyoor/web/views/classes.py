@@ -14,7 +14,7 @@ from viyyoor import models
 from .. import forms
 from .. import acl
 
-from .digital_signature import sign_digital_signature
+from .digital_signatures import sign_digital_signature
 
 module = Blueprint(
     "classes",
@@ -37,10 +37,6 @@ def view(class_id):
     return render_template("/classes/view.html", class_=class_)
 
 
-def endorse_prcess():
-    pass
-
-
 @module.route("/<class_id>/endorse", methods=["GET", "POST"])
 @acl.roles_required("endorser")
 def endorse(class_id):
@@ -55,8 +51,33 @@ def endorse(class_id):
 
     certificates = models.Certificate.objects(class_=class_, status="prerelease")
 
+    endorser = class_.get_endorser_by_user(current_user._get_current_object())
+    if not endorser:
+        return redirect(url_for("dashboard.index"))
     for certificate in certificates:
-        sign_digital_signature(user, certificate, password)
+        # sign signature hear1
+        # sign_digital_signature(user, certificate, password)
+        endorsement = models.Endorsement(
+            endorser=current_user._get_current_object(),
+            ip_address=request.remote_addr,
+        )
+        certificate.endorsements[endorser.endorser_id] = endorsement
+
+        check_approval = True
+        for endorser in class_.endorsers:
+            if (
+                endorser.endorser_id in certificate.endorsements
+                and endorser.user != certificate.endorsements[endorser.endorser_id].user
+            ):
+                check_approval = False
+            else:
+                check_approval = False
+
+            if not check_approval:
+                break
+
+        if check_approval:
+            certificate.status = "complete"
 
     return redirect(url_for("dashboard.index"))
 
