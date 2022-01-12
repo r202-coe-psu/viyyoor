@@ -103,3 +103,7 @@ BaseCertificateTemplateForm = model_form(
 
 class CertificateTemplateForm(BaseCertificateTemplateForm):
     template = fields.SelectField("Template", validators=[validators.InputRequired()])
+
+
+class EndorsementForm(FlaskForm):
+    password = fields.PasswordField("Password")

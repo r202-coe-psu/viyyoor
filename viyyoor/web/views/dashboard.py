@@ -12,9 +12,21 @@ subviews = []
 
 def index_admin():
     now = datetime.datetime.now()
+
+    classes = models.Class.objects(endorsers__user=current_user._get_current_object())
+    endorses_classes = models.Certificate.objects(
+        status="prerelease", class___in=classes
+    ).distinct(field="class_")
+
+    endorsed_classes = models.Certificate.objects(
+        status="completed", class___in=classes
+    ).distinct(field="class_")
+
     return render_template(
         "/dashboard/index-admin.html",
         now=datetime.datetime.now(),
+        endorses_classes=endorses_classes,
+        endorsed_classes=endorsed_classes,
     )
 
 
@@ -34,7 +46,7 @@ def index_user():
 @login_required
 def index():
     user = current_user._get_current_object()
-    if "admin" in user.roles:
+    if "admin" in user.roles or "endorser" in user.roles:
         return index_admin()
 
     return index_user()

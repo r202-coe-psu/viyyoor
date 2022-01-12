@@ -1,0 +1,68 @@
+{% extends '/classes/index.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+
+{% block content %}
+<div class="ui segment">
+		<h3>{{ class_.name }}</h3>
+		<div>
+			<b>Description:</b> {{ class_.description }}
+    </div>
+    {#
+		<div>
+			<b>Code:</b> {{ class_.code }}
+    </div>
+    #}
+		<div>
+			<b>Started Date:</b> {{ class_.started_date }}
+		</div>
+		<div>
+			<b>Ended Date:</b> {{ class_.ended_date }}
+		</div>
+
+		<div>
+			<b>Tag:</b> {{ class_.tags | join(', ') }}
+    </div>
+    <div>
+      <form class="ui form" method="POST">
+        {{ form.hidden_tag() }}
+        <div class="two fields">
+          {{ renderer.render_field(form.password) }}
+          <div class="field">
+            <label>&nbsp;</label>
+            <button type="submit" class="ui primary button">Endorse</button>
+          </div>
+        </div>
+      </form>
+    </div>
+</div>
+
+<div class="ui segment">
+  <h5>Certificates</h5>
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Group</th>
+        <th>Issued Date</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for certificate in certificates %}
+      {% set participant=certificate.class_.get_participant(certificate.participant_id) %}
+      <tr>
+        <td>
+          {{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}
+        </td>
+        <td>
+          {{ participant.group.title() }}
+        </td>
+        <td>{{ certificate.issued_date.date() }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+            	
+</div>
+{% endblock %}

@@ -10,7 +10,9 @@ from flask import (
 from flask_login import current_user, login_required
 
 
-from .. import models
+from viyyoor import models
+from .. import forms
+from .. import acl
 
 module = Blueprint(
     "classes",
@@ -30,28 +32,27 @@ def index():
 @login_required
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
-    enrollment = models.Enrollment.objects(
-        user=current_user._get_current_object(), enrolled_class=class_
-    ).first()
-    return render_template("/classes/view.html", enrollment=enrollment, class_=class_)
+    return render_template("/classes/view.html", class_=class_)
 
 
-@module.route("/<class_id>/enroll")
-@login_required
-def enroll(class_id):
+@module.route("/<class_id>/endorse", methods=["GET", "POST"])
+@acl.roles_required("endorser")
+def endorse(class_id):
+
     class_ = models.Class.objects.get(id=class_id)
-    enrollment = models.Enrollment.objects(
-        user=current_user._get_current_object(), enrolled_class=class_
-    ).first()
-    if not enrollment:
-        enrollment = models.Enrollment(
-            user=current_user._get_current_object(), enrolled_class=class_
+    certificates = models.Certificate.objects(class_=class_, status="prerelease")
+    form = forms.classes.EndorsementForm()
+    if not form.validate_on_submit():
+        return render_template(
+            "/classes/endorse.html", form=form, class_=class_, certificates=certificates
         )
-        enrollment.save()
-        class_.enrollments.append(enrollment)
-        class_.save()
 
-    return redirect(url_for("classes.view", class_id=class_.id))
+    certificates = models.Certificate.objects(class_=class_, status="prerelease")
+
+    for certificate in certificates:
+        pass
+
+    return redirect(url_for("dashboard.index"))
 
 
 @module.route("/<class_id>/certificate/<participant_id>.<extension>")

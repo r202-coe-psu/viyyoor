@@ -8,4 +8,63 @@
   <div>
     <a class="ui primary button" href="{{ url_for('admin.classes.index') }}">Class</a>
   </div>
+
+  {% if endorses_classes | length > 0 %}
+    <div class="ui segment">
+      <h3>Endorsement</h3>
+      <table class="ui table celled">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Endorser</th>
+            <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for class_ in endorses_classes %}
+            <tr>
+              <td>{{ class_.name }}</td>
+              <td>
+                {% for endorser in class_.endorsers %}
+                  {{ endorser.user.first_name }} {{ endorser.user.last_name }},
+                {% endfor %}
+              </td>
+              <td>
+                <a class="ui primary button" href="{{ url_for('classes.endorse', class_id=class_.id) }}">
+                  Endorse
+                </a>
+              </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  {% if endorsed_classes | length > 0 %}
+    <div class="ui segment">
+      <h3>Last Courses</h3>
+      <table class="ui table celled">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Endorser</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for class_ in endorsed_classes %}
+            <tr>
+              <td>{{ class_.name }}</td>
+              <td>
+                {% for endorser in class_.endorsers %}
+                  {{ endorser.user.first_name }} {{ endorser.user.last_name }},
+                {% endfor %}
+              </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
 {% endblock %}

@@ -78,7 +78,8 @@
 				<tr>
 						<th>ID</th>
 						<th>Name</th>
-						<th>Group</th>
+            <th>Group</th>
+            <th>Certificate Status</th>
 						<th>Operation</th>
 				</tr>
 			</thead>
@@ -92,6 +93,13 @@
               {{ participant.title }}  {{ participant.first_name }} {{ participant.last_name }}
             </td>
             <td> {{ participant.get_group_display() }} </td>
+            <td> {% set certificate = class_.get_certificate(participant.participant_id) %} 
+              {% if certificate %}
+                {{ certificate.status.title() }}
+              {% else %}
+                None
+              {% endif %}
+            </td>
           <td>
             <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.participant_id, extension='png') }}" target="_blank"><i class="certificate icon"></i></a>
             {% set certificate = class_.get_certificate(participant.participant_id) %}
