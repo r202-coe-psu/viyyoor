@@ -18,7 +18,10 @@
     <h2>Add Digital Signature</h2>
     <form method="POST" class="ui form" enctype="multipart/form-data">
       {{ form.csrf_token }}
-      {{ renderer.render_fileinput(form.digital_signature_file) }}
+      <div class="two fields">
+        {{ renderer.render_fileinput(form.digital_certificate_file) }}
+        {{ renderer.render_field(form.password) }}
+      </div>
       <button name="create" type="submit" class="ui primary button">Add</button>
     </form>
     {% if form.errors | length > 0 %}
@@ -42,14 +45,14 @@
 
 {% block additional_js %}
     <script type="text/javascript">
-      $(".attach-file-digital_signature_file").click(function() {
-        $(this).parent().find("#digital_signature_file").click();
+      $(".attach-file-digital_certificate_file").click(function() {
+        $(this).parent().find("#digital_certificate_file").click();
       });
 
-      $('#digital_signature_file')
+      $('#digital_certificate_file')
       .on('change', function(e) {
         var name = e.target.files[0].name;
-        $('.attach-file-digital_signature_file', $(e.target).parent()).val(name);
+        $('.attach-file-digital_certificate_file', $(e.target).parent()).val(name);
       });
     </script>
 

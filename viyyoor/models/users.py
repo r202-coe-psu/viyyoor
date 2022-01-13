@@ -52,8 +52,3 @@ class User(me.Document, UserMixin):
         from .signatures import Signature
 
         return Signature.objects(owner=self)
-
-    def get_digital_signatures(self):
-        from .signatures import DigitalSignature
-
-        return DigitalSignature.objects(owner=self)

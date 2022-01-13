@@ -225,31 +225,6 @@ def picture(user_id, filename):
     return response
 
 
-@module.route("/accounts/<user_id>/add-digital-signature", methods=["GET", "POST"])
-def add_digital_signature(user_id):
-    user = models.User.objects.get(id=user_id)
-
-    form = forms.accounts.DigitalSignatureForm()
-    if not form.validate_on_submit():
-        return render_template(
-            "/accounts/add-digital-signature.html",
-            form=form,
-        )
-
-    ds = models.DigitalSignature(
-        owner=current_user._get_current_object(),
-        ip_address=request.remote_addr,
-    )
-    ds.file.put(
-        form.digital_signature_file.data,
-        filename=form.digital_signature_file.data.filename,
-        content_type=form.digital_signature_file.data.content_type,
-    )
-    ds.save()
-
-    return redirect(url_for("accounts.profile", user_id=user_id))
-
-
 @module.route(
     "/accounts/<user_id>/add-signature",
     methods=["GET", "POST"],

@@ -1,0 +1,40 @@
+{% extends '/admin/index.html' %}
+{% import '/base/error-handler.html' as eh %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block title %}
+  Digital Certificate
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ super() }}
+<i class="right angle icon divider"></i>
+<div class="active section">Digital Certificate</div>
+{% endblock %}
+
+{% block content %}
+  <div class="ui segment">
+    <a class="ui primary icon button" href="{{ url_for('admin.digital_certificates.add') }}"><i class="fingerprint icon"></i> Add Digital ID</a>
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Operation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for certificate in get_digital_certificates %}
+        <tr>
+          <td>{{ certificate.file.filename }}</td>
+          <td>{{ certificate.created_date }}</td>
+          <td>{{ certificate.status }}</td>
+          <td>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}

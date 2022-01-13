@@ -60,31 +60,6 @@ Profile
 
   {% if 'endorser' in current_user.roles %}
   <div class="ui segment">
-    <a class="ui primary icon button" href="{{ url_for('accounts.add_digital_signature', user_id=current_user.id) }}"><i class="fingerprint icon"></i> Add Digital ID</a>
-    <table class="ui celled table">
-      <thead>
-        <tr>
-          <th>Filename</th>
-          <th>Date</th>
-          <th>Status</th>
-          <th>Operation</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for signature in user.get_digital_signatures() %}
-        <tr>
-          <td>{{ signature.file.filename }}</td>
-          <td>{{ signature.created_date }}</td>
-          <td>{{ signature.status }}</td>
-          <td>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <div class="ui segment">
     <a class="ui primary icon button" href="{{ url_for('accounts.add_or_edit_signature', user_id=current_user.id) }}"><i class="signature icon"></i> Add Signature</a>
     <table class="ui celled table">
       <thead>

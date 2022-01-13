@@ -16,15 +16,3 @@ class Signature(me.Document):
     )
 
     ip_address = me.StringField(required=True, default="0.0.0.0")
-
-
-class DigitalSignature(me.Document):
-    meta = {"collection": "digital_signatures"}
-
-    file = me.FileField(required=True, collection_name="digital_signature_fs")
-
-    owner = me.ReferenceField("User", dbref=True, required=True)
-    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
-    status = me.StringField(required=True, default="active")
-
-    ip_address = me.StringField(required=True, default="0.0.0.0")

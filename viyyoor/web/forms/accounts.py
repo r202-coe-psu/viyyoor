@@ -90,23 +90,3 @@ class ProfileForm(BaseProfileForm):
     pic = fields.FileField(
         "Picture", validators=[FileAllowed(["png", "jpg"], "allow png and jpg")]
     )
-
-
-BaseDigitalSignatureForm = model_form(
-    models.DigitalSignature,
-    FlaskForm,
-    exclude=[
-        "created_date",
-        "ip_address",
-        "file",
-        "owner",
-        "status",
-    ],
-    field_args={},
-)
-
-
-class DigitalSignatureForm(BaseDigitalSignatureForm):
-    digital_signature_file = fields.FileField(
-        "Digital Signature File", validators=[FileAllowed(["p12"], "allow p12")]
-    )
