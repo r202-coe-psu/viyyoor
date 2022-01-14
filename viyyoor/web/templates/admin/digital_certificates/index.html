@@ -25,11 +25,11 @@
         </tr>
       </thead>
       <tbody>
-        {% for certificate in get_digital_certificates %}
+        {% for certificate in digital_certificates %}
         <tr>
           <td>{{ certificate.file.filename }}</td>
           <td>{{ certificate.created_date }}</td>
-          <td>{{ certificate.status }}</td>
+          <td>{{ certificate.status.title() }}</td>
           <td>
           </td>
         </tr>

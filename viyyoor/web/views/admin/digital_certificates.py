@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user
 
 import datetime
@@ -29,18 +29,19 @@ def add():
             form=form,
         )
 
-    ds = models.DigitalSignature(
+    dc = models.DigitalCertificate(
         owner=current_user._get_current_object(),
         ip_address=request.remote_addr,
     )
-    ds.file.put(
-        form.digital_signature_file.data,
-        filename=form.digital_signature_file.data.filename,
-        content_type=form.digital_signature_file.data.content_type,
+    dc.file.put(
+        form.digital_certificate_file.data,
+        filename=form.digital_certificate_file.data.filename,
+        content_type=form.digital_certificate_file.data.content_type,
     )
 
-    ds.encrypt_password(form.password.data)
+    encrypted_password = dc.encrypt_password(form.password.data)
+    dc.password = encrypted_password
 
-    ds.save()
+    dc.save()
 
     return redirect(url_for("admin.digital_certificates.index"))

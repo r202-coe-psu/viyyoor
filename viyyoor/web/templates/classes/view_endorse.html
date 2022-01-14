@@ -23,18 +23,6 @@
 		<div>
 			<b>Tag:</b> {{ class_.tags | join(', ') }}
     </div>
-    <div>
-      <form class="ui form" method="POST">
-        {{ form.hidden_tag() }}
-        <div class="two fields">
-          {{ renderer.render_field(form.password) }}
-          <div class="field">
-            <label>&nbsp;</label>
-            <button type="submit" class="ui primary button">Endorse</button>
-          </div>
-        </div>
-      </form>
-    </div>
 </div>
 
 <div class="ui segment">
@@ -45,12 +33,13 @@
         <th>Name</th>
         <th>Group</th>
         <th>Issued Date</th>
+        <th>Status</th>
       </tr>
     </thead>
 
     <tbody>
-      {% for certificate in certificates %}
-      {% set participant=certificate.class_.get_participant(certificate.participant_id) %}
+      {% for participant in class_.participants %}
+      {% set certificate=class_.get_certificate(participant.participant_id) %}
       <tr>
         <td>
           {{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}
@@ -58,7 +47,20 @@
         <td>
           {{ participant.group.title() }}
         </td>
-        <td>{{ certificate.issued_date.date() }}</td>
+        
+        <td>
+          {% if certificate %}
+            {{ certificate.issued_date.date() }}
+          {% endif %}
+        </td>
+        <td>
+          {% if certificate %}
+            {{ certificate.status.title() }}
+          {% else %}
+            Wait for prepairing
+          {% endif %}
+        </td>
+        
       </tr>
     {% endfor %}
     </tbody>

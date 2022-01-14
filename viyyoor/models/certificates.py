@@ -18,6 +18,7 @@ class Certificate(me.Document):
     participant_id = me.StringField(required=True)
 
     issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    signed_date = me.DateTimeField()
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True

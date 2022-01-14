@@ -108,12 +108,18 @@ class Class(me.Document):
 
         return None
 
-    def get_endorser_by_user(self, user):
+    def get_endorsers_by_user(self, user):
+        endorsers = []
         for end in self.endorsers:
             if end.user == user:
-                return end
+                endorsers.append(end)
 
-        return None
+        return endorsers
+
+    def get_certificates(self):
+        from viyyoor import models
+
+        return models.Certificate.objects(class_=self)
 
     def get_certificate(self, participant_id: str):
         from viyyoor import models
@@ -185,7 +191,6 @@ class Class(me.Document):
                 variables[f"{ endorser.endorser_id }_position_{i}"] = t
 
             signature = endorser.user.get_signature()
-            sign_encoded = ""
 
             if signature:
                 sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
@@ -195,9 +200,11 @@ class Class(me.Document):
 
         data = template.render(**variables)
 
+        print("-->", validation_url)
         if extension == "png":
             output = cairosvg.svg2png(bytestring=data.encode())
         elif extension == "pdf":
+            # output = cairosvg.svg2png(bytestring=data.encode())
             output = cairosvg.svg2pdf(bytestring=data.encode())
 
         image_io = io.BytesIO()

@@ -260,20 +260,27 @@ def prepair_certificate(class_id):
                 class_=class_,
                 participant_id=participant.participant_id,
                 issuer=current_user._get_current_object(),
+                last_updated_by=current_user._get_current_object(),
+            )
+            certificate.save()
+            certificate.file.put(
+                class_.render_certificate(participant.participant_id, "pdf")
             )
 
-        certificate.file.replace(
-            class_.render_certificate(participant.participant_id, "pdf")
-        )
+        else:
+            certificate.file.replace(
+                class_.render_certificate(participant.participant_id, "pdf")
+            )
         certificate.last_updated_by = current_user._get_current_object()
         certificate.updated_date = datetime.datetime.now()
         certificate.status = "prerelease"
+        certificate.privacy = "prerelease"
         certificate.save()
 
     return redirect(url_for("admin.classes.view", class_id=class_.id))
 
 
-@module.route("/<class_id>/prepair_certificate")
+@module.route("/<class_id>/export_certificate")
 @acl.roles_required("admin")
 def export_certificate(class_id):
     return "Export"

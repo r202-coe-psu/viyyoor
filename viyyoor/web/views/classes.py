@@ -8,7 +8,7 @@ from flask import (
     request,
 )
 from flask_login import current_user, login_required
-
+import datetime
 
 from viyyoor import models
 from .. import forms
@@ -34,6 +34,9 @@ def index():
 @login_required
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
+    if "admin" in current_user.roles or "endorse" in current_user.roles:
+        return render_template("/classes/view_endorse.html", class_=class_)
+
     return render_template("/classes/view.html", class_=class_)
 
 
@@ -42,18 +45,19 @@ def view(class_id):
 def endorse(class_id):
 
     class_ = models.Class.objects.get(id=class_id)
-    certificates = models.Certificate.objects(class_=class_, status="prerelease")
-    form = forms.classes.EndorsementForm()
-    if not form.validate_on_submit():
-        return render_template(
-            "/classes/endorse.html", form=form, class_=class_, certificates=certificates
-        )
+    # certificates = models.Certificate.objects(class_=class_, status="prerelease")
+    # form = forms.classes.EndorsementForm()
+    # if not form.validate_on_submit():
+    #     return render_template(
+    #         "/classes/endorse.html", form=form, class_=class_, certificates=certificates
+    #     )
 
     certificates = models.Certificate.objects(class_=class_, status="prerelease")
 
-    endorser = class_.get_endorser_by_user(current_user._get_current_object())
-    if not endorser:
+    endorsers = class_.get_endorsers_by_user(current_user._get_current_object())
+    if not len(endorsers):
         return redirect(url_for("dashboard.index"))
+
     for certificate in certificates:
         # sign signature hear1
         # sign_digital_signature(user, certificate, password)
@@ -61,23 +65,33 @@ def endorse(class_id):
             endorser=current_user._get_current_object(),
             ip_address=request.remote_addr,
         )
-        certificate.endorsements[endorser.endorser_id] = endorsement
+
+        for endorser in endorsers:
+            certificate.endorsements[endorser.endorser_id] = endorsement
 
         check_approval = True
         for endorser in class_.endorsers:
-            if (
-                endorser.endorser_id in certificate.endorsements
-                and endorser.user != certificate.endorsements[endorser.endorser_id].user
-            ):
+            if endorser.endorser_id not in certificate.endorsements:
                 check_approval = False
-            else:
+            elif (
+                endorser.endorser_id in certificate.endorsements
+                and endorser.user
+                != certificate.endorsements[endorser.endorser_id].endorser
+            ):
                 check_approval = False
 
             if not check_approval:
                 break
 
         if check_approval:
-            certificate.status = "complete"
+            dc = models.DigitalCertificate.objects().order_by("-id").first()
+            sign_digital_signature(certificate, dc)
+            certificate.signed_date = datetime.datetime.now()
+            certificate.status = "completed"
+            certificate.privacy = "public"
+
+        certificate.updated_date = datetime.datetime.now()
+        certificate.save()
 
     return redirect(url_for("dashboard.index"))
 

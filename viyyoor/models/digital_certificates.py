@@ -2,6 +2,9 @@ import mongoengine as me
 import datetime
 
 import base64
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
 class DigitalCertificate(me.Document):
@@ -15,16 +18,27 @@ class DigitalCertificate(me.Document):
 
     ip_address = me.StringField(required=True, default="0.0.0.0")
 
-    def encrypt_password(self, password):
+    def get_key(self):
 
-        data = str(owner.id).rjust(32, "0")[:32]
-        key = base64.urlsafe_b64encode(data)
+        password = self.ip_address.encode()
+        salt = str(self.owner.id).rjust(16, "0")[:16].encode()
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=390000,
+        )
+        # data = str(self.owner.id).rjust(32, "0")[:32]
+        key = base64.urlsafe_b64encode(kdf.derive(password))
+        return key
+
+    def encrypt_password(self, password):
+        key = self.get_key()
         f = Fernet(key)
         return f.encrypt(password.encode())
 
     def decrypt_password(self, token):
 
-        data = str(owner.id).rjust(32, "0")[:32]
-        key = base64.urlsafe_b64encode(data)
+        key = self.get_key()
         f = Fernet(key)
         return f.decrypt(token)

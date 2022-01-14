@@ -26,10 +26,10 @@ def view(certificate_id):
     ).first()
 
     if not certificate:
-        if current_user.is_authenticated and "admin" in current_user.roles:
-            certificate = models.Certificate.objects(
-                id=certificate_id, privacy="public"
-            ).first()
+        if current_user.is_authenticated and (
+            "admin" in current_user.roles or "endorser" in current_user.roles
+        ):
+            certificate = models.Certificate.objects(id=certificate_id).first()
 
     if not certificate:
         response = Response()
@@ -54,14 +54,24 @@ def download(certificate_id):
     certificate = models.Certificate.objects(
         id=certificate_id, status="completed", privacy="public"
     ).first()
+
+    if not certificate:
+        if current_user.is_authenticated and (
+            "admin" in current_user.roles or "endorser" in current_user.roles
+        ):
+            certificate = models.Certificate.objects(id=certificate_id).first()
+
     if not certificate:
         return response
+
+    class_ = certificate.class_
+    participant = class_.get_participant(certificate.participant_id)
 
     mimetype = "application/pdf"
 
     response = send_file(
         certificate.file,
-        attachment_filename=f"certificate.pdf",
+        attachment_filename=f"certificate-{ participant.first_name }-{ participant.last_name }.pdf",
         # as_attachment=True,
         mimetype=mimetype,
     )

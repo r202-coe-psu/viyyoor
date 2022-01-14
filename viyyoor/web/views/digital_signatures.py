@@ -5,46 +5,42 @@ import datetime
 import io
 
 
-def sign_digital_signature(user, certificate, password, reason):
-    ds = models.DigitalSignature.objects(user=user).order_by("-id").first()
+def sign_digital_signature(certificate, dc, reason=""):
+
+    password = dc.decrypt_password(dc.password)
     p12 = pkcs12.load_key_and_certificates(
-        ds.file.read(), passwod.encode(), backends.default_backend()
+        dc.file.read(), password, backends.default_backend()
     )
 
     if not reason.strip():
-        reason = "Issued Certification by Department of Computer Engineering"
-
-    endorser = certificate.class_.get_endorser(user)
-    if not endorser:
-        return None
+        reason = "Issued Certificate by Department of Computer Engineering"
 
     now = datetime.datetime.now()
     date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
-    box = [0, 0, 100, 8]
-    order = int(endorser.endorser_id[-1:])
-    box[0] = box[0] + (box[2] * (order - 1))
-    box[2] = box[2] * order
+    box = [0, 0, 300, 8]
     dct = {
         "aligned": 0,
         "sigflags": 3,
         "sigflagsft": 132,
         "sigpage": 0,
         "sigbutton": True,
-        "sigfield": endorser.endorser_id,
+        "sigfield": "Signature",
         "auto_sigfield": True,
         "sigandcertify": True,
         "signaturebox": box,
-        "signature": f"{endorser.title} {endorser.first_name} {endorser.last_name}".strip(),
+        "signature": "Department of Computer Engineering, Faculty of Engineering, Prince of Songkla University",
         "text": {"textalign": "center", "fontsize": 5},
-        "contact": user.email,
+        "contact": "admin@coe.psu.ac.th",
         "location": "Hat Yai, Thailand",
         "signingdate": date_str,
         "reason": reason,
     }
 
-    signed_file = sign_cms(certificate.file, p12, endorser)
+    signed_file = sign_cms(certificate.file, p12, dct)
     certificate.file.replace(signed_file)
     certificate.save()
+
+    print("complete sign")
 
 
 def sign_cms(document_fp, p12, dct):

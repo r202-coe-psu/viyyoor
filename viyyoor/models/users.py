@@ -52,3 +52,8 @@ class User(me.Document, UserMixin):
         from .signatures import Signature
 
         return Signature.objects(owner=self)
+
+    def get_signature(self):
+        from .signatures import Signature
+
+        return Signature.objects(owner=self).order_by("-id").first()

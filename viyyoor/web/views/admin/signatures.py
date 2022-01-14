@@ -36,6 +36,7 @@ def index():
 def create_or_edit(signature_id):
     form = forms.signatures.SignatureAdminForm()
 
+    signature = None
     if signature_id:
         signature = models.Signature.objects.get(id=signature_id)
         form = forms.signatures.SignatureAdminForm(obj=signature)
