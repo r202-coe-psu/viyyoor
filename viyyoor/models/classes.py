@@ -136,6 +136,7 @@ class Class(me.Document):
         if not certificate_template:
             return None
 
+        certificate_template.template.file.seek(0)
         data = certificate_template.template.file.read().decode()
         template = Template(data)
 
@@ -200,12 +201,14 @@ class Class(me.Document):
 
         data = template.render(**variables)
 
-        print("-->", validation_url)
         if extension == "png":
             output = cairosvg.svg2png(bytestring=data.encode())
         elif extension == "pdf":
             # output = cairosvg.svg2png(bytestring=data.encode())
+            # output = cairosvg.svg2png(bytestring=data.encode())
             output = cairosvg.svg2pdf(bytestring=data.encode())
+        elif extension == "svg":
+            output = data.encode()
 
         image_io = io.BytesIO()
         image_io.write(output)

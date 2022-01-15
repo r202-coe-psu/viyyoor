@@ -1,10 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, send_file
 from flask_login import current_user
 
 import datetime
 
 from viyyoor import models
 from viyyoor.web import acl, forms
+
+from . import pdf_utils
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -255,6 +257,7 @@ def prepair_certificate(class_id):
         certificate = models.Certificate.objects(
             class_=class_, participant_id=participant.participant_id
         ).first()
+
         if not certificate:
             certificate = models.Certificate(
                 class_=class_,
@@ -283,4 +286,14 @@ def prepair_certificate(class_id):
 @module.route("/<class_id>/export_certificate")
 @acl.roles_required("admin")
 def export_certificate(class_id):
-    return "Export"
+    class_ = models.Class.objects.get(id=class_id)
+
+    certificates = pdf_utils.export_certificates(class_)
+    response = send_file(
+        certificates,
+        attachment_filename=f"{class_.id}-all.pdf",
+        # as_attachment=True,
+        mimetype="application/pdf",
+    )
+
+    return response
