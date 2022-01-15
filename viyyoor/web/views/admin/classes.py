@@ -99,11 +99,14 @@ def add_or_edit_endorser(class_id, endorser_id):
             class_=class_,
         )
 
-    endorser = class_.get_endorser(form.endorser_id.data)
+    endorser = class_.get_endorser(endorser_id)
 
     if not endorser:
         endorser = models.Endorser(endorser_id=form.endorser_id.data)
-        class_.endorsers.append(endorser)
+    else:
+        class_.endorsers.pop(endorser_id)
+
+    class_.endorsers[form.endorser_id.data] = endorser
 
     form.populate_obj(endorser)
     endorser.user = models.User.objects.get(id=form.user.data)
@@ -121,7 +124,7 @@ def delete_endorser(class_id, endorser_id):
     endorser = class_.get_endorser(endorser_id)
 
     if endorser:
-        class_.endorsers.remove(endorser)
+        class_.endorsers.pop(endorser_id)
         class_.save()
 
     return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
@@ -150,11 +153,11 @@ def add_or_edit_participant(class_id, participant_id):
         )
 
     if not participant:
-        participant = class_.get_participant(participant_id)
-
-    if not participant:
         participant = models.Participant()
-        class_.participants.append(participant)
+    else:
+        class_.participants.pop(participant_id)
+
+    class_.participants[form.participant_id.data] = participant
 
     form.populate_obj(participant)
     participant.last_updated_by = current_user._get_current_object()
@@ -173,8 +176,41 @@ def delete_participant(class_id, participant_id):
     participant = class_.get_participant(participant_id)
 
     if participant:
-        class_.participants.remove(participant)
+        class_.participants.pop(participant_id)
         class_.save()
+
+    return redirect(
+        url_for("admin.classes.add_or_edit_participant", class_id=class_.id)
+    )
+
+
+@module.route(
+    "/<class_id>/participants/add-from-file",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def add_participant_from_file(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    form = forms.classes.ParticipantFileForm()
+
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/classes/add-participant-from-file.html",
+            form=form,
+            class_=class_,
+        )
+
+    # if not participant:
+    #     participant = class_.get_participant(participant_id)
+
+    # if not participant:
+    #     participant = models.Participant()
+    #     class_.participants.append(participant)
+
+    # form.populate_obj(participant)
+    # participant.last_updated_by = current_user._get_current_object()
+    # class_.save()
 
     return redirect(
         url_for("admin.classes.add_or_edit_participant", class_id=class_.id)
@@ -253,7 +289,7 @@ def prepair_certificate(class_id):
         updated_date=datetime.datetime.now(),
     )
 
-    for participant in class_.participants:
+    for key, participant in class_.participants.items():
         certificate = models.Certificate.objects(
             class_=class_, participant_id=participant.participant_id
         ).first()

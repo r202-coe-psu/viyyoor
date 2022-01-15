@@ -50,7 +50,7 @@
     
     <div>
       <b>Endorsers</b> 
-      {% for end in class_.endorsers %}
+      {% for key, end in class_.endorsers.items() %}
         {{ end.user.first_name }} {{ end.user.last_name }}, 
       {% endfor %}
     </div>
@@ -65,6 +65,7 @@
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
+      <a class="item" href="{{ url_for('admin.classes.add_participant_from_file', class_id=class_.id) }}"><i class="user graduate file icon"></i>Participant From File</a>
       <a class="item" href="{{ url_for('admin.classes.prepair_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}" target="_blank"><i class="export file icon"></i>Export Certificate</a>
     {% endif %}
@@ -84,13 +85,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for participant in class_.participants %}
+				{% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
           <tr>
             <td>
               {{ participant.participant_id }}
             </td>
             <td>
-              {{ participant.title }}  {{ participant.first_name }} {{ participant.last_name }}
+              {{ participant.name }}
             </td>
             <td> {{ participant.get_group_display() }} </td>
             <td> {% set certificate = class_.get_certificate(participant.participant_id) %} 

@@ -15,7 +15,7 @@ from .. import models
 module = Blueprint(
     "certificates",
     __name__,
-    url_prefix="/certificate",
+    url_prefix="/certificates",
 )
 
 
@@ -71,7 +71,7 @@ def download(certificate_id):
 
     response = send_file(
         certificate.file,
-        attachment_filename=f"certificate-{ participant.first_name }-{ participant.last_name }.pdf",
+        attachment_filename=f"certificate-{ participant.name.replace(' ', '-') }.pdf",
         # as_attachment=True,
         mimetype=mimetype,
     )

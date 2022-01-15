@@ -1,5 +1,5 @@
 from flask_mongoengine.wtf import model_form
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, file
 from wtforms import fields, widgets, validators
 
 import datetime
@@ -56,9 +56,7 @@ BaseEndorserForm = model_form(
     field_args={
         "position": {"label": "Position"},
         "endorser_id": {"label": "Endorse ID"},
-        "title": {"label": "Title"},
-        "first_name": {"label": "First Name"},
-        "last_name": {"label": "Last Name"},
+        "name": {"label": "Name"},
     },
 )
 
@@ -77,9 +75,8 @@ BaseParticipantForm = model_form(
     exclude=["updated_date", "last_updated_by"],
     field_args={
         "participant_id": {"label": "Participant ID"},
-        "title": {"label": "Title"},
-        "first_name": {"label": "First Name"},
-        "last_name": {"label": "Last Name"},
+        "name": {"label": "Name"},
+        "extra": {"label": "Extra"},
         "group": {"label": "Group"},
     },
 )
@@ -87,6 +84,12 @@ BaseParticipantForm = model_form(
 
 class ParticipantForm(BaseParticipantForm):
     pass
+
+
+class ParticipantFileForm(FlaskForm):
+    participant_file = file.FileField(
+        "Participant File", validators=[file.FileRequired()]
+    )
 
 
 BaseCertificateTemplateForm = model_form(

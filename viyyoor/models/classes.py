@@ -16,9 +16,7 @@ PARTICIPANT_GROUP = [
 
 class Participant(me.EmbeddedDocument):
     participant_id = me.StringField(required=True, max_length=20)
-    title = me.StringField(default="", max_length=50)
-    first_name = me.StringField(required=True, max_length=256)
-    last_name = me.StringField(required=True, max_length=256)
+    name = me.StringField(required=True, max_length=256)
     group = me.StringField(
         required=True,
         choices=PARTICIPANT_GROUP,
@@ -28,6 +26,8 @@ class Participant(me.EmbeddedDocument):
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+
+    extra = me.DictField()
 
 
 class Endorser(me.EmbeddedDocument):
@@ -41,9 +41,7 @@ class Endorser(me.EmbeddedDocument):
         ],
     )
     user = me.ReferenceField("User", dbref=True, required=True)
-    title = me.StringField(default="", max_length=50)
-    first_name = me.StringField(required=True, max_length=256)
-    last_name = me.StringField(required=True, max_length=256)
+    name = me.StringField(required=True, max_length=256)
 
     position = me.StringField()
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
@@ -73,8 +71,8 @@ class Class(me.Document):
     name = me.StringField(required=True, max_length=256)
     description = me.StringField()
 
-    participants = me.EmbeddedDocumentListField(Participant)
-    endorsers = me.EmbeddedDocumentListField(Endorser)
+    participants = me.MapField(field=me.EmbeddedDocumentField(Participant))
+    endorsers = me.MapField(field=me.EmbeddedDocumentField(Endorser))
     issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     certificate_templates = me.MapField(
         field=me.EmbeddedDocumentField(CertificateTemplate)
@@ -95,18 +93,10 @@ class Class(me.Document):
     status = me.StringField(required=True, default="active")
 
     def get_participant(self, participant_id: str):
-        for p in self.participants:
-            if p.participant_id == participant_id:
-                return p
-
-        return None
+        return self.participants.get(participant_id, None)
 
     def get_endorser(self, endorser_id: str):
-        for end in self.endorsers:
-            if end.endorser_id == endorser_id:
-                return end
-
-        return None
+        return self.endorsers.get(endorser_id, None)
 
     def get_endorsers_by_user(self, user):
         endorsers = []
@@ -172,9 +162,7 @@ class Class(me.Document):
 
         variables = dict(
             certificate_name=certificate_template.name,
-            participant_name=(
-                f"{participant.title} {participant.first_name} {participant.last_name}"
-            ).strip(),
+            participant_name=participant.name.strip(),
             appreciate_text="".join(appreciate_text),
             module_name=self.name,
             issued_date=self.issued_date.strftime("%B %Y, %-d"),
@@ -182,10 +170,10 @@ class Class(me.Document):
             validation_qrcode=f"image/png;base64,{qrcode_encoded}",
         )
 
-        for endorser in self.endorsers:
-            variables[f"{ endorser.endorser_id }_name"] = (
-                f"{endorser.title} { endorser.first_name } { endorser.last_name }"
-            ).strip()
+        variables.update(participant.extra)
+
+        for key, endorser in self.endorsers.items():
+            variables[f"{ endorser.endorser_id }_name"] = endorser.name.strip()
 
             text = [t.strip() for t in endorser.position.split("\n")]
             for i, t in enumerate(text):
@@ -204,8 +192,6 @@ class Class(me.Document):
         if extension == "png":
             output = cairosvg.svg2png(bytestring=data.encode())
         elif extension == "pdf":
-            # output = cairosvg.svg2png(bytestring=data.encode())
-            # output = cairosvg.svg2png(bytestring=data.encode())
             output = cairosvg.svg2pdf(bytestring=data.encode())
         elif extension == "svg":
             output = data.encode()

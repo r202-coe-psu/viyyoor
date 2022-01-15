@@ -37,10 +37,9 @@
       {{ renderer.render_select(form.participant_id) }}
       {{ renderer.render_select(form.group) }}
       </div>
-      <div class="three fields">
-      {{ renderer.render_field(form.title) }}
-      {{ renderer.render_field(form.first_name) }}
-      {{ renderer.render_field(form.last_name) }}
+      <div class="two fields">
+        {{ renderer.render_field(form.name) }}
+        {{ renderer.render_field(form.extra) }}
       </div>
 
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
@@ -59,10 +58,10 @@
       </tr>
     </thead>
     <tbody>
-      {% for participant in class_.participants %}
+      {% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
         <tr>
           <td>{{ participant.participant_id }}</td>
-          <td>{{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}</td>
+          <td>{{ participant.name }}</td>
           <td>{{ participant.get_group_display() }}</td>
           <td>
             <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id, participant_id=participant.participant_id) }}"><i class="edit icon"></i></a>

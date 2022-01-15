@@ -37,14 +37,10 @@
       {{ renderer.render_select(form.endorser_id) }}
       {{ renderer.render_select(form.user) }}
       </div>
-
-      <div class="three fields">
-      {{ renderer.render_field(form.title) }}
-      {{ renderer.render_field(form.first_name) }}
-      {{ renderer.render_field(form.last_name) }}
-      </div>
-
+      <div class="two fields">
+      {{ renderer.render_field(form.name) }}
       {{ renderer.render_field(form.position) }}
+      </div>
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>
   </div>
@@ -61,10 +57,10 @@
       </tr>
     </thead>
     <tbody>
-      {% for endorser in class_.endorsers %}
+      {% for key, endorser in class_.endorsers.items() | sort(attribute='1.endorser_id') %}
         <tr>
           <td>{{ endorser.get_endorser_id_display() }}</td>
-          <td>{{ endorser.title }} {{ endorser.first_name }} {{ endorser.last_name }}</td>
+          <td>{{ endorser.name }}</td>
           <td>{{ endorser.position }}</td>
           <td>
             <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="edit icon"></i></a>
