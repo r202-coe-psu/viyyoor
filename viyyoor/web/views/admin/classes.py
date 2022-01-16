@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, send_file
+from flask import Blueprint, render_template, redirect, url_for, send_file, request
 from flask_login import current_user
 
 import datetime
@@ -8,6 +8,7 @@ from viyyoor.web import acl, forms
 
 from . import pdf_utils
 import pandas
+import json
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -145,6 +146,8 @@ def add_or_edit_participant(class_id, participant_id):
     participant = class_.get_participant(participant_id)
     if participant:
         form = forms.classes.ParticipantForm(obj=participant)
+        if request.method == "GET":
+            form.extra_data.data = json.dumps(participant.extra, ensure_ascii=False)
 
     if not form.validate_on_submit():
         return render_template(
@@ -161,6 +164,7 @@ def add_or_edit_participant(class_id, participant_id):
     class_.participants[form.participant_id.data] = participant
 
     form.populate_obj(participant)
+    participant.extra = json.loads(form.extra_data.data)
     participant.last_updated_by = current_user._get_current_object()
     class_.save()
 

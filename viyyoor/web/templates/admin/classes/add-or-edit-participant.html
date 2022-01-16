@@ -39,7 +39,7 @@
       </div>
       <div class="two fields">
         {{ renderer.render_field(form.name) }}
-        {{ renderer.render_field(form.extra) }}
+        {{ renderer.render_field(form.extra_data) }}
       </div>
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>

@@ -40,8 +40,6 @@ def sign_digital_signature(certificate, dc, reason=""):
     certificate.file.replace(signed_file)
     certificate.save()
 
-    print("complete sign")
-
 
 def sign_cms(document_fp, p12, dct):
     datau = document_fp.read()

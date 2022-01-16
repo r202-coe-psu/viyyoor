@@ -72,7 +72,7 @@ class EndorserGrantForm(FlaskForm):
 BaseParticipantForm = model_form(
     models.Participant,
     FlaskForm,
-    exclude=["updated_date", "last_updated_by"],
+    exclude=["updated_date", "last_updated_by", "extra"],
     field_args={
         "participant_id": {"label": "Participant ID"},
         "name": {"label": "Name"},
@@ -83,7 +83,7 @@ BaseParticipantForm = model_form(
 
 
 class ParticipantForm(BaseParticipantForm):
-    pass
+    extra_data = fields.TextAreaField("Extra Data")
 
 
 class ParticipantFileForm(FlaskForm):
