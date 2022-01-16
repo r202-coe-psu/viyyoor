@@ -13,7 +13,10 @@
         <div class="content">
           <div class="header">{{ certificate.class_.name }}</div>
           <div class="description">
-            {{ certificate.class_.description }}
+            <p>{{ certificate.class_.description }}</p>
+            {% if certificate.class_.instructors %}
+              <p><b>Instructor: </b> {{ certificate.class_.instructors | join(',') }}</p>
+            {% endif %}
           </div>
         </div>
         <a class="ui bottom attached button" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank">
