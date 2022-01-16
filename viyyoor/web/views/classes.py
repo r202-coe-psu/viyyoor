@@ -70,7 +70,7 @@ def endorse(class_id):
             certificate.endorsements[endorser.endorser_id] = endorsement
 
         check_approval = True
-        for endorser in class_.endorsers:
+        for key, endorser in class_.endorsers.items():
             if endorser.endorser_id not in certificate.endorsements:
                 check_approval = False
             elif (

@@ -13,6 +13,13 @@ PARTICIPANT_GROUP = [
     ("achievement", "Achievement"),
 ]
 
+ENDORSER_POSITIONS = [
+    ("endorser_1", "Endorser 1"),
+    ("endorser_2", "Endorser 2"),
+    ("endorser_3", "Endorser 3"),
+    ("endorser_4", "Endorser 4"),
+]
+
 
 class Participant(me.EmbeddedDocument):
     participant_id = me.StringField(required=True, max_length=20)
@@ -33,12 +40,7 @@ class Participant(me.EmbeddedDocument):
 class Endorser(me.EmbeddedDocument):
     endorser_id = me.StringField(
         required=True,
-        choices=[
-            ("endorser_1", "Endorser 1"),
-            ("endorser_2", "Endorser 2"),
-            ("endorser_3", "Endorser 3"),
-            ("endorser_4", "Endorser 4"),
-        ],
+        choices=ENDORSER_POSITIONS,
     )
     user = me.ReferenceField("User", dbref=True, required=True)
     name = me.StringField(required=True, max_length=256)
@@ -100,7 +102,7 @@ class Class(me.Document):
 
     def get_endorsers_by_user(self, user):
         endorsers = []
-        for end in self.endorsers:
+        for key, end in self.endorsers.items():
             if end.user == user:
                 endorsers.append(end)
 

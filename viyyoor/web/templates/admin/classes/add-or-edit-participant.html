@@ -41,7 +41,6 @@
         {{ renderer.render_field(form.name) }}
         {{ renderer.render_field(form.extra) }}
       </div>
-
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>
   </div>

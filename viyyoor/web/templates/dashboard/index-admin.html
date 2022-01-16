@@ -32,7 +32,7 @@
                 </a>
               </td>
               <td>
-                {% for endorser in class_.endorsers %}
+                {% for key, endorser in class_.endorsers.items() %}
                   {{ endorser.user.first_name }} {{ endorser.user.last_name }},
                 {% endfor %}
               </td>
@@ -67,7 +67,7 @@
                 </a>
               </td>
               <td>
-                {% for endorser in class_.endorsers %}
+                {% for key, endorser in class_.endorsers.items() %}
                   {{ endorser.user.first_name }} {{ endorser.user.last_name }},
                 {% endfor %}
               </td>

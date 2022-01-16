@@ -12,8 +12,19 @@ subviews = []
 
 def index_admin():
     now = datetime.datetime.now()
+    endorser_positions = models.classes.ENDORSER_POSITIONS
+    # queries = {
+    #     f"endorsers__{ep[0]}__user": current_user._get_current_object()
+    #     for ep in endorser_positions
+    # }
+    # print("q", queries)
+    classes_set = set()
+    for ep in endorser_positions:
+        queries = {f"endorsers__{ep[0]}__user": current_user._get_current_object()}
+        sub_classes = models.Class.objects(**queries)
+        classes_set.update(sub_classes)
 
-    classes = models.Class.objects(endorsers__user=current_user._get_current_object())
+    classes = list(classes_set)
     endorses_classes = models.Certificate.objects(
         status="prerelease", class___in=classes
     ).distinct(field="class_")

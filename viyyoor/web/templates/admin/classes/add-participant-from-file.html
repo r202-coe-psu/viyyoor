@@ -5,6 +5,16 @@
   <script type="text/javascript">
     $('.ui.dropdown')
       .dropdown();
+  $(".attach-file-participant_file").click(function() {
+    $(this).parent().find("#participant_file").click();
+  });
+
+  $('#participant_file')
+    .on('change', function(e) {
+      var name = e.target.files[0].name;
+      $('.attach-file-participant_file', $(e.target).parent()).val(name);
+    });
+
 	</script>
 {% endblock %}
 
@@ -22,7 +32,7 @@
 {% block content %}
 <div class="ui container">
   <div class="ui segment">
-    <form method="POST" class="ui form">
+    <form method="POST" class="ui form" enctype="multipart/form-data">
       {{ form.csrf_token }}
       {{ renderer.render_fileinput(form.participant_file) }}
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>

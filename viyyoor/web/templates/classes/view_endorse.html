@@ -1,6 +1,9 @@
 {% extends '/classes/index.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 
+{% block breadcrumbs %}
+  {{ super() }}
+{% endblock %}
 
 {% block content %}
 <div class="ui segment">
@@ -23,6 +26,9 @@
 		<div>
 			<b>Tag:</b> {{ class_.tags | join(', ') }}
     </div>
+    <div>
+      <a href="{{ url_for('dashboard.index') }}" class="ui primary icon button"><i class="dashboard icon"></i> Dashboard</a>
+    </div>
 </div>
 
 <div class="ui segment">
@@ -30,19 +36,22 @@
   <table class="ui celled table">
     <thead>
       <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Group</th>
         <th>Issued Date</th>
         <th>Status</th>
+        <th>Certificate</th>
       </tr>
     </thead>
 
     <tbody>
-      {% for participant in class_.participants %}
+      {% for key, participant in class_.participants.items() | sort() %}
       {% set certificate=class_.get_certificate(participant.participant_id) %}
       <tr>
+        <td>{{ participant.participant_id }}</td>
         <td>
-          {{ participant.title }} {{ participant.first_name }} {{ participant.last_name }}
+          {{ participant.name }}
         </td>
         <td>
           {{ participant.group.title() }}
@@ -60,7 +69,13 @@
             Wait for prepairing
           {% endif %}
         </td>
-        
+        <td>
+          {% if certificate %}
+            <a class="ui primary button" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}"><i class="certificate icon"></i> view</a>
+          {% else %}
+            Wait
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
     </tbody>

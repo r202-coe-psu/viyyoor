@@ -23,7 +23,7 @@ def export_certificates(class_, dpi=72):
     surface = cairocffi.PDFSurface(output, 1, 1)
     context = cairocffi.Context(surface)
 
-    for participant in class_.participants:
+    for key, participant in class_.participants.items():
         certificate = models.Certificate.objects(
             class_=class_, participant_id=participant.participant_id
         ).first()

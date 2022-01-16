@@ -7,6 +7,7 @@ from viyyoor import models
 from viyyoor.web import acl, forms
 
 from . import pdf_utils
+import pandas
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -200,6 +201,33 @@ def add_participant_from_file(class_id):
             form=form,
             class_=class_,
         )
+
+    dfs = pandas.read_excel(form.participant_file.data)
+    dfs.columns = dfs.columns.str.lower()
+    for index, row in dfs.iterrows():
+        pid = str(row["id"]).strip()
+        participant = class_.get_participant(pid)
+        if not participant:
+            participant = models.Participant(participant_id=pid)
+            class_.participants[pid] = participant
+
+        if row["grade"] in ["A", "B+", "B", "C+", "C", "D+", "D", "E", "W"]:
+            if row["grade"] in ["A", "B+", "B", "C+", "C"]:
+                participant.group = "achievement"
+            elif row["grade"] in ["D+", "D"]:
+                participant.group = "participant"
+            else:
+                class_.participants.pop(pid)
+                continue
+        else:
+            participant.group = row["grade"]
+
+        participant.name = row["name"].strip()
+        participant.last_updated_by = current_user._get_current_object()
+        participant.updated_date = datetime.datetime.now()
+        participant.extra = row.to_dict()
+
+    class_.save()
 
     # if not participant:
     #     participant = class_.get_participant(participant_id)
