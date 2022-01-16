@@ -4,13 +4,13 @@ import datetime
 from .. import models
 from .. import caches
 
-module = Blueprint('site', __name__)
+module = Blueprint("site", __name__)
 
 
-@module.route('/')
+@module.route("/")
 @caches.cache.cached(timeout=600)
 def index():
     now = datetime.datetime.now()
     return render_template(
-            '/sites/index.html',
-            )
+        "/sites/index.html",
+    )

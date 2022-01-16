@@ -43,6 +43,7 @@ BaseClassForm = model_form(
 
 class ClassForm(BaseClassForm):
     tags = TagListField("Tags")
+    instructors = TagListField("Instructors")
 
 
 BaseEndorserForm = model_form(

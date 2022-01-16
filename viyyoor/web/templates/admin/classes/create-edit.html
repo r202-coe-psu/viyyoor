@@ -64,13 +64,14 @@
       {{ renderer.render_field(form.name) }}
       {{ renderer.render_field(form.description) }}
 
-      <div class="two fields">
+      <div class="three fields">
         {{ renderer.render_calendar(form.started_date, calendar_id='started_date_calendar') }}
         {{ renderer.render_calendar(form.ended_date, calendar_id='ended_date_calendar') }}
+        {{ renderer.render_calendar(form.issued_date, calendar_id='issued_date_calendar') }}
       </div>
 
-      <div class="two field">
-        {{ renderer.render_calendar(form.issued_date, calendar_id='issued_date_calendar') }}
+      <div class="two fields">
+        {{ renderer.render_field(form.instructors) }}
         {{ renderer.render_field(form.tags) }}
       </div>
       <button name="create" type="submit" class="ui button primary">{{ 'Create' if 'create' in request.path else 'Edit' }}</button>

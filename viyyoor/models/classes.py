@@ -75,6 +75,8 @@ class Class(me.Document):
 
     participants = me.MapField(field=me.EmbeddedDocumentField(Participant))
     endorsers = me.MapField(field=me.EmbeddedDocumentField(Endorser))
+    instructors = me.ListField(me.StringField())
+
     issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     certificate_templates = me.MapField(
         field=me.EmbeddedDocumentField(CertificateTemplate)
