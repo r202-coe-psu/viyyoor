@@ -187,9 +187,15 @@ class Class(me.Document):
 
             if signature:
                 sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
-            variables[
-                f"{ endorser.endorser_id }_sign"
-            ] = f"image/png;base64,{sign_encoded}"
+                variables[
+                    f"{ endorser.endorser_id }_sign"
+                ] = f"image/png;base64,{sign_encoded}"
+            else:
+                variables[
+                    f"{ endorser.endorser_id }_sign"
+                ] = "image/png;base64,"
+
+
 
         data = template.render(**variables)
 

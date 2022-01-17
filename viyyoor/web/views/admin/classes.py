@@ -147,7 +147,8 @@ def add_or_edit_participant(class_id, participant_id):
     if participant:
         form = forms.classes.ParticipantForm(obj=participant)
         if request.method == "GET":
-            form.extra_data.data = json.dumps(participant.extra, ensure_ascii=False)
+            if participant.extra:
+                form.extra_data.data = json.dumps(participant.extra, ensure_ascii=False)
 
     if not form.validate_on_submit():
         return render_template(
@@ -164,7 +165,8 @@ def add_or_edit_participant(class_id, participant_id):
     class_.participants[form.participant_id.data] = participant
 
     form.populate_obj(participant)
-    participant.extra = json.loads(form.extra_data.data)
+    if form.extra_data.data:
+        participant.extra = json.loads(form.extra_data.data)
     participant.last_updated_by = current_user._get_current_object()
     class_.save()
 
