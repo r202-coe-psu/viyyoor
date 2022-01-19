@@ -328,14 +328,14 @@ def delete_certificate_template(class_id, certificate_template_id):
 def prepair_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
     models.Certificate.objects(class_=class_, status="prerelease").update(
-        status="prepair",
+        status="prepare",
         last_updated_by=current_user._get_current_object(),
         updated_date=datetime.datetime.now(),
     )
 
     for key, participant in class_.participants.items():
         certificate = models.Certificate.objects(
-            class_=class_, participant_id=participant.participant_id
+            class_=class_, participant_id=participant.participant_id, status="prepare"
         ).first()
 
         if not certificate:
@@ -394,7 +394,7 @@ def export_certificate_url(class_id):
         data = {
             "ID": certificate.participant_id,
             "Name": participant.name,
-            "url": certificate.get_validation_url(),
+            "URL": certificate.get_validation_url(),
         }
         row_list.append(data)
 
@@ -406,7 +406,9 @@ def export_certificate_url(class_id):
     response = Response(
         output.getvalue(),
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-disposition": f"attachment; filename=export-volunteers.xlsx"},
+        headers={
+            "Content-disposition": f"attachment; filename=export-certificate-url.xlsx"
+        },
     )
 
     return response

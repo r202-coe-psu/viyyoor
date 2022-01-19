@@ -17,7 +17,7 @@ def sign_digital_signature(certificate, dc, reason=""):
 
     now = datetime.datetime.now()
     date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
-    box = [0, 0, 300, 8]
+    box = [5, 0, 300, 8]
     dct = {
         "aligned": 0,
         "sigflags": 3,
@@ -29,7 +29,8 @@ def sign_digital_signature(certificate, dc, reason=""):
         "sigandcertify": True,
         "signaturebox": box,
         "signature": "Department of Computer Engineering, Faculty of Engineering, Prince of Songkla University",
-        "text": {"textalign": "center", "fontsize": 5},
+        # "text": {"textalign": "center", "fontsize": 5},
+        "text": {"textalign": "left", "fontsize": 5},
         "contact": "admin@coe.psu.ac.th",
         "location": "Hat Yai, Thailand",
         "signingdate": date_str,
