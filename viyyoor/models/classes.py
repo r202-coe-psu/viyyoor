@@ -71,6 +71,7 @@ class Class(me.Document):
     meta = {"collection": "classes"}
 
     name = me.StringField(required=True, max_length=256)
+    printed_name = me.StringField(required=True, max_length=256)
     description = me.StringField()
 
     participants = me.MapField(field=me.EmbeddedDocumentField(Participant))
@@ -122,7 +123,7 @@ class Class(me.Document):
             class_=self, participant_id=participant_id
         ).first()
 
-    def render_certificate(self, participant_id, extension):
+    def render_certificate(self, participant_id, extension, required_signature=True):
 
         participant = self.get_participant(participant_id)
         certificate_template = self.certificate_templates.get(participant.group)
@@ -168,7 +169,7 @@ class Class(me.Document):
             certificate_name=certificate_template.name,
             participant_name=participant.name.strip(),
             appreciate_text="".join(appreciate_text),
-            module_name=self.name,
+            class_name=self.printed_name,
             issued_date=self.issued_date.strftime("%B %Y, %-d"),
             validation_url=validation_url,
             validation_qrcode=f"image/png;base64,{qrcode_encoded}",
@@ -185,7 +186,7 @@ class Class(me.Document):
 
             signature = endorser.user.get_signature()
 
-            if signature:
+            if signature and required_signature:
                 sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
             variables[
                 f"{ endorser.endorser_id }_sign"

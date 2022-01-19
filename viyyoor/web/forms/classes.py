@@ -22,6 +22,7 @@ BaseClassForm = model_form(
     ],
     field_args={
         "name": {"label": "Name"},
+        "printed_name": {"label": "Printed Name"},
         "description": {
             "label": "Desctiption",
         },
