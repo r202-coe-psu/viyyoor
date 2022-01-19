@@ -39,6 +39,7 @@ def sign_digital_signature(certificate, dc, reason=""):
 
     signed_file = sign_cms(certificate.file, p12, dct)
     certificate.file.replace(signed_file)
+    certificate.ca_download_url = dc.ca_download_url
     certificate.save()
 
 

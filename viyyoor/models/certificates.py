@@ -17,7 +17,7 @@ class Certificate(me.Document):
     class_ = me.ReferenceField("Class", dbref=True, required=True)
     participant_id = me.StringField(required=True)
 
-    issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    issued_date = me.DateTimeField()
     signed_date = me.DateTimeField()
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(
@@ -29,6 +29,8 @@ class Certificate(me.Document):
     privacy = me.StringField(required=True, default="public")
     status = me.StringField(required=True, default="no-action")
     endorsements = me.MapField(field=me.EmbeddedDocumentField(Endorsement))
+
+    ca_download_url = me.StringField()
 
     file = me.FileField(required=True, collection_name="certificate_fs")
 

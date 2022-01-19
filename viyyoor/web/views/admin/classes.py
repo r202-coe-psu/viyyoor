@@ -19,6 +19,7 @@ import pandas
 import xlsxwriter
 import json
 import io
+from copy import deepcopy
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -26,7 +27,7 @@ module = Blueprint("classes", __name__, url_prefix="/classes")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    classes = models.Class.objects(status="active")
+    classes = models.Class.objects(status="active").order_by("-id")
     return render_template(
         "/admin/classes/index.html",
         classes=classes,
@@ -81,6 +82,30 @@ def delete(class_id):
     class_.save()
 
     return redirect(url_for("admin.classes.index"))
+
+
+@module.route("/<class_id>/copy")
+@acl.roles_required("admin")
+def copy(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    if not class_:
+        return redirect(url_for("admin.classes.index"))
+
+    now = datetime.datetime.now()
+    new_class = deepcopy(class_)
+    new_class.id = None
+    new_class.name = f"{ new_class.name } copy { now.strftime('%Y-%m-%d') }"
+    new_class.participants = {}
+    new_class.started_date = datetime.datetime.now()
+    new_class.ended_data = datetime.datetime.now()
+    new_class.issued_date = datetime.datetime.now()
+    new_class.created_date = datetime.datetime.now()
+    new_class.updated_date = datetime.datetime.now()
+    new_class.owner = current_user._get_current_object()
+    new_class.status = "active"
+    new_class.save()
+
+    return redirect(url_for("admin.classes.view", class_id=new_class.id))
 
 
 @module.route(
@@ -342,8 +367,6 @@ def prepair_certificate(class_id):
             certificate = models.Certificate(
                 class_=class_,
                 participant_id=participant.participant_id,
-                issuer=current_user._get_current_object(),
-                last_updated_by=current_user._get_current_object(),
             )
             certificate.save()
             certificate.file.put(
@@ -354,11 +377,33 @@ def prepair_certificate(class_id):
             certificate.file.replace(
                 class_.render_certificate(participant.participant_id, "pdf")
             )
-        certificate.last_updated_by = current_user._get_current_object()
+
+        print("-->", current_user._get_current_object())
         certificate.updated_date = datetime.datetime.now()
+        certificate.issued_date = class_.issued_date
+        certificate.last_updated_by = current_user._get_current_object()
+        certificate.issuer = current_user._get_current_object()
         certificate.status = "prerelease"
         certificate.privacy = "prerelease"
         certificate.save()
+
+    return redirect(url_for("admin.classes.view", class_id=class_.id))
+
+
+@module.route("/<class_id>/purge_certificate")
+@acl.roles_required("admin")
+def purge_certificate(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    models.Certificate.objects(class_=class_).update(
+        status="prepare",
+        privacy="none",
+        endorsements={},
+        signed_date=None,
+        issued_date=None,
+        ca_download_url=None,
+        last_updated_by=current_user._get_current_object(),
+        updated_date=datetime.datetime.now(),
+    )
 
     return redirect(url_for("admin.classes.view", class_id=class_.id))
 

@@ -12,6 +12,8 @@ class DigitalCertificate(me.Document):
 
     file = me.FileField(required=True, collection_name="digital_certificate_fs")
     password = me.BinaryField(required=True, default=b"")
+    ca_download_url = me.StringField(max_length=1024)
+
     owner = me.ReferenceField("User", dbref=True, required=True)
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     status = me.StringField(required=True, default="active")

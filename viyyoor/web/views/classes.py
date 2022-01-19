@@ -84,7 +84,11 @@ def endorse(class_id):
                 break
 
         if check_approval:
-            dc = models.DigitalCertificate.objects().order_by("-id").first()
+            dc = (
+                models.DigitalCertificate.objects(status="active")
+                .order_by("-id")
+                .first()
+            )
             sign_digital_signature(certificate, dc)
             certificate.signed_date = datetime.datetime.now()
             certificate.status = "completed"

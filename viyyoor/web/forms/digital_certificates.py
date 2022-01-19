@@ -13,7 +13,7 @@ BaseDigitalCertificateForm = model_form(
     models.DigitalCertificate,
     FlaskForm,
     exclude=["created_date", "ip_address", "file", "owner", "status", "password"],
-    field_args={},
+    field_args={"ca_download_url": {"label": "CA Download URL"}},
 )
 
 

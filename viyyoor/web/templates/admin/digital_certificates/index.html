@@ -20,6 +20,7 @@
         <tr>
           <th>Filename</th>
           <th>Date</th>
+          <th>CA Download URL</th>
           <th>Status</th>
           <th>Operation</th>
         </tr>
@@ -29,6 +30,7 @@
         <tr>
           <td>{{ certificate.file.filename }}</td>
           <td>{{ certificate.created_date }}</td>
+          <td>{{ certificate.ca_download_url }}</td>
           <td>{{ certificate.status.title() }}</td>
           <td>
           </td>

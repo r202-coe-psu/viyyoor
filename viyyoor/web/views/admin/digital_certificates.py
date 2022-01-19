@@ -12,7 +12,7 @@ module = Blueprint("digital_certificates", __name__, url_prefix="/digital-certif
 
 @module.route("")
 def index():
-    digital_certificates = models.DigitalCertificate.objects()
+    digital_certificates = models.DigitalCertificate.objects().order_by("-id")
     return render_template(
         "/admin/digital_certificates/index.html",
         digital_certificates=digital_certificates,
@@ -41,6 +41,7 @@ def add():
 
     encrypted_password = dc.encrypt_password(form.password.data)
     dc.password = encrypted_password
+    dc.ca_download_url = form.ca_download_url.data
 
     dc.save()
 

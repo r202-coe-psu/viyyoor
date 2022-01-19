@@ -22,6 +22,7 @@
         {{ renderer.render_fileinput(form.digital_certificate_file) }}
         {{ renderer.render_field(form.password) }}
       </div>
+      {{ renderer.render_field(form.ca_download_url) }}
       <button name="create" type="submit" class="ui primary button">Add</button>
     </form>
     {% if form.errors | length > 0 %}
