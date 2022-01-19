@@ -186,8 +186,10 @@ class Class(me.Document):
 
             signature = endorser.user.get_signature()
 
+            sign_encoded = ""
             if signature and required_signature:
                 sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
+
             variables[
                 f"{ endorser.endorser_id }_sign"
             ] = f"image/png;base64,{sign_encoded}"
