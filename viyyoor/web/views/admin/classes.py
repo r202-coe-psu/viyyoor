@@ -1,4 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, send_file, request
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    send_file,
+    request,
+    Response,
+)
 from flask_login import current_user
 
 import datetime
@@ -8,7 +16,9 @@ from viyyoor.web import acl, forms
 
 from . import pdf_utils
 import pandas
+import xlsxwriter
 import json
+import io
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -364,6 +374,39 @@ def export_certificate(class_id):
         attachment_filename=f"{class_.id}-all.pdf",
         # as_attachment=True,
         mimetype="application/pdf",
+    )
+
+
+@module.route("/<class_id>/export_certificate_url")
+@acl.roles_required("admin")
+def export_certificate_url(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    certificates = models.Certificate.objects(class_=class_)
+    row_list = []
+
+    for certificate in certificates:
+        participant = class_.get_participant(certificate.participant_id)
+        if not participant:
+            print(certificate.participant_id, participant)
+            continue
+
+        data = {
+            "ID": certificate.participant_id,
+            "Name": participant.name,
+            "url": certificate.get_validation_url(),
+        }
+        row_list.append(data)
+
+    output = io.BytesIO()
+    df = pandas.DataFrame(row_list)
+    writer = pandas.ExcelWriter(output, engine="xlsxwriter")
+    df.to_excel(writer, sheet_name="Sheet1")
+    writer.save()
+    response = Response(
+        output.getvalue(),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-disposition": f"attachment; filename=export-volunteers.xlsx"},
     )
 
     return response
