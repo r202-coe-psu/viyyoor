@@ -29,7 +29,7 @@ def add_or_edit(user_id):
     user = None
     if user_id:
         user = models.User.objects(id=user_id).first()
-        form = forms.classes.UserForm(obj=user)
+        form = forms.accounts.UserForm(obj=user)
 
     if not form.validate_on_submit():
         return render_template(
