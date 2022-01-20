@@ -378,7 +378,6 @@ def prepair_certificate(class_id):
                 class_.render_certificate(participant.participant_id, "pdf")
             )
 
-        print("-->", current_user._get_current_object())
         certificate.updated_date = datetime.datetime.now()
         certificate.issued_date = class_.issued_date
         certificate.last_updated_by = current_user._get_current_object()

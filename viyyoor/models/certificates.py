@@ -7,7 +7,6 @@ from flask import request, url_for
 class Endorsement(me.EmbeddedDocument):
     endorser = me.ReferenceField("User", dbref=True, required=True)
     endorsed_date = me.DateTimeField(required=True, default=datetime.datetime.now)
-    digital_signature = me.ReferenceField("DigitalSignature", dbref=True)
     ip_address = me.StringField(required=True, default="0.0.0.0")
 
 
