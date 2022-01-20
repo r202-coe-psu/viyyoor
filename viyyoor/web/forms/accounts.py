@@ -12,6 +12,7 @@ from flask_wtf.file import FileAllowed
 from flask_mongoengine.wtf import model_form
 
 from .. import models
+from .fields import TagListField
 
 
 def validate_email(form, field):
@@ -90,3 +91,34 @@ class ProfileForm(BaseProfileForm):
     pic = fields.FileField(
         "Picture", validators=[FileAllowed(["png", "jpg"], "allow png and jpg")]
     )
+
+
+BaseUserForm = model_form(
+    models.User,
+    FlaskForm,
+    exclude=[
+        "created_date",
+        "updated_date",
+        "last_login_date",
+        "picture",
+        "roles",
+        "status",
+        "resources",
+    ],
+    field_args={
+        "title": {"label": "Title"},
+        "first_name": {"label": "First Name"},
+        "last_name": {"label": "Last Name"},
+        "title_th": {"label": "Thai Title"},
+        "first_name_th": {"label": "Thai First Name"},
+        "last_name_th": {"label": "Thai Last Name"},
+        "biography": {"label": "Biography"},
+        "email": {"label": "Email"},
+        "username": {"label": "Username"},
+        "citizen_id": {"label": "Citizen ID"},
+    },
+)
+
+
+class UserForm(BaseUserForm):
+    roles = TagListField("Roles", default=["user"])

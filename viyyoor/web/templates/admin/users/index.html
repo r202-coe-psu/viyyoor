@@ -1,0 +1,45 @@
+{% extends '/admin/index.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  {% if request.path == url_for('admin.users.index') %}
+    <div class="section active">User</div>
+  {% else %}
+    <a class="active" href="{{ url_for('admin.users.index') }}">User</a>
+    <span class="divider">/</span>
+  {% endif %}
+{% endblock %}
+
+{% block dashboard_title %}
+  User
+{% endblock %}
+
+{% block content %}
+  <div style="margin-top: 2em;">
+    <a href="{{ url_for('admin.users.add_or_edit') }}" class="ui icon primary button"><i class="add icon"></i> Add</a>
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Operation</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td class="single line">
+            <a class="ui circular icon primary button" href="{{ url_for('admin.users.add_or_edit', user_id=user.id) }}"><i class="edit icon"></i></a>
+            {#
+            <a class="ui circular icon negative button" href="{{ url_for('admin.endorsers.delete', user_id=user.id) }}"><i class="trash icon"></i></a>
+            #}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+{% endblock %}

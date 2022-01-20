@@ -7,7 +7,8 @@ from flask import url_for
 
 class User(me.Document, UserMixin):
     meta = {"collection": "users", "strict": False}
-    username = me.StringField(required=True, unique=True)
+    username = me.StringField(required=True, unique=True, max_length=100)
+    citizen_id = me.StringField(max_length=13)
 
     title = me.StringField(max_length=50)
     email = me.StringField(required=True, unique=True, max_length=200)
@@ -51,7 +52,7 @@ class User(me.Document, UserMixin):
     def get_signatures(self):
         from .signatures import Signature
 
-        return Signature.objects(owner=self)
+        return Signature.objects(owner=self).order_by("-id")
 
     def get_signature(self):
         from .signatures import Signature

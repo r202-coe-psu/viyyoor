@@ -1,0 +1,43 @@
+{% extends '/admin/users/index.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  {% if request.path == url_for('admin.users.add_or_edit') %}
+    <div class="section active">Add User</div>
+  {% else %}
+    <div class="section active">Edit User</div>
+  {% endif %}
+{% endblock %}
+
+{% block dashboard_title %}
+User
+{% endblock %}
+
+{% block content %}
+  <div class="ui segment">
+    <form method="POST" class="ui form">
+      {{ form.hidden_tag() }}
+      <div class="two fields">
+        {{ renderer.render_field(form.username) }}
+        {{ renderer.render_field(form.citizen_id) }}
+        {{ renderer.render_field(form.email) }}
+      </div>
+      {{ renderer.render_field(form.roles) }}
+      <div class="three fields">
+        {{ renderer.render_field(form.title) }}
+        {{ renderer.render_field(form.first_name) }}
+        {{ renderer.render_field(form.last_name) }}
+      </div>
+      <div class="three fields">
+        {{ renderer.render_field(form.title_th) }}
+        {{ renderer.render_field(form.first_name_th) }}
+        {{ renderer.render_field(form.last_name_th) }}
+      </div>
+      <div class="field" style="margin-top: 1ex;">
+        <button type="submit" class="ui button primary">Submit</button>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}
