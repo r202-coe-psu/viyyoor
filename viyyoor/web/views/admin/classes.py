@@ -368,6 +368,8 @@ def prepair_certificate(class_id):
                 class_=class_,
                 participant_id=participant.participant_id,
             )
+            certificate.last_updated_by = current_user._get_current_object()
+            certificate.issuer = current_user._get_current_object()
             certificate.save()
             certificate.file.put(
                 class_.render_certificate(participant.participant_id, "pdf")

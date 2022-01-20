@@ -109,7 +109,7 @@
           <td>
             <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.participant_id, extension='png') }}" target="_blank"><i class="certificate icon"></i></a>
             {% set certificate = class_.get_certificate(participant.participant_id) %}
-            {% if certificate and certificate.status == 'prerelease' %}
+            {% if certificate and certificate.status not in ['prepare'] %}
             <a class="ui icon button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank"><i class="certificate icon"></i></a>
             {% endif %}
             {#
