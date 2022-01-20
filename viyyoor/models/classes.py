@@ -170,7 +170,7 @@ class Class(me.Document):
             participant_name=participant.name.strip(),
             appreciate_text="".join(appreciate_text),
             class_name=self.printed_name,
-            issued_date=self.issued_date.strftime("%B %Y, %-d"),
+            issued_date=self.issued_date.strftime("%-d %B %Y"),
             validation_url=validation_url,
             validation_qrcode=f"image/png;base64,{qrcode_encoded}",
         )
