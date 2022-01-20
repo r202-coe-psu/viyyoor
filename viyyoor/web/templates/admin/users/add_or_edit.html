@@ -18,12 +18,15 @@ User
   <div class="ui segment">
     <form method="POST" class="ui form">
       {{ form.hidden_tag() }}
-      <div class="two fields">
+      <div class="three fields">
         {{ renderer.render_field(form.username) }}
         {{ renderer.render_field(form.citizen_id) }}
         {{ renderer.render_field(form.email) }}
       </div>
-      {{ renderer.render_field(form.roles) }}
+      <div class="two fields">
+        {{ renderer.render_field(form.roles) }}
+        {{ renderer.render_field(form.status) }}
+      </div>
       <div class="three fields">
         {{ renderer.render_field(form.title) }}
         {{ renderer.render_field(form.first_name) }}

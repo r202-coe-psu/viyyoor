@@ -102,7 +102,7 @@ BaseUserForm = model_form(
         "last_login_date",
         "picture",
         "roles",
-        "status",
+        # "status",
         "resources",
     ],
     field_args={
@@ -115,6 +115,7 @@ BaseUserForm = model_form(
         "biography": {"label": "Biography"},
         "email": {"label": "Email"},
         "username": {"label": "Username"},
+        "status": {"label": "Status"},
         "citizen_id": {"label": "Citizen ID"},
     },
 )

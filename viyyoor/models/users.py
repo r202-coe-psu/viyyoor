@@ -23,7 +23,7 @@ class User(me.Document, UserMixin):
 
     picture = me.ImageField(thumbnail_size=(800, 600, True))
 
-    status = me.StringField(required=True, default="disactive")
+    status = me.StringField(required=True, default="disactive", max_length=15)
     roles = me.ListField(me.StringField(), default=["user"])
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
