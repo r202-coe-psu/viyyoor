@@ -263,7 +263,7 @@ def add_participant_from_file(class_id):
         else:
             participant.group = row["grade"]
 
-        participant.name = row["name"].strip()
+        participant.name = str(row["name"]).strip()
         participant.last_updated_by = current_user._get_current_object()
         participant.updated_date = datetime.datetime.now()
         participant.extra = row.to_dict()
