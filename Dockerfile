@@ -10,8 +10,7 @@ ENV LC_ALL th_TH.UTF-8
 COPY . /app
 WORKDIR /app
 
-RUN mkdir -p /usr/share/fonts/opentype
-RUN cp -r fonts/* /usr/share/fonts/opentype/
+RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
 
 RUN npm install --prefix viyyoor/web/static
 
