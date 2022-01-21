@@ -10,6 +10,9 @@ ENV LC_ALL th_TH.UTF-8
 COPY . /app
 WORKDIR /app
 
+RUN mkdir -p /usr/share/fonts/opentype
+RUN cp -r fonts/* /usr/share/fonts/opentype/
+
 RUN npm install --prefix viyyoor/web/static
 
 ENV VIYYOOR_SETTINGS=/app/viyyoor-production.cfg
