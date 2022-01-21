@@ -46,8 +46,10 @@ def view(certificate_id):
     )
 
 
-@module.route("/<certificate_id>/certificate.pdf")
-def download(certificate_id):
+@module.route(
+    "/<certificate_id>/certificate.<extension>", defaults={"extension": "png"}
+)
+def download(certificate_id, extension):
     response = Response()
     response.status_code = 404
 
@@ -67,13 +69,23 @@ def download(certificate_id):
     class_ = certificate.class_
     participant = class_.get_participant(certificate.participant_id)
 
-    mimetype = "application/pdf"
+    if extension == "pdf":
+        mimetype = "application/pdf"
 
-    response = send_file(
-        certificate.file,
-        attachment_filename=f"certificate-{ participant.name.replace(' ', '-') }.pdf",
-        # as_attachment=True,
-        mimetype=mimetype,
-    )
+        response = send_file(
+            certificate.file,
+            attachment_filename=f"certificate-{ participant.name.replace(' ', '-') }.pdf",
+            # as_attachment=True,
+            mimetype=mimetype,
+        )
+    elif extension == "png":
+        mimetype = "image.png"
+
+        response = send_file(
+            class_.render_certificate(participant.participant_id, extension),
+            attachment_filename=f"certificate-{ participant.name.replace(' ', '-') }.ong",
+            # as_attachment=True,
+            mimetype=mimetype,
+        )
 
     return response
