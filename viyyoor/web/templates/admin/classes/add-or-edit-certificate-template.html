@@ -63,7 +63,7 @@
           <td>{{ v.name }}</td>
           <td>{{ v.appreciate_text }}</td>
           <td>{{ v.template.name }}</td>
-          <td>
+          <td class="single line">
             <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id, certificate_template_id=v.group) }}"><i class="edit icon"></i></a>
             <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_certificate_template', class_id=class_.id, certificate_template_id=v.group) }}"><i class="trash icon"></i></a>
           </td>
