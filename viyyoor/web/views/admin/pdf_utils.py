@@ -17,7 +17,7 @@ class RecordingPDFSurface(PDFSurface):
         return cairo_surface, width, height
 
 
-def export_certificates(class_, dpi=72):
+def export_certificates(class_, required_signature=True, dpi=72):
 
     output = io.BytesIO()
     surface = cairocffi.PDFSurface(output, 1, 1)
@@ -31,7 +31,9 @@ def export_certificates(class_, dpi=72):
         if not certificate:
             continue
 
-        bytestring = class_.render_certificate(participant.participant_id, "svg")
+        bytestring = class_.render_certificate(
+            participant.participant_id, "svg", required_signature
+        )
 
         image_surface = RecordingPDFSurface(
             Tree(bytestring=bytestring.read()), None, dpi
@@ -41,6 +43,7 @@ def export_certificates(class_, dpi=72):
         context.paint()
         surface.show_page()
     surface.finish()
+    print("finish")
 
     output.seek(0)
     return output

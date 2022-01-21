@@ -16,7 +16,7 @@
 
 {% block content %}
 
-<div class="ui container">
+<div class="">
   <div class="ui segment">
 		<div>
       <b>Printed Name:</b> {{ class_.printed_name }}
@@ -62,7 +62,7 @@
   </div>
 </div>
 
-<div class="ui container" style="margin-top: 1em;">
+<div class="" style="margin-top: 1em;">
     <div class="ui labeled icon menu">
     {% if class_.owner == current_user %}
       <a class="item" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i>Edit</a>
@@ -72,12 +72,13 @@
       <a class="item" href="{{ url_for('admin.classes.add_participant_from_file', class_id=class_.id) }}"><i class="user graduate file icon"></i>Participant From File</a>
       <a class="item" href="{{ url_for('admin.classes.prepair_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}" target="_blank"><i class="export file icon"></i>Export Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id, signature='off') }}" target="_blank"><i class="export file icon"></i>Export Certificate Without Sign</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate_url', class_id=class_.id) }}" target="_blank"><i class="export globe icon"></i>Export Certificate URL</a>
     {% endif %}
     </div>
 </div>
 
-<div class="ui container" style="margin-top: 1em;">
+<div class="" style="margin-top: 1em;">
 		<h2>Paticipants</h2>
 		<table class="ui celled table">
 			<thead>

@@ -203,6 +203,8 @@ class Class(me.Document):
         elif extension == "svg":
             output = data.encode()
 
+        print("check")
+
         image_io = io.BytesIO()
         image_io.write(output)
         image_io.seek(0)

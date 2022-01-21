@@ -413,14 +413,20 @@ def purge_certificate(class_id):
 @acl.roles_required("admin")
 def export_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
+    required_signature = True
+    txt_signature = request.args.get("signature", "on")
+    if txt_signature == "off":
+        required_signature = False
 
-    certificates = pdf_utils.export_certificates(class_)
+    certificates = pdf_utils.export_certificates(class_, required_signature)
     response = send_file(
         certificates,
         attachment_filename=f"{class_.id}-all.pdf",
         # as_attachment=True,
         mimetype="application/pdf",
     )
+
+    return response
 
 
 @module.route("/<class_id>/export_certificate_url")
