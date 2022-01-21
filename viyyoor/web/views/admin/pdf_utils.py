@@ -43,7 +43,6 @@ def export_certificates(class_, required_signature=True, dpi=72):
         context.paint()
         surface.show_page()
     surface.finish()
-    print("finish")
 
     output.seek(0)
     return output
