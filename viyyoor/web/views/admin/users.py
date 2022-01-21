@@ -13,7 +13,7 @@ module = Blueprint("users", __name__, url_prefix="/users")
 @acl.roles_required("admin")
 def index():
     form = forms.accounts.UserForm()
-    users = models.User.objects()
+    users = models.User.objects().order_by("-id")
     return render_template(
         "/admin/users/index.html",
         users=users,

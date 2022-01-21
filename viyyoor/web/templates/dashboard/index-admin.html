@@ -12,7 +12,7 @@
     <div class="ui segment">
       <h3>Endorsement</h3>
 
-      {% if endorses_classes | length == 0 %}
+      {% if endorses_classes and endorses_classes | length == 0 %}
         <div class="ui header">Waiting for new endorsement</div>
       {% else %}
       <table class="ui table celled">
@@ -48,7 +48,7 @@
       {% endif %}
     </div>
 
-  {% if endorsed_classes | length > 0 %}
+  {% if endorsed_classes and endorsed_classes | length > 0 %}
     <div class="ui segment">
       <h3>Last Courses</h3>
       <table class="ui table celled">

@@ -33,6 +33,9 @@ def index_admin():
         status="completed", class___in=classes
     ).distinct(field="class_")
 
+    endorses_classes.sort(key=lambda c: c.id, reverse=True)
+    endorsed_classes.sort(key=lambda c: c.id, reverse=True)
+
     return render_template(
         "/dashboard/index-admin.html",
         now=datetime.datetime.now(),
