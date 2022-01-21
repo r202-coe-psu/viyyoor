@@ -11,6 +11,10 @@ import base64
 PARTICIPANT_GROUP = [
     ("participant", "Participant"),
     ("achievement", "Achievement"),
+    ("winner", "Winner"),
+    ("first_runner_up", "First Runner-up"),
+    ("second_runner_up", "Second Runner-up"),
+    ("honorable_mention_prize", "Honorable Mention Prize"),
 ]
 
 ENDORSER_POSITIONS = [
