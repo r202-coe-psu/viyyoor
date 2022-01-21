@@ -9,9 +9,8 @@
       <i class="certificate icon"></i>
       <div class="content">
         <div class="header">
-        {{ class_.name }}
+        {{ class_.printed_name }}
         </div>
-        <p>{{ class_.description }}</p>
         <p><b>Date: </b> {{ class_.started_date.strftime("%-d %B %Y") }} - {{ class_.ended_date.strftime("%-d %B %Y") }}</p>
         {% if class_.instructors %}
           <p><b>Instructor: </b> {{ class_.instructors | join(", ") }}</p>
@@ -32,6 +31,15 @@
       {% endif %}
       <i class="globe icon"></i>
       Validate URL: <a class="ui primary label" href="{{ request.url }}"> {{ request.url }}</a>
+    </div>
+
+    <div class="ui segment">
+      <div class="ui message">
+        <div class="header">
+          About {{ class_.printed_name }}
+        </div>
+        <p>{{ class_.description }}</p>
+      </div>
     </div>
   </div>
 </div>
