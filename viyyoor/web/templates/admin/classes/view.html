@@ -53,12 +53,16 @@
     </div>
     
     <div>
-      <b>Endorsers</b> 
+      <b>Endorsers:</b> 
       {% for key, end in class_.endorsers.items() %}
         {{ end.user.first_name }} {{ end.user.last_name }}, 
       {% endfor %}
     </div>
-    
+    <div>
+      <b>Instructor:</b> 
+      {{ class_.instructors | join(', ') }}
+    </div>
+
   </div>
 </div>
 
