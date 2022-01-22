@@ -115,8 +115,8 @@ def render_certificate(class_id, participant_id, extension):
 
     image_io = class_.render_certificate(participant_id, extension)
 
-    if extension == "png":
-        mimetype = "image/png"
+    if extension in ["png", "svg"]:
+        mimetype = f"image/{extension}"
     elif extension == "pdf":
         mimetype = "application/pdf"
 

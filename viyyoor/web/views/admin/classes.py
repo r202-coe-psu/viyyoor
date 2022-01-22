@@ -305,6 +305,8 @@ def add_or_edit_certificate_template(class_id, certificate_template_id):
 
     if certificate_template_id:
         form = forms.classes.CertificateTemplateForm(obj=certificate_template)
+        if request.method == "GET":
+            form.template.data = str(certificate_template.template.id)
 
     form.template.choices = [(str(t.id), t.name) for t in templates]
 

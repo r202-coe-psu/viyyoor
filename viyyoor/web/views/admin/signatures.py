@@ -19,7 +19,7 @@ module = Blueprint("signatures", __name__, url_prefix="/signatures")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    signatures = models.Signature.objects(status="active")
+    signatures = models.Signature.objects(status="active").order_by("-id")
     return render_template(
         "/admin/signatures/index.html",
         signatures=signatures,

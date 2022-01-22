@@ -19,7 +19,7 @@ module = Blueprint("templates", __name__, url_prefix="/templates")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    templates = models.Template.objects(status="active")
+    templates = models.Template.objects(status="active").order_by("-id")
     return render_template(
         "/admin/templates/index.html",
         templates=templates,
