@@ -49,6 +49,7 @@ def view(certificate_id):
 @module.route(
     "/<certificate_id>/certificate.<extension>", defaults={"extension": "png"}
 )
+@module.route("/<certificate_id>/certificate.<extension>")
 def download(certificate_id, extension):
     response = Response()
     response.status_code = 404
