@@ -12,7 +12,7 @@
         {{ class_.printed_name }}
         </div>
         <p><b>Date: </b> {{ class_.started_date.strftime("%-d %B %Y") }} - {{ class_.ended_date.strftime("%-d %B %Y") }}</p>
-        {% if class_.instructors %}
+        {% if class_.instructors | length > 0 %}
           <p><b>Instructor: </b> {{ class_.instructors | join(", ") }}</p>
         {% endif %}
       </div>
