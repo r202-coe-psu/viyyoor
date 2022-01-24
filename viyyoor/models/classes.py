@@ -169,12 +169,16 @@ class Class(me.Document):
         qrcode_image.save(qrcode_io, "PNG", quality=100)
         qrcode_encoded = base64.b64encode(qrcode_io.getvalue()).decode("ascii")
 
+        class_date = self.started_date.strftime("%-d %B %Y")
+        if self.started_date != self.ended_date:
+            class_date += " - " + self.ended_date.strftime("%-d %B %Y")
         variables = dict(
             certificate_name=certificate_template.name,
             participant_name=participant.name.strip(),
             appreciate_text="".join(appreciate_text),
             class_name=self.printed_name,
             issued_date=self.issued_date.strftime("%-d %B %Y"),
+            class_date=class_date,
             validation_url=validation_url,
             validation_qrcode=f"image/png;base64,{qrcode_encoded}",
         )

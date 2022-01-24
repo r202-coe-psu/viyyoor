@@ -35,7 +35,7 @@
           </div>
           <div style="column">
             <i class="globe icon"></i>
-            Validate URL: <a class="ui primary label" href="{{ request.url }}"> {{ request.url }}</a>
+            Validate URL: <a class="ui primary label" href="{{ certificate.get_validation_url() }}"> {{ certificate.get_validation_url() }}</a>
           </div>
         </div>
       </div>
