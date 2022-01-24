@@ -179,7 +179,28 @@ class Class(me.Document):
             validation_qrcode=f"image/png;base64,{qrcode_encoded}",
         )
 
-        variables.update(participant.extra)
+        # variables.update(participant.extra)
+
+        for k, v in participant.extra.items():
+            if v is not str:
+                variables[k] = text[0]
+                continue
+
+            text = [t.strip() for t in v.split("\n") if len(t.strip()) > 0]
+
+            if len(text) == 0:
+                continue
+
+            if len(text) == 1:
+                variables[k] = text[0]
+                continue
+
+            printed_text = [f"<tspan>{text[0]}</tspan>"]
+            for i, t in enumerate(text[1:]):
+                printed_text.append(
+                    f'<tspan x="50%" dy="{10*(i+1)}">{t.strip()}</tspan>'
+                )
+            variables[k] = "".join(printed_text)
 
         for key, endorser in self.endorsers.items():
             variables[f"{ endorser.endorser_id }_name"] = endorser.name.strip()
