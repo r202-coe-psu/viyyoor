@@ -82,3 +82,9 @@ def index():
         return index_admin()
 
     return index_user()
+
+
+@module.route("/me")
+@login_required
+def show_my_certificates():
+    return index_user()

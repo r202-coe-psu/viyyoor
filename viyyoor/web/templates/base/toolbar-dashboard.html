@@ -14,6 +14,7 @@
 <a class="item" href="{{ url_for('dashboard.index') }}"><i class="icon dashboard"></i>Dashboard</a>
 
 {% if current_user.has_roles(['admin']) %}
+  <a class="item" href="{{ url_for('dashboard.show_my_certificates') }}"><i class="icon dashboard"></i>My Certificate</a>
   <a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
   <a class="item" href="{{ url_for('admin.classes.index') }}"><i class="icon users"></i>Class</a>
   <a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon user check"></i>Endorsers</a>
