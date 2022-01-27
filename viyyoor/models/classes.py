@@ -186,11 +186,11 @@ class Class(me.Document):
         # variables.update(participant.extra)
 
         for k, v in participant.extra.items():
-            if v is not str:
-                variables[k] = text[0]
+            if type(v) is not str:
+                variables[k] = v
                 continue
 
-            text = [t.strip() for t in v.split("\n") if len(t.strip()) > 0]
+            text = [t.strip() for t in v.split("\n")]
 
             if len(text) == 0:
                 continue
@@ -222,7 +222,7 @@ class Class(me.Document):
             variables[
                 f"{ endorser.endorser_id }_sign"
             ] = f"image/png;base64,{sign_encoded}"
-
+        # print(variables)
         data = template.render(**variables)
 
         if extension == "png":

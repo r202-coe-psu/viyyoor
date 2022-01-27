@@ -118,8 +118,8 @@
             <a class="ui icon button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank" tile><i class="certificate icon"></i></a>
             {% endif %}
             {% if certificate %}
-            <a class="ui icon button circular grey" href="{{ url_for('admin.classes.rebuild_certificate',class_id=class_.id, certificate_id=certificate.id) }}" target="_blank"><i class="undo icon"></i></a>
-            <a class="ui icon button circular negative" href="{{ url_for('admin.classes.purge_certificate',class_id=class_.id, certificate_id=certificate.id) }}" target="_blank"><i class="ban icon"></i></a>
+            <a class="ui icon button circular grey" href="{{ url_for('admin.classes.rebuild_certificate',class_id=class_.id, certificate_id=certificate.id) }}"><i class="undo icon"></i></a>
+            <a class="ui icon button circular negative" href="{{ url_for('admin.classes.purge_certificate',class_id=class_.id, certificate_id=certificate.id) }}"><i class="ban icon"></i></a>
             {% endif %}
 					</td>
 				</tr>

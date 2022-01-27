@@ -17,7 +17,7 @@ def sign_digital_signature(certificate, dc, reason=""):
 
     now = datetime.datetime.utcnow()
     date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
-    box = [5, 0, 300, 8]
+    box = [25, 0, 350, 5]
     dct = {
         "aligned": 0,
         "sigflags": 3,

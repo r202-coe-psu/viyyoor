@@ -33,6 +33,13 @@ class Certificate(me.Document):
 
     file = me.FileField(required=True, collection_name="certificate_fs")
 
+    def get_participant(self):
+        return self.class_.get_participant(self.participant_id)
+
+    def get_participant_name(self):
+        participant = self.get_participant()
+        return participant.name
+
     def get_validation_url(self):
         validation_url = request.host_url[:-1] + url_for(
             "certificates.view", certificate_id=self.id

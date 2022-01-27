@@ -1,6 +1,7 @@
 {% extends '/base/default-page.html' %}
 
-{% block title %}{{ class_.name.title() }} certificate{% endblock %}
+{% set participant = certificate.get_participant() %}
+{% block title %}{{ participant.name }} Certificate{% endblock %}
 
 {% block content %}
 <div class="ui container">
@@ -11,10 +12,20 @@
         <div class="header">
         {{ class_.printed_name }}
         </div>
-        <p><b>Date: </b> {{ class_.started_date.strftime("%-d %B %Y") }} - {{ class_.ended_date.strftime("%-d %B %Y") }}</p>
-        {% if class_.instructors | length > 0 %}
-          <p><b>Instructor: </b> {{ class_.instructors | join(", ") }}</p>
-        {% endif %}
+        <div>
+          <div><b>Name: </b> {{ participant.name }}</div>
+          <div>
+            <b>Date: </b> {{ class_.started_date.strftime("%-d %B %Y") }} - {{ class_.ended_date.strftime("%-d %B %Y") }}
+          </div>
+          <div>
+            {% if class_.instructors | length > 0 %}
+            <b>Instructor: </b> {{ class_.instructors | join(", ") }}</p>
+            {% endif %}
+          </div>
+          <div>
+            <b>Certificate ID: </b> {{ class_.id }}
+          </div>
+        </div>
       </div>
     </div>
 
