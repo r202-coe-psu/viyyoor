@@ -218,6 +218,13 @@ def delete_participant(class_id, participant_id):
     participant = class_.get_participant(participant_id)
 
     if participant:
+        certificate = models.Certificate.objects(
+            class_=class_, participant_id=participant_id
+        ).first()
+        if certificate:
+            certificate.status = "purge"
+            certificate.save()
+
         class_.participants.pop(participant_id)
         class_.save()
 
@@ -393,20 +400,53 @@ def prepair_certificate(class_id):
     return redirect(url_for("admin.classes.view", class_id=class_.id))
 
 
+@module.route("/<class_id>/rebuild_certificate")
+@acl.roles_required("admin")
+def rebuild_certificate(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    certificate_id = request.args.get("certificate_id", None)
+
+    query = None
+    if certificate_id:
+        query = models.Certificate.objects(id=certificate_id, class_=class_)
+    else:
+        query = models.Certificate.objects(class_=class_)
+
+    if query:
+        query.update(
+            status="prepare",
+            privacy="none",
+            endorsements={},
+            signed_date=None,
+            issued_date=None,
+            ca_download_url=None,
+            last_updated_by=current_user._get_current_object(),
+            updated_date=datetime.datetime.now(),
+        )
+
+    return redirect(url_for("admin.classes.view", class_id=class_.id))
+
+
 @module.route("/<class_id>/purge_certificate")
 @acl.roles_required("admin")
 def purge_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
-    models.Certificate.objects(class_=class_).update(
-        status="prepare",
-        privacy="none",
-        endorsements={},
-        signed_date=None,
-        issued_date=None,
-        ca_download_url=None,
-        last_updated_by=current_user._get_current_object(),
-        updated_date=datetime.datetime.now(),
-    )
+
+    certificate_id = request.args.get("certificate_id", None)
+
+    query = None
+    if certificate_id:
+        query = models.Certificate.objects(id=certificate_id, class_=class_)
+    else:
+        query = models.Certificate.objects(class_=class_)
+
+    if query:
+        query.update(
+            status="purge",
+            last_updated_by=current_user._get_current_object(),
+            updated_date=datetime.datetime.now(),
+        )
 
     return redirect(url_for("admin.classes.view", class_id=class_.id))
 
