@@ -51,6 +51,7 @@
     <thead>
       <tr>
         <th>ID</th>
+        <th>Common ID</th>
         <th>Name</th>
         <th>Group</th>
         <th>Operation</th>
@@ -59,6 +60,7 @@
     <tbody>
       {% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
         <tr>
+          <td>{{ participant.id }}</td>
           <td>{{ participant.common_id }}</td>
           <td>{{ participant.name }}</td>
           <td>{{ participant.get_group_display() }}</td>

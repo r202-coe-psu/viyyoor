@@ -253,11 +253,9 @@ def add_participant_from_file(class_id):
     dfs = pandas.read_excel(form.participant_file.data)
     dfs.columns = dfs.columns.str.lower()
     for index, row in dfs.iterrows():
-        pid = str(row["id"]).strip()
-        participant = class_.get_participant(pid)
-        if not participant:
-            participant = models.Participant(participant_id=pid)
-            class_.participants[pid] = participant
+        common_id = str(row["id"]).strip()
+        participant = models.Participant(common_id=common_id)
+        class_.participants[common_id] = participant
 
         if row["grade"] in ["A", "B+", "B", "C+", "C", "D+", "D", "E", "W"]:
             if row["grade"] in ["A", "B+", "B", "C+", "C"]:
