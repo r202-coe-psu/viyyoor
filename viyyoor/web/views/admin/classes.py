@@ -255,7 +255,7 @@ def add_participant_from_file(class_id):
     for index, row in dfs.iterrows():
         common_id = str(row["id"]).strip()
         participant = models.Participant(common_id=common_id)
-        class_.participants[common_id] = participant
+        class_.participants[str(participant.id)] = participant
 
         if row["grade"] in ["A", "B+", "B", "C+", "C", "D+", "D", "E", "W"]:
             if row["grade"] in ["A", "B+", "B", "C+", "C"]:
