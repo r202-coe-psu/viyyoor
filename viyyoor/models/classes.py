@@ -27,7 +27,7 @@ ENDORSER_POSITIONS = [
 
 
 class Participant(me.EmbeddedDocument):
-    id = me.ObjectIdField(required=True, default=bson.ObjectId())
+    id = me.ObjectIdField(required=True, default=bson.ObjectId)
     common_id = me.StringField(required=True, max_length=20)
     name = me.StringField(required=True, max_length=256)
     group = me.StringField(
