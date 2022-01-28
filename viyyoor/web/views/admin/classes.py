@@ -219,7 +219,7 @@ def delete_participant(class_id, participant_id):
 
     if participant:
         certificate = models.Certificate.objects(
-            class_=class_, pid=participant_id
+            class_=class_, participant_id=participant_id
         ).first()
         if certificate:
             certificate.status = "purge"
