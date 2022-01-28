@@ -83,6 +83,7 @@ BaseProfileForm = model_form(
         "last_name_th": {"label": "Thai Last Name"},
         "biography": {"label": "Biography"},
         "email": {"label": "Email"},
+        "citizen_id": {"label": "Citizen ID"},
     },
 )
 
