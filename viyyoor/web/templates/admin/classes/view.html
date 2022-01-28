@@ -96,7 +96,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
+        {% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
+            {% set certificate = class_.get_certificate(participant.id) %}
           <tr>
             <td>{{ participant.id }}</td>
             <td>
@@ -106,7 +107,7 @@
               {{ participant.name }}
             </td>
             <td> {{ participant.get_group_display() }} </td>
-            <td> {% set certificate = class_.get_certificate(participant.pid) %} 
+            <td>
               {% if certificate %}
                 {{ certificate.status.title() }}
               {% else %}
@@ -115,7 +116,6 @@
             </td>
           <td>
             <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.id, extension='png') }}" target="_blank" title='view'><i class="certificate icon"></i></a>
-            {% set certificate = class_.get_certificate(participant.id) %}
             {% if certificate and certificate.status not in ['prepare', 'purge'] %}
             <a class="ui icon button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank" tile><i class="certificate icon"></i></a>
             {% endif %}
