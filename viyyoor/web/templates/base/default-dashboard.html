@@ -1,6 +1,8 @@
 {% extends "/base/base-layout.html" %}
 
-{% block title %}{{ config.get('APP_TITLE') }} Dashboard{% endblock %}
+{% block title %}
+  {{ self.dashboard_title() }}
+{% endblock %}
 
 {% block default_head %}
   <style type="text/css">
@@ -113,7 +115,7 @@
     </a>
 
     <div class="item">
-      {% block dashboard_title %}Dashboard{% endblock %}
+      {% block dashboard_title %}{{ config.get('APP_TITLE') }} Dashboard{% endblock %}
     </div>
 
     {#

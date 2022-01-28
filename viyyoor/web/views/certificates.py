@@ -83,7 +83,7 @@ def download(certificate_id, extension):
         mimetype = "image.png"
 
         response = send_file(
-            class_.render_certificate(participant.participant_id, extension),
+            class_.render_certificate(participant.id, extension),
             attachment_filename=f"certificate-{ participant.name.replace(' ', '-') }.ong",
             # as_attachment=True,
             mimetype=mimetype,

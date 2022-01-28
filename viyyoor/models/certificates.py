@@ -11,10 +11,13 @@ class Endorsement(me.EmbeddedDocument):
 
 
 class Certificate(me.Document):
-    meta = {"collection": "certificates"}
+    meta = {
+        "collection": "certificates",
+    }
 
     class_ = me.ReferenceField("Class", dbref=True, required=True)
-    participant_id = me.StringField(required=True)
+    common_id = me.StringField(required=True)
+    participant_id = me.ObjectIdField(required=True)
 
     issued_date = me.DateTimeField()
     signed_date = me.DateTimeField()

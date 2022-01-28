@@ -47,9 +47,9 @@
 
     <tbody>
       {% for key, participant in class_.participants.items() | sort() %}
-      {% set certificate=class_.get_certificate(participant.participant_id) %}
+      {% set certificate=class_.get_certificate(participant.id) %}
       <tr>
-        <td>{{ participant.participant_id }}</td>
+        <td>{{ participant.id }}</td>
         <td>
           {{ participant.name }}
         </td>

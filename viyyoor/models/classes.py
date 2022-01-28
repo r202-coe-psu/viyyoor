@@ -1,4 +1,5 @@
 import mongoengine as me
+import bson
 import datetime
 
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
@@ -26,7 +27,8 @@ ENDORSER_POSITIONS = [
 
 
 class Participant(me.EmbeddedDocument):
-    participant_id = me.StringField(required=True, max_length=20)
+    id = me.ObjectIdField(required=True, default=bson.ObjectId())
+    common_id = me.StringField(required=True, max_length=20)
     name = me.StringField(required=True, max_length=256)
     group = me.StringField(
         required=True,
@@ -101,8 +103,19 @@ class Class(me.Document):
 
     status = me.StringField(required=True, default="active")
 
-    def get_participant(self, participant_id: str):
-        return self.participants.get(participant_id, None)
+    def get_participant(self, pid):
+        if type(pid) is not str:
+            pid = str(pid)
+
+        return self.participants.get(pid, None)
+
+    def get_participants_with_participant_id(self, participant_id: str):
+        participants = []
+        for p in self.participants:
+            if p.participant_id == participant_id:
+                participants.append(p)
+
+        return participants
 
     def get_endorser(self, endorser_id: str):
         return self.endorsers.get(endorser_id, None)
@@ -120,8 +133,11 @@ class Class(me.Document):
 
         return models.Certificate.objects(class_=self)
 
-    def get_certificate(self, participant_id: str):
+    def get_certificate(self, participant_id):
         from viyyoor import models
+
+        if not participant_id:
+            return None
 
         return models.Certificate.objects(
             class_=self, participant_id=participant_id

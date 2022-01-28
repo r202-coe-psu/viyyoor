@@ -25,14 +25,14 @@ def export_certificates(class_, required_signature=True, dpi=72):
 
     for key, participant in class_.participants.items():
         certificate = models.Certificate.objects(
-            class_=class_, participant_id=participant.participant_id
+            class_=class_, participant_id=participant.id
         ).first()
 
         if not certificate:
             continue
 
         bytestring = class_.render_certificate(
-            participant.participant_id, "svg", required_signature
+            participant.id, "svg", required_signature
         )
 
         image_surface = RecordingPDFSurface(

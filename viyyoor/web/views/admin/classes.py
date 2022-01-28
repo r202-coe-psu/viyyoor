@@ -195,9 +195,9 @@ def add_or_edit_participant(class_id, participant_id):
     if not participant:
         participant = models.Participant()
     else:
-        class_.participants.pop(participant_id)
+        class_.participants.pop(str(participant.id))
 
-    class_.participants[form.participant_id.data] = participant
+    class_.participants[str(participant.id)] = participant
 
     form.populate_obj(participant)
     if form.extra_data.data:
@@ -219,7 +219,7 @@ def delete_participant(class_id, participant_id):
 
     if participant:
         certificate = models.Certificate.objects(
-            class_=class_, participant_id=participant_id
+            class_=class_, pid=participant_id
         ).first()
         if certificate:
             certificate.status = "purge"
@@ -359,7 +359,7 @@ def delete_certificate_template(class_id, certificate_template_id):
 
 @module.route("/<class_id>/prepair_certificate")
 @acl.roles_required("admin")
-def prepair_certificate(class_id):
+def prepare_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
     models.Certificate.objects(class_=class_, status="prerelease").update(
         status="prepare",
@@ -369,25 +369,22 @@ def prepair_certificate(class_id):
 
     for key, participant in class_.participants.items():
         certificate = models.Certificate.objects(
-            class_=class_, participant_id=participant.participant_id, status="prepare"
+            class_=class_, participant_id=participant.id, status="prepare"
         ).first()
 
         if not certificate:
             certificate = models.Certificate(
                 class_=class_,
-                participant_id=participant.participant_id,
+                participant_id=participant.id,
+                common_id=participant.common_id,
             )
             certificate.last_updated_by = current_user._get_current_object()
             certificate.issuer = current_user._get_current_object()
             certificate.save()
-            certificate.file.put(
-                class_.render_certificate(participant.participant_id, "pdf")
-            )
+            certificate.file.put(class_.render_certificate(participant.id, "pdf"))
 
         else:
-            certificate.file.replace(
-                class_.render_certificate(participant.participant_id, "pdf")
-            )
+            certificate.file.replace(class_.render_certificate(participant.id, "pdf"))
 
         certificate.updated_date = datetime.datetime.now()
         certificate.issued_date = class_.issued_date

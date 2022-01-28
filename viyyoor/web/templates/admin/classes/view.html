@@ -74,7 +74,7 @@
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
       <a class="item" href="{{ url_for('admin.classes.add_participant_from_file', class_id=class_.id) }}"><i class="user graduate file icon"></i>Participant From File</a>
-      <a class="item" href="{{ url_for('admin.classes.prepair_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.prepare_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}" target="_blank"><i class="export file icon"></i>Export Certificate</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id, signature='off') }}" target="_blank"><i class="export file icon"></i>Export Certificate Without Sign</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate_url', class_id=class_.id) }}" target="_blank"><i class="export globe icon"></i>Export Certificate URL</a>
@@ -88,6 +88,7 @@
 			<thead>
 				<tr>
 						<th>ID</th>
+						<th>Common ID</th>
 						<th>Name</th>
             <th>Group</th>
             <th>Certificate Status</th>
@@ -97,14 +98,15 @@
 			<tbody>
 				{% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
           <tr>
+            <td>{{ participant.id }}</td>
             <td>
-              {{ participant.participant_id }}
+              {{ participant.common_id }}
             </td>
             <td>
               {{ participant.name }}
             </td>
             <td> {{ participant.get_group_display() }} </td>
-            <td> {% set certificate = class_.get_certificate(participant.participant_id) %} 
+            <td> {% set certificate = class_.get_certificate(participant.pid) %} 
               {% if certificate %}
                 {{ certificate.status.title() }}
               {% else %}
@@ -112,8 +114,8 @@
               {% endif %}
             </td>
           <td>
-            <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.participant_id, extension='png') }}" target="_blank" title='view'><i class="certificate icon"></i></a>
-            {% set certificate = class_.get_certificate(participant.participant_id) %}
+            <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.id, extension='png') }}" target="_blank" title='view'><i class="certificate icon"></i></a>
+            {% set certificate = class_.get_certificate(participant.id) %}
             {% if certificate and certificate.status not in ['prepare', 'purge'] %}
             <a class="ui icon button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank" tile><i class="certificate icon"></i></a>
             {% endif %}

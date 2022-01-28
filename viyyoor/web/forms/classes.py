@@ -76,7 +76,7 @@ BaseParticipantForm = model_form(
     FlaskForm,
     exclude=["updated_date", "last_updated_by", "extra"],
     field_args={
-        "participant_id": {"label": "Participant ID"},
+        "common_id": {"label": "Common ID"},
         "name": {"label": "Name"},
         "extra": {"label": "Extra"},
         "group": {"label": "Group"},
