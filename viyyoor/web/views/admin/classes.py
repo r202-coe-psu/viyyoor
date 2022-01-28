@@ -490,7 +490,11 @@ def export_certificate_url(class_id):
     output = io.BytesIO()
     df = pandas.DataFrame(row_list)
     writer = pandas.ExcelWriter(output, engine="xlsxwriter")
-    df.to_excel(writer, sheet_name="Sheet1")
+    df.index += 1
+    df.to_excel(
+        writer,
+        sheet_name="Sheet1",
+    )
     writer.save()
     response = Response(
         output.getvalue(),
