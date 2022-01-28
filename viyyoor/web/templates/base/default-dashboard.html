@@ -168,7 +168,9 @@
         {%- if self.dashboard_title().lower() != 'dashboard' %}
         <div class="ui segment">
           <div class="ui big breadcrumb">
-            {% block breadcrumbs %}{% endblock %}
+            {% block breadcrumbs %}
+              <div class="active section">Dashboard</div>
+            {% endblock %}
           </div>
         </div>
         {% endif -%}
