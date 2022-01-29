@@ -63,8 +63,7 @@ def index_admin():
 
 def index_user():
     certificates = models.Certificate.objects(
-        me.Q(participant_id=current_user.username)
-        | me.Q(participant_id=current_user.citizen_id)
+        me.Q(common_id=current_user.username) | me.Q(common_id=current_user.citizen_id)
     ).order_by("-id")
     now = datetime.datetime.now()
     return render_template(
