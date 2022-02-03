@@ -9,6 +9,7 @@ from flask import (
 )
 from flask_login import current_user, login_required
 import io
+from pdf2image import convert_from_bytes
 
 from .. import models
 
@@ -82,8 +83,14 @@ def download(certificate_id, extension):
     elif extension == "png":
         mimetype = "image.png"
 
+        image = convert_from_bytes(certificate.file.read(), dpi=100)
+        image_bytes = io.BytesIO()
+        image[0].save(image_bytes, "png")
+        image_bytes.seek(0)
+
         response = send_file(
-            class_.render_certificate(participant.id, extension),
+            image_bytes,
+            # class_.render_certificate(participant.id, extension),
             attachment_filename=f"certificate-{ participant.name.replace(' ', '-') }.ong",
             # as_attachment=True,
             mimetype=mimetype,

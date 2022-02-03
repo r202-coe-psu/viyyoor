@@ -477,7 +477,6 @@ def export_certificate_url(class_id):
     for certificate in certificates:
         participant = class_.get_participant(certificate.participant_id)
         if not participant:
-            print(certificate.participant_id, participant)
             continue
 
         data = {

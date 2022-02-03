@@ -255,7 +255,7 @@ class Class(me.Document):
         if extension == "png":
             output = cairosvg.svg2png(bytestring=data.encode())
         elif extension == "pdf":
-            output = cairosvg.svg2pdf(bytestring=data.encode())
+            output = cairosvg.svg2pdf(bytestring=data.encode(), dpi=300)
         elif extension == "svg":
             output = data.encode()
 

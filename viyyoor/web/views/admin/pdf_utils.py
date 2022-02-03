@@ -17,7 +17,7 @@ class RecordingPDFSurface(PDFSurface):
         return cairo_surface, width, height
 
 
-def export_certificates(class_, required_signature=True, dpi=72):
+def export_certificates(class_, required_signature=True, dpi=300):
 
     output = io.BytesIO()
     surface = cairocffi.PDFSurface(output, 1, 1)
