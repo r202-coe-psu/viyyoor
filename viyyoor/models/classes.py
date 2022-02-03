@@ -187,7 +187,18 @@ class Class(me.Document):
 
         class_date = self.started_date.strftime("%-d %B %Y")
         if self.started_date != self.ended_date:
-            class_date += " - " + self.ended_date.strftime("%-d %B %Y")
+            if (
+                self.started_date.year == self.ended_date.year
+                and self.started_date.month == self.ended_date.month
+            ):
+                class_date = "{sdate} - {edate} {month} {year}".format(
+                    sdate=self.started_date.strftime("%-d"),
+                    edate=self.ended_date.strftime("%-d"),
+                    month=self.ended_date.strftime("%B"),
+                    year=self.ended_date.year,
+                )
+            else:
+                class_date += " - " + self.ended_date.strftime("%-d %B %Y")
         variables = dict(
             certificate_name=certificate_template.name,
             participant_name=participant.name.strip(),
