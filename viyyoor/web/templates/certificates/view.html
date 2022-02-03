@@ -30,8 +30,8 @@
     </div>
 
 
-    <div>
-      <img class="ui image" src="{{ url_for('certificates.download', certificate_id=certificate.id, extension='png') }}">
+    <div class="ui image">
+      <img src="{{ url_for('certificates.download', certificate_id=certificate.id, extension='png') }}">
     </div>
 
     
