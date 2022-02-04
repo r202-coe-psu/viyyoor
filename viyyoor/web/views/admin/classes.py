@@ -253,38 +253,57 @@ def add_participant_from_file(class_id):
     dfs = pandas.read_excel(form.participant_file.data)
     dfs.columns = dfs.columns.str.lower()
     for index, row in dfs.iterrows():
-        common_id = str(row["id"]).strip()
-        participant = models.Participant(common_id=common_id)
-        class_.participants[str(participant.id)] = participant
-
-        if row["grade"] in ["A", "B+", "B", "C+", "C", "D+", "D", "E", "W"]:
-            if row["grade"] in ["A", "B+", "B", "C+", "C"]:
-                participant.group = "achievement"
-            elif row["grade"] in ["D+", "D"]:
-                participant.group = "participant"
-            else:
-                class_.participants.pop(pid)
-                continue
+        participant = None
+        if "id" in dfs.columns:
+            participant = class_.get_participant(row["id"])
         else:
-            participant.group = row["grade"]
+            participant = models.Participant()
 
-        participant.name = str(row["name"]).strip()
+        common_id = str(row["common_id"]).strip()
+        participant.common_id = common_id
+
+        if "grade" in dfs.columns:
+            if row["grade"] in [
+                "A",
+                "B+",
+                "B",
+                "C+",
+                "C",
+                "D+",
+                "D",
+                "E",
+                "W",
+            ]:
+                if row["grade"] in ["A", "B+", "B", "C+", "C"]:
+                    participant.group = "achievement"
+                elif row["grade"] in ["D+", "D"]:
+                    participant.group = "participant"
+                else:
+                    continue
+            else:
+                participant.group = row["grade"]
+
+        if "group" in dfs.columns:
+            participant.group = row["group"]
+
+        class_.participants[str(participant.id)] = participant
+        participant_name = ""
+
+        if "name" in dfs.columns:
+            participant_name = str(row["name"]).strip()
+
+        if "first_name" in dfs.columns and "last_name" in dfs.columns:
+            participant_name = f"{row['first_name']} {row['last_name']}"
+
+        if "title" in dfs.columns:
+            participant_name = f"{row['title']}{participant_name}"
+
+        participant.name = participant_name
         participant.last_updated_by = current_user._get_current_object()
         participant.updated_date = datetime.datetime.now()
         participant.extra = row.to_dict()
 
     class_.save()
-
-    # if not participant:
-    #     participant = class_.get_participant(participant_id)
-
-    # if not participant:
-    #     participant = models.Participant()
-    #     class_.participants.append(participant)
-
-    # form.populate_obj(participant)
-    # participant.last_updated_by = current_user._get_current_object()
-    # class_.save()
 
     return redirect(
         url_for("admin.classes.add_or_edit_participant", class_id=class_.id)
@@ -480,7 +499,7 @@ def export_certificate_url(class_id):
             continue
 
         data = {
-            "ID": certificate.participant_id,
+            "ID": certificate.id,
             "Name": participant.name,
             "URL": certificate.get_validation_url(),
         }
@@ -500,6 +519,42 @@ def export_certificate_url(class_id):
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={
             "Content-disposition": f"attachment; filename=export-certificate-url.xlsx"
+        },
+    )
+
+    return response
+
+
+@module.route("/<class_id>/export_participant_data")
+@acl.roles_required("admin")
+def export_participant_data(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    row_list = []
+
+    for pid, participant in class_.participants.items():
+        data = {
+            "ID": pid,
+            "common_id": participant.common_id,
+            "name": participant.name,
+            "group": participant.group,
+        }
+        data.update(participant.extra)
+        row_list.append(data)
+
+    output = io.BytesIO()
+    df = pandas.DataFrame(row_list)
+    writer = pandas.ExcelWriter(output, engine="xlsxwriter")
+    df.index += 1
+    df.to_excel(
+        writer,
+        sheet_name="Sheet1",
+    )
+    writer.save()
+    response = Response(
+        output.getvalue(),
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-disposition": f"attachment; filename=export-participant_data.xlsx"
         },
     )
 

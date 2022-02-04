@@ -17,6 +17,7 @@ loginpass = "^0.5"
 endesive = "^2.0.7"
 XlsxWriter = "^3.0.2"
 pdf2image = "^1.16.0"
+openpyxl = "^3.0.9"
 
 [tool.poetry.dev-dependencies]
 
