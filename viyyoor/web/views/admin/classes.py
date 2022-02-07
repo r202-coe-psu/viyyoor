@@ -262,6 +262,7 @@ def add_participant_from_file(class_id):
         common_id = str(row["common_id"]).strip()
         participant.common_id = common_id
 
+        participant.group = "participant"
         if "grade" in dfs.columns:
             if row["grade"] in [
                 "A",
@@ -280,8 +281,6 @@ def add_participant_from_file(class_id):
                     participant.group = "participant"
                 else:
                     continue
-            else:
-                participant.group = row["grade"]
 
         if "group" in dfs.columns:
             participant.group = row["group"]
