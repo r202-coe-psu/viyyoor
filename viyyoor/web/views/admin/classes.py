@@ -491,6 +491,7 @@ def export_certificate_url(class_id):
 
     certificates = models.Certificate.objects(class_=class_)
     row_list = []
+    including_keys = ["academy", "project_name"]
 
     for certificate in certificates:
         participant = class_.get_participant(certificate.participant_id)
@@ -502,6 +503,11 @@ def export_certificate_url(class_id):
             "Name": participant.name,
             "URL": certificate.get_validation_url(),
         }
+
+        for key in including_keys:
+            if key in participant.extra:
+                data[key] = participant.extra[key]
+
         row_list.append(data)
 
     output = io.BytesIO()
