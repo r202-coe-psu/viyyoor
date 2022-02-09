@@ -516,7 +516,7 @@ def export_certificate_url(class_id):
     df.index += 1
     df.to_excel(
         writer,
-        sheet_name="Sheet1",
+        sheet_name="URL",
     )
     writer.save()
     response = Response(
