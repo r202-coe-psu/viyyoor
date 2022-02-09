@@ -73,6 +73,7 @@ BaseProfileForm = model_form(
         "status",
         "username",
         "resources",
+        "other_ids",
     ],
     field_args={
         "title": {"label": "Title"},
@@ -92,6 +93,7 @@ class ProfileForm(BaseProfileForm):
     pic = fields.FileField(
         "Picture", validators=[FileAllowed(["png", "jpg"], "allow png and jpg")]
     )
+    other_ids = TagListField("Other IDs")
 
 
 BaseUserForm = model_form(

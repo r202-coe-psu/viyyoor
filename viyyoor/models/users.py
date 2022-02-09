@@ -9,6 +9,7 @@ class User(me.Document, UserMixin):
     meta = {"collection": "users", "strict": False}
     username = me.StringField(required=True, unique=True, max_length=100)
     citizen_id = me.StringField(max_length=13)
+    other_ids = me.ListField(me.StringField())
 
     title = me.StringField(max_length=50)
     email = me.StringField(required=True, unique=True, max_length=200)

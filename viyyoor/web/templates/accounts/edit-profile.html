@@ -28,10 +28,13 @@
         {{ renderer.render_field(form.first_name_th) }}
         {{ renderer.render_field(form.last_name_th) }}
       </div>
-      <div class="three fields">
-        {{ renderer.render_field(form.citizen_id) }}
+      <div class="two fields">
         {{ renderer.render_field(form.email) }}
         {{ renderer.render_fileinput(form.pic) }}
+      </div>
+      <div class="two fields">
+        {{ renderer.render_field(form.citizen_id) }}
+        {{ renderer.render_field(form.other_ids) }}
       </div>
       {{ renderer.render_field(form.biography) }}
       <button name="create" type="submit" class="ui primary button">Change</button>
