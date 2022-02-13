@@ -42,9 +42,3 @@ class Certificate(me.Document):
     def get_participant_name(self):
         participant = self.get_participant()
         return participant.name
-
-    def get_validation_url(self):
-        validation_url = request.host_url[:-1] + url_for(
-            "certificates.view", certificate_id=self.id
-        )
-        return validation_url

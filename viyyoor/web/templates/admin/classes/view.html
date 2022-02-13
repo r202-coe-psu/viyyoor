@@ -58,11 +58,65 @@
         {{ end.user.first_name }} {{ end.user.last_name }}, 
       {% endfor %}
     </div>
+    {% if class_.instructors %}
     <div>
       <b>Instructor:</b> 
       {{ class_.instructors | join(', ') }}
     </div>
+  {% endif %}
+  </div>
+</div>
 
+<div class="ui segment">
+  <div class="ui horizontal basic segments">
+    <div class="ui segment">
+      <div><b>Prepare Certificates</b></div>
+      <div>
+        {% if jobs['prepare certificates'] %}
+          {% if jobs['prepare certificates'].get_status(refresh=True) in ["queued", "started"] %}
+            <div class="ui label green" >{{ jobs['prepare certificates'].get_status(refresh=True).title() }}</div>
+          {% else %}
+            <div class="ui orange label" >{{ jobs['prepare certificates'].get_status(refresh=True).title() }}</div>
+          {% endif %}
+        {% else %}
+          <div class="ui label">Stop</div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="ui segment">
+      <div><b>Export Certificates</b></div>
+        {% if jobs['export certificates'] %}
+          {% if jobs['export certificates'].get_status(refresh=True) in ["queued", "started"] %}
+            <div class="ui label green" >{{ jobs['export certificates'].get_status(refresh=True).title() }}</div>
+          {% elif jobs['export certificates'].get_status(refresh=True) in ["failed"] %}
+            <div class="ui red label" >{{ jobs['export certificates'].get_status(refresh=True).title() }}</div>
+          {% else %}
+            <div class="ui orange label" >{{ jobs['export certificates'].get_status(refresh=True).title() }}</div>
+          {% endif %}
+        {% else %}
+          <div class="ui label">Stop</div>
+        {% endif %}
+        {% if job_data['export certificates'].exists() %}
+          <a target="_blank" class="ui button primary icon" href="{{ url_for('admin.classes.download', class_id=class_.id, filename=job_data['export certificates'].name) }}"><i class="ui download icon"></i> Download</a>
+        {% endif %}
+    </div>
+    <div class="ui segment">
+      <div><b>Export Certificates without Signature</b></div>
+        {% if jobs['export certificates without signature'] %}
+          {% if jobs['export certificates without signature'].get_status(refresh=True) in ["queued", "started"] %}
+            <div class="ui label green" >{{ jobs['export certificates without signature'].get_status(refresh=True).title() }}</div>
+          {% elif jobs['export certificates without signature'].get_status(refresh=True) in ["failed"] %}
+            <div class="ui label red" >{{ jobs['export certificates without signature'].get_status(refresh=True).title() }}</div>
+          {% else %}
+            <div class="ui orange label" >{{ jobs['export certificates without signature'].get_status(refresh=True).title() }}</div>
+          {% endif %}
+        {% else %}
+          <div class="ui label">Stop</div>
+        {% endif %}
+        {% if job_data['export certificates without signature'].exists() %}
+          <a target="_blank" class="ui button primary icon" href="{{ url_for('admin.classes.download', class_id=class_.id, filename=job_data['export certificates without signature'].name) }}"><i class="ui download icon"></i> Download</a>
+        {% endif %}
+    </div>
   </div>
 </div>
 
@@ -76,8 +130,8 @@
       <a class="item" href="{{ url_for('admin.classes.add_participant_from_file', class_id=class_.id) }}"><i class="user graduate file icon"></i>Participant From File</a>
       <a class="item" href="{{ url_for('admin.classes.prepare_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
       <a class="item" href="{{ url_for('admin.classes.export_participant_data', class_id=class_.id) }}" target="_blank"><i class="list icon"></i>Export Participant Data</a>
-      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}" target="_blank"><i class="export file icon"></i>Export Certificate</a>
-      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id, signature='off') }}" target="_blank"><i class="export file icon"></i>Export Certificate Without Sign</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}"><i class="export file icon"></i>Export Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id, signature='off') }}"><i class="export file icon"></i>Export Certificate Without Sign</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate_url', class_id=class_.id) }}" target="_blank"><i class="export globe icon"></i>Export Certificate URL</a>
     {% endif %}
     </div>

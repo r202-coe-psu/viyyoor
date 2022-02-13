@@ -1,4 +1,5 @@
 import optparse
+import pathlib
 
 from flask import Flask
 
@@ -7,21 +8,26 @@ from . import views
 from . import acl
 from . import caches
 from . import oauth2
+from . import redis_rq
 
 app = Flask(__name__)
 
 
 def create_app():
     app.config.from_object("viyyoor.default_settings")
-    app.config.from_envvar(
-        "VIYYOOR_SETTINGS", silent=True
-    )
+    app.config.from_envvar("VIYYOOR_SETTINGS", silent=True)
+
+    VIYYOOR_CACHE_DIR = app.config.get("VIYYOOR_CACHE_DIR")
+    p = pathlib.Path(VIYYOOR_CACHE_DIR)
+    if not p.exists():
+        p.mkdir(parents=True, exist_ok=True)
 
     models.init_db(app)
     views.register_blueprint(app)
     acl.init_acl(app)
     caches.init_cache(app)
     oauth2.init_oauth(app)
+    redis_rq.init_rq(app)
 
     return app
 

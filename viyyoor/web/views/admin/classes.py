@@ -6,20 +6,26 @@ from flask import (
     send_file,
     request,
     Response,
+    current_app,
+    abort,
 )
 from flask_login import current_user
 
 import datetime
+import pathlib
 
-from viyyoor import models
-from viyyoor.web import acl, forms
-
-from . import pdf_utils
 import pandas
 import xlsxwriter
 import json
 import io
 from copy import deepcopy
+
+
+from viyyoor import models
+from viyyoor.web import acl, forms, redis_rq
+
+from . import pdf_utils
+from . import certificate_utils
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -68,9 +74,26 @@ def create_or_edit(class_id):
 @acl.roles_required("admin")
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
+    job_keys = {
+        f"prepare certificates": f"prepare_certificates_{class_.id}",
+        f"export certificates": f"export_certificates_{class_.id}_on",
+        f"export certificates without signature": f"export_certificates_{class_.id}_off",
+    }
+
+    jobs = {}
+    job_data = {}
+    for key, job_id in job_keys.items():
+        jobs[key] = redis_rq.redis_queue.get_job(job_id)
+        if "export" in key:
+            job_data[key] = pathlib.Path(
+                f"{current_app.config['VIYYOOR_CACHE_DIR']}/{job_id}.pdf"
+            )
+
     return render_template(
         "/admin/classes/view.html",
         class_=class_,
+        jobs=jobs,
+        job_data=job_data,
     )
 
 
@@ -383,33 +406,18 @@ def prepare_certificate(class_id):
         updated_date=datetime.datetime.now(),
     )
 
-    for key, participant in class_.participants.items():
-        certificate = models.Certificate.objects(
-            class_=class_, participant_id=participant.id, status="prepare"
-        ).first()
+    kwargs = {
+        "validated_url_template": request.host_url[:-1]
+        + url_for("certificates.view", certificate_id="{certificate_id}")
+    }
 
-        if not certificate:
-            certificate = models.Certificate(
-                class_=class_,
-                participant_id=participant.id,
-                common_id=participant.common_id,
-            )
-            certificate.last_updated_by = current_user._get_current_object()
-            certificate.issuer = current_user._get_current_object()
-            certificate.save()
-            certificate.file.put(class_.render_certificate(participant.id, "pdf"))
-
-        else:
-            certificate.file.replace(class_.render_certificate(participant.id, "pdf"))
-
-        certificate.updated_date = datetime.datetime.now()
-        certificate.issued_date = class_.issued_date
-        certificate.last_updated_by = current_user._get_current_object()
-        certificate.issuer = current_user._get_current_object()
-        certificate.status = "prerelease"
-        certificate.privacy = "prerelease"
-        certificate.save()
-
+    job = redis_rq.redis_queue.queue.enqueue(
+        certificate_utils.create_certificates,
+        args=(class_, current_user._get_current_object()),
+        kwargs=kwargs,
+        job_id=f"prepare_certificates_{class_.id}",
+    )
+    print("submit", job.get_id())
     return redirect(url_for("admin.classes.view", class_id=class_.id))
 
 
@@ -470,18 +478,42 @@ def export_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
     required_signature = True
     txt_signature = request.args.get("signature", "on")
+    if txt_signature not in ["on", "off"]:
+        txt_signature = "on"
+
     if txt_signature == "off":
         required_signature = False
 
-    certificates = pdf_utils.export_certificates(class_, required_signature)
-    response = send_file(
-        certificates,
-        attachment_filename=f"{class_.id}-all.pdf",
-        # as_attachment=True,
-        mimetype="application/pdf",
-    )
+    # certificates = pdf_utils.export_certificates(class_, required_signature)
+    # response = send_file(
+    #     certificates,
+    #     attachment_filename=f"{class_.id}-all.pdf",
+    #     # as_attachment=True,
+    #     mimetype="application/pdf",
+    # )
 
-    return response
+    # return response
+    VIYYOOR_CACHE_DIR = current_app.config.get("VIYYOOR_CACHE_DIR")
+    filename = (
+        f"{VIYYOOR_CACHE_DIR}/export_certificates_{class_.id}_{txt_signature}.pdf"
+    )
+    p = pathlib.Path(filename)
+    if p.exists():
+        p.unlink(missing_ok=True)
+
+    kwargs = {
+        "filename": filename,
+        "validated_url_template": request.host_url[:-1]
+        + url_for("certificates.view", certificate_id="{certificate_id}"),
+    }
+    job = redis_rq.redis_queue.queue.enqueue(
+        pdf_utils.export_certificates,
+        args=(class_, required_signature),
+        kwargs=dict(filename=filename),
+        job_id=f"export_certificates_{class_.id}_{txt_signature}",
+    )
+    print("submit", job.get_id())
+    return redirect(url_for("admin.classes.view", class_id=class_.id))
 
 
 @module.route("/<class_id>/export_certificate_url")
@@ -561,6 +593,28 @@ def export_participant_data(class_id):
         headers={
             "Content-disposition": f"attachment; filename=export-participant_data.xlsx"
         },
+    )
+
+    return response
+
+
+@module.route("/<class_id>/download/<filename>")
+@acl.roles_required("admin")
+def download(class_id, filename):
+    p = pathlib.Path(f"{current_app.config['VIYYOOR_CACHE_DIR']}/{filename}")
+    if not p.exists():
+        return abort(404)
+
+    class_ = models.Class.objects.get(id=class_id)
+    if not class_:
+        return abort(404)
+
+    f = open(p, "rb")
+    response = send_file(
+        f,
+        attachment_filename=filename,
+        # as_attachment=True,
+        mimetype="application/pdf",
     )
 
     return response

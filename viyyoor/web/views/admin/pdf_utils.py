@@ -6,6 +6,8 @@ from cairosvg.surface import PDFSurface
 
 from viyyoor import models
 
+from . import certificate_utils
+
 
 class RecordingPDFSurface(PDFSurface):
     surface_class = cairocffi.RecordingSurface
@@ -17,7 +19,12 @@ class RecordingPDFSurface(PDFSurface):
         return cairo_surface, width, height
 
 
-def export_certificates(class_, required_signature=True, dpi=300):
+def generate_certificates(
+    class_,
+    required_signature=True,
+    dpi=300,
+    validated_url_template="http://localhost/certificates/{certificate_id}",
+):
 
     output = io.BytesIO()
     surface = cairocffi.PDFSurface(output, 1, 1)
@@ -31,8 +38,8 @@ def export_certificates(class_, required_signature=True, dpi=300):
         if not certificate:
             continue
 
-        bytestring = class_.render_certificate(
-            participant.id, "svg", required_signature
+        bytestring = certificate_utils.render_certificate(
+            class_, participant.id, "svg", required_signature, validated_url_template
         )
 
         image_surface = RecordingPDFSurface(
@@ -46,3 +53,21 @@ def export_certificates(class_, required_signature=True, dpi=300):
 
     output.seek(0)
     return output
+
+
+def export_certificates(
+    class_,
+    required_signature=True,
+    dpi=300,
+    filename="",
+    validated_url_template="http://localhost/certificates/{certificate_id}",
+):
+    output = generate_certificates(
+        class_, required_signature, dpi, validated_url_template
+    )
+
+    if not filename:
+        return output
+
+    with open(filename, "wb") as f:
+        f.write(output.read())
