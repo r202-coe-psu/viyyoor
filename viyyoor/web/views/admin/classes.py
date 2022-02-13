@@ -416,6 +416,7 @@ def prepare_certificate(class_id):
         args=(class_, current_user._get_current_object()),
         kwargs=kwargs,
         job_id=f"prepare_certificates_{class_.id}",
+        timeout=600,
     )
     print("submit", job.get_id())
     return redirect(url_for("admin.classes.view", class_id=class_.id))
@@ -511,6 +512,7 @@ def export_certificate(class_id):
         args=(class_, required_signature),
         kwargs=dict(filename=filename),
         job_id=f"export_certificates_{class_.id}_{txt_signature}",
+        timeout=600,
     )
     print("submit", job.get_id())
     return redirect(url_for("admin.classes.view", class_id=class_.id))
