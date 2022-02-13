@@ -399,12 +399,8 @@ def delete_certificate_template(class_id, certificate_template_id):
 @acl.roles_required("admin")
 def prepare_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
-    force = request.args.get("force", "false").lower()
-    statuses = ["prerelease"]
-    if force == "true":
-        statuses.append("completed")
 
-    models.Certificate.objects(class_=class_, status__in=statuses).update(
+    models.Certificate.objects(class_=class_, status="prerelease").update(
         status="prepare",
         last_updated_by=current_user._get_current_object(),
         updated_date=datetime.datetime.now(),
