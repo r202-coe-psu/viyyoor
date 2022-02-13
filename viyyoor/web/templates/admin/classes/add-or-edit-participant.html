@@ -50,6 +50,7 @@
   <table class="ui celled table">
     <thead>
       <tr>
+        <th>Order</th>
         <th>ID</th>
         <th>Common ID</th>
         <th>Name</th>
@@ -60,6 +61,7 @@
     <tbody>
       {% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
         <tr>
+          <td>{{ loop.index }}</td>
           <td>{{ participant.id }}</td>
           <td>{{ participant.common_id }}</td>
           <td>{{ participant.name }}</td>

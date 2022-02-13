@@ -217,10 +217,9 @@ def add_or_edit_participant(class_id, participant_id):
 
     if not participant:
         participant = models.Participant()
-    else:
-        class_.participants.pop(str(participant.id))
-
-    class_.participants[str(participant.id)] = participant
+        class_.participants[str(participant.id)] = participant
+    # else:
+    #     class_.participants.pop(str(participant.id))
 
     form.populate_obj(participant)
     if form.extra_data.data:
@@ -404,8 +403,6 @@ def prepare_certificate(class_id):
     statuses = ["prerelease"]
     if force == "true":
         statuses.append("completed")
-
-    print("xxx", statuses)
 
     models.Certificate.objects(class_=class_, status__in=statuses).update(
         status="prepare",

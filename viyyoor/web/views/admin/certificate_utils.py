@@ -18,8 +18,11 @@ def create_certificates(
 ):
     for key, participant in class_.participants.items():
         certificate = models.Certificate.objects(
-            class_=class_, participant_id=participant.id, status="prepare"
+            class_=class_, participant_id=participant.id
         ).first()
+
+        if certificate and certificate.status != "prepare":
+            continue
 
         if not certificate:
             certificate = models.Certificate(
