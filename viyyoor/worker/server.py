@@ -34,6 +34,6 @@ class WorkerServer:
         self.conn = redis.from_url(redis_url)
 
     def run(self):
-        with Connection(conn):
+        with Connection(self.conn):
             worker = ViyyoorWorker(list(map(Queue, listen)), settings=self.settings)
             worker.work()
