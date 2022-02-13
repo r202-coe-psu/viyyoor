@@ -33,6 +33,7 @@ class Certificate(me.Document):
     endorsements = me.MapField(field=me.EmbeddedDocumentField(Endorsement))
 
     ca_download_url = me.StringField()
+    validated_url = me.StringField()
 
     file = me.FileField(required=True, collection_name="certificate_fs")
 

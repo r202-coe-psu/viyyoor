@@ -13,8 +13,9 @@ import datetime
 from viyyoor import models
 from .. import forms
 from .. import acl
+from .. import redis_rq
 
-from .digital_signatures import sign_digital_signature
+from . import digital_signatures
 
 module = Blueprint(
     "classes",
@@ -84,18 +85,17 @@ def endorse(class_id):
                 break
 
         if check_approval:
-            dc = (
-                models.DigitalCertificate.objects(status="active")
-                .order_by("-id")
-                .first()
-            )
-            sign_digital_signature(certificate, dc)
-            certificate.signed_date = datetime.datetime.now()
-            certificate.status = "completed"
-            certificate.privacy = "public"
+            certificate.status = "signing"
 
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
+
+    job = redis_rq.redis_queue.queue.enqueue(
+        digital_signatures.sign_certificates,
+        args=(class_id,),
+        job_id=f"endorsements_certificates_{class_.id}",
+    )
+    print("submit", job.get_id())
 
     return redirect(url_for("dashboard.index"))
 

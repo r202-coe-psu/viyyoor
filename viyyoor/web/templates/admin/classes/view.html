@@ -74,7 +74,7 @@
       <div>
         {% if jobs['prepare certificates'] %}
           {% if jobs['prepare certificates'].get_status(refresh=True) in ["queued", "started"] %}
-            <div class="ui label green" >{{ jobs['prepare certificates'].get_status(refresh=True).title() }}</div>
+            <div class="ui label yellow" >{{ jobs['prepare certificates'].get_status(refresh=True).title() }}</div>
           {% else %}
             <div class="ui orange label" >{{ jobs['prepare certificates'].get_status(refresh=True).title() }}</div>
           {% endif %}
@@ -87,7 +87,7 @@
       <div><b>Export Certificates</b></div>
         {% if jobs['export certificates'] %}
           {% if jobs['export certificates'].get_status(refresh=True) in ["queued", "started"] %}
-            <div class="ui label green" >{{ jobs['export certificates'].get_status(refresh=True).title() }}</div>
+            <div class="ui label yellow" >{{ jobs['export certificates'].get_status(refresh=True).title() }}</div>
           {% elif jobs['export certificates'].get_status(refresh=True) in ["failed"] %}
             <div class="ui red label" >{{ jobs['export certificates'].get_status(refresh=True).title() }}</div>
           {% else %}
@@ -104,7 +104,7 @@
       <div><b>Export Certificates without Signature</b></div>
         {% if jobs['export certificates without signature'] %}
           {% if jobs['export certificates without signature'].get_status(refresh=True) in ["queued", "started"] %}
-            <div class="ui label green" >{{ jobs['export certificates without signature'].get_status(refresh=True).title() }}</div>
+            <div class="ui label yellow" >{{ jobs['export certificates without signature'].get_status(refresh=True).title() }}</div>
           {% elif jobs['export certificates without signature'].get_status(refresh=True) in ["failed"] %}
             <div class="ui label red" >{{ jobs['export certificates without signature'].get_status(refresh=True).title() }}</div>
           {% else %}
@@ -138,22 +138,24 @@
 </div>
 
 <div class="" style="margin-top: 1em;">
-		<h2>Paticipants</h2>
-		<table class="ui celled table">
-			<thead>
-				<tr>
-						<th>ID</th>
-						<th>Common ID</th>
-						<th>Name</th>
-            <th>Group</th>
-            <th>Certificate Status</th>
-						<th>Operation</th>
-				</tr>
-			</thead>
-			<tbody>
+  <h2>Paticipants</h2>
+  <table class="ui celled table">
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>ID</th>
+        <th>Common ID</th>
+        <th>Name</th>
+        <th>Group</th>
+        <th>Certificate Status</th>
+        <th>Operation</th>
+      </tr>
+    </thead>
+    <tbody>
         {% for key, participant in class_.participants.items() | sort(attribute='1.participant_id') %}
             {% set certificate = class_.get_certificate(participant.id) %}
-          <tr>
+            <tr>
+              <td>{{ loop.index }}</td>
             <td>{{ participant.id }}</td>
             <td>
               {{ participant.common_id }}

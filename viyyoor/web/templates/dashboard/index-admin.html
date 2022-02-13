@@ -56,6 +56,8 @@
           <tr>
             <th>Class</th>
             <th>Endorser</th>
+            <th>Status</th>
+
           </tr>
         </thead>
         <tbody>
@@ -70,6 +72,20 @@
                 {% for key, endorser in class_.endorsers.items() %}
                   {{ endorser.user.first_name }} {{ endorser.user.last_name }},
                 {% endfor %}
+              </td>
+              <td>
+                {% set job = endorsed_jobs[ class_.id| string] %}
+                {% if job %}
+                  {% if job.get_status(refresh=True) in ["queued", "started"] %}
+                    <div class="ui label yellow" >{{ job.get_status(refresh=True).title() }}</div>
+                  {% elif job.get_status(refresh=True) in ["failed"] %}
+                    <div class="ui label red" >{{ job.get_status(refresh=True).title() }}</div>
+                  {% else %}
+                    <div class="ui orange label" >{{ job.get_status(refresh=True).title() }}</div>
+                  {% endif %}
+                {% else %}
+                  <div class="ui label green">Completed</div>
+                {% endif %}
               </td>
             </tr>
         {% endfor %}

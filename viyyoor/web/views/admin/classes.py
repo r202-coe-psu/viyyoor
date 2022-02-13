@@ -19,7 +19,7 @@ import xlsxwriter
 import json
 import io
 from copy import deepcopy
-
+from urllib import parse
 
 from viyyoor import models
 from viyyoor.web import acl, forms, redis_rq
@@ -400,7 +400,14 @@ def delete_certificate_template(class_id, certificate_template_id):
 @acl.roles_required("admin")
 def prepare_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
-    models.Certificate.objects(class_=class_, status="prerelease").update(
+    force = request.args.get("force", "false").lower()
+    statuses = ["prerelease"]
+    if force == "true":
+        statuses.append("completed")
+
+    print("xxx", statuses)
+
+    models.Certificate.objects(class_=class_, status__in=statuses).update(
         status="prepare",
         last_updated_by=current_user._get_current_object(),
         updated_date=datetime.datetime.now(),
@@ -408,7 +415,7 @@ def prepare_certificate(class_id):
 
     kwargs = {
         "validated_url_template": request.host_url[:-1]
-        + url_for("certificates.view", certificate_id="{certificate_id}")
+        + parse.unquote(url_for("certificates.view", certificate_id="{certificate_id}"))
     }
 
     job = redis_rq.redis_queue.queue.enqueue(

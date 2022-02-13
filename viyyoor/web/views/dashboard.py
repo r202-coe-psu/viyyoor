@@ -4,6 +4,8 @@ from flask_login import login_required, current_user
 from viyyoor import models
 import mongoengine as me
 
+from .. import redis_rq
+
 import datetime
 
 module = Blueprint("dashboard", __name__, url_prefix="/dashboard")
@@ -53,11 +55,19 @@ def index_admin():
     endorses_classes.sort(key=lambda c: c.id, reverse=True)
     endorsed_classes.sort(key=lambda c: c.id, reverse=True)
 
+    endorsed_jobs = dict()
+    redis_queue = redis_rq.redis_queue
+    for c in endorsed_classes:
+        endorsed_jobs[str(c.id)] = redis_queue.get_job(
+            f"endorsements_certificates_{c.id}"
+        )
+
     return render_template(
         "/dashboard/index-admin.html",
         now=datetime.datetime.now(),
         endorses_classes=endorses_classes,
         endorsed_classes=endorsed_classes,
+        endorsed_jobs=endorsed_jobs,
     )
 
 

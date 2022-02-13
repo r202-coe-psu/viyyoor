@@ -1,0 +1,35 @@
+{% extends '/admin/certificates/index.html' %}
+{% import '/base/error-handler.html' as eh %}
+
+{% block dashboard_title %}Certificate{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <i class="right angle icon divider"></i>
+  <div class="active section">{{ signature.owner.first_name }} {{ signature.owner.last_name }} </div>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="">
+  <div class="ui segment">
+		<div>
+			<b>Owner:</b> {{ signature.owner.first_name }} {{ signature.owner.last_name }}
+		</div>
+		<div>
+			<b>Last Updated By:</b> {{ signature.last_updated_by.first_name }} {{ signature.last_updated_by.last_name }}
+		</div>
+		<div>
+			<b>Updated Date:</b> {{ signature.updated_date }}
+    </div>
+		<div>
+			<b>Filename:</b> {{ signature.file.filename }}
+    </div>
+  </div>
+  <div class="ui segment">
+    <img src="{{ url_for('admin.signatures.download', signature_id=signature.id, filename=signature.file.filename) }}"/>
+  </div>
+
+</div>
+{% endblock %}

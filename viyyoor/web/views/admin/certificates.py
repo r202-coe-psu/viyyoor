@@ -12,14 +12,18 @@ module = Blueprint("certificates", __name__, url_prefix="/certificates")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    return "certificates"
+    certificates = models.Certificate.objects
+    return render_template(
+        "/admin/certificates/index.html",
+        certificates=certificates,
+    )
 
 
 @module.route("/<certificate_id>/delete")
 @acl.roles_required("admin")
-def delete(user_id):
-    certificate = models.Certificate.objects.get(id=user_id)
-    certificate.satus = "delete"
-    certificate.save()
+def delete(certificate_id):
+    certificate = models.Certificate.objects.get(id=certificate_id)
+    certificate.file.delete()
+    certificate.delete()
 
-    return ""
+    return redirect(url_for("admin.certificates.index"))

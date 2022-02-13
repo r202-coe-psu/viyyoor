@@ -9,7 +9,20 @@ services:
         restart: always
         networks:
             - default
- 
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
+    redis:
+        image: redis
+        container_name: viyyoor-redis
+        restart: always
+        networks:
+            - default
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
     web:
         build: .
         image: viyyoor-image
@@ -32,7 +45,28 @@ services:
             options:
                 max-size: "10m"
                 max-file: "3"
-    
+    worker:
+        build: .
+        image: viyyoor-image
+        container_name: viyyoor-worker
+        volumes:
+            - ../deployment:/deployment
+            - /etc/localtime:/etc/localtime:ro
+        depends_on:
+            - mongodb
+            - redis
+        links:
+            - mongodb
+            - redis
+        restart: always
+        environment:
+            VIYYOOR_SETTINGS: /app/viyyoor-production.cfg
+        command:
+            viyyoor-worker
+        logging:
+            options:
+                max-size: "10m"
+                max-file: "3"
 
 networks:
     default:

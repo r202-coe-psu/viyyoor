@@ -30,7 +30,14 @@ def create_certificates(
             certificate.last_updated_by = user
             certificate.issuer = user
             certificate.save()
-            certificate.file.put(class_.render_certificate(participant.id, "pdf"))
+            certificate.file.put(
+                render_certificate(
+                    class_,
+                    participant.id,
+                    "pdf",
+                    validated_url_template=validated_url_template,
+                )
+            )
 
         else:
             certificate.file.replace(
@@ -42,6 +49,9 @@ def create_certificates(
                 )
             )
 
+        certificate.validated_url = validated_url_template.format(
+            certificate_id=certificate.id
+        )
         certificate.updated_date = datetime.datetime.now()
         certificate.issued_date = class_.issued_date
         certificate.last_updated_by = user

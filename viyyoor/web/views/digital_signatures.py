@@ -4,6 +4,21 @@ from endesive.pdf import cms
 import datetime
 import io
 
+from viyyoor import models
+
+
+def sign_certificates(class_):
+    certificates = models.Certificate.objects(class_=class_, status="signing")
+    for certificate in certificates:
+        dc = models.DigitalCertificate.objects(status="active").order_by("-id").first()
+        sign_digital_signature(certificate, dc)
+        certificate.signed_date = datetime.datetime.now()
+        certificate.status = "completed"
+        certificate.privacy = "public"
+
+        certificate.updated_date = datetime.datetime.now()
+        certificate.save()
+
 
 def sign_digital_signature(certificate, dc, reason=""):
 
