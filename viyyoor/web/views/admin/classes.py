@@ -537,7 +537,7 @@ def export_certificate_url(class_id):
         data = {
             "ID": certificate.id,
             "Name": participant.name,
-            "URL": certificate.get_validation_url(),
+            "URL": certificate.validated_url,
         }
 
         for key in including_keys:
