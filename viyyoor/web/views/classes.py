@@ -95,6 +95,7 @@ def endorse(class_id):
         args=(class_id,),
         job_id=f"endorsements_certificates_{class_.id}",
         timeout=600,
+        job_timeout=600,
     )
     print("submit", job.get_id())
 
