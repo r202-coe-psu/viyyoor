@@ -69,7 +69,7 @@ def render_certificate(
     participant_id,
     extension,
     required_signature=True,
-    validated_url_template="https://localhost/{certificate_url}",
+    validated_url_template="https://localhost/certificates/{certificate_id}",
 ):
 
     participant = class_.get_participant(participant_id)
@@ -93,7 +93,9 @@ def render_certificate(
 
     certificate = class_.get_certificate(participant_id)
 
-    validation_url = validated_url_template.format(certificate_id=certificate.id)
+    validation_url = validated_url_template.format(certificate_id="test")
+    if certificate:
+        validation_url = validated_url_template.format(certificate_id=certificate.id)
 
     qr = qrcode.QRCode(
         version=1,

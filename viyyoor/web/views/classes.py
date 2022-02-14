@@ -16,6 +16,7 @@ from .. import acl
 from .. import redis_rq
 
 from . import digital_signatures
+from .admin import certificate_utils
 
 module = Blueprint(
     "classes",
@@ -115,7 +116,7 @@ def render_certificate(class_id, participant_id, extension):
     if not certificate_template:
         return response
 
-    image_io = class_.render_certificate(participant_id, extension)
+    image_io = certificate_utils.render_certificate(class_, participant_id, extension)
 
     if extension in ["png", "svg"]:
         mimetype = f"image/{extension}"
