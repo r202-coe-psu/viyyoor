@@ -9,6 +9,7 @@ from flask import (
 )
 from flask_login import current_user, login_required
 import datetime
+from urllib import parse
 
 from viyyoor import models
 from .. import forms
@@ -116,7 +117,15 @@ def render_certificate(class_id, participant_id, extension):
     if not certificate_template:
         return response
 
-    image_io = certificate_utils.render_certificate(class_, participant_id, extension)
+    image_io = certificate_utils.render_certificate(
+        class_,
+        participant_id,
+        extension,
+        validated_url_template=request.host_url[:-1]
+        + parse.unquote(
+            url_for("certificates.view", certificate_id="{certificate_id}")
+        ),
+    )
 
     if extension in ["png", "svg"]:
         mimetype = f"image/{extension}"
