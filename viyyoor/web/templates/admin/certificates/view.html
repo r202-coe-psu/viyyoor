@@ -1,35 +1,59 @@
-{% extends '/admin/certificates/index.html' %}
-{% import '/base/error-handler.html' as eh %}
-
-{% block dashboard_title %}Certificate{% endblock %}
+{% extends '/base/default-dashboard.html' %}
 
 {% block breadcrumbs %}
-  {{ super() }}
-  <i class="right angle icon divider"></i>
-  <div class="active section">{{ signature.owner.first_name }} {{ signature.owner.last_name }} </div>
+<a href="{{ url_for('admin.certificates.index') }}" class="section">Certificate</a>
 {% endblock %}
 
+{% block _title %}
+Certificate
+{% endblock %}
+
+{% block dashboard_title %}
+Certificate
+{% endblock %}
 
 {% block content %}
 
-<div class="">
-  <div class="ui segment">
-		<div>
-			<b>Owner:</b> {{ signature.owner.first_name }} {{ signature.owner.last_name }}
-		</div>
-		<div>
-			<b>Last Updated By:</b> {{ signature.last_updated_by.first_name }} {{ signature.last_updated_by.last_name }}
-		</div>
-		<div>
-			<b>Updated Date:</b> {{ signature.updated_date }}
-    </div>
-		<div>
-			<b>Filename:</b> {{ signature.file.filename }}
-    </div>
-  </div>
-  <div class="ui segment">
-    <img src="{{ url_for('admin.signatures.download', signature_id=signature.id, filename=signature.file.filename) }}"/>
+  <div style="margin-top: 1ex;">
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Order</th>
+          <th>ID</th>
+          <th>Owner</th>
+          <th>Class</th>
+          <th>Issued Date</th>
+          <th>Signed Date</th>
+          <th>Operation</th>
+        </tr>
+      </thead>
+      <tbody>
+    {% for certificate in certificates %}
+      <tr>
+        <td>{{ loop.index  }}</td>
+        <td>{{ certificate.id }}</td>
+        <td>
+          {{ certificate.get_participant().name }}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.classes.view', class_id=certificate.class_.id) }}">{{ certificate.class_.name }}</a>
+        </td>
+        <td>
+          {{ certificate.issued_date }}
+        </td>
+        <td>
+          {% if certificate.signed_date %}
+            {{ certificate.signed_date }}
+          {% endif %}
+        </td>
+        <td class="single line">
+          <a class="ui circular button negative icon" href="{{ url_for('admin.certificates.delete', certificate_id=certificate.id) }}"><i class="trash icon"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+      </tbody>
+    </table>
   </div>
 
-</div>
+
 {% endblock %}

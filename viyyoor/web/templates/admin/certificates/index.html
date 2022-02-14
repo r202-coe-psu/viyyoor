@@ -19,35 +19,24 @@ Certificate
       <thead>
         <tr>
           <th>Order</th>
-          <th>ID</th>
-          <th>Owner</th>
           <th>Class</th>
           <th>Issued Date</th>
-          <th>Signed Date</th>
           <th>Operation</th>
         </tr>
       </thead>
       <tbody>
-    {% for certificate in certificates %}
+    {% for class_ in classes %}
       <tr>
         <td>{{ loop.index  }}</td>
-        <td>{{ certificate.id }}</td>
         <td>
-          {{ certificate.get_participant().name }}
+          <a href="{{ url_for('admin.certificates.view_in_class', class_id=class_.id) }}">
+            {{ class_.name }}
+          </a>
         </td>
         <td>
-          <a href="{{ url_for('admin.classes.view', class_id=certificate.class_.id) }}">{{ certificate.class_.name }}</a>
-        </td>
-        <td>
-          {{ certificate.issued_date }}
-        </td>
-        <td>
-          {% if certificate.signed_date %}
-            {{ certificate.signed_date }}
-          {% endif %}
+          {{ class_.issued_date }}
         </td>
         <td class="single line">
-          <a class="ui circular button negative icon" href="{{ url_for('admin.certificates.delete', certificate_id=certificate.id) }}"><i class="trash icon"></i></a>
         </td>
       </tr>
     {% endfor %}

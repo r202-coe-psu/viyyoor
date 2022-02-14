@@ -12,9 +12,30 @@ module = Blueprint("certificates", __name__, url_prefix="/certificates")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
-    certificates = models.Certificate.objects
+    classes = models.Certificate.objects().distinct(field="class_")
+
+    classes.sort(key=lambda c: c.id, reverse=True)
+    certificate_stat = {}
+    for class_ in classes:
+        certificate_stat[str(class_.id)] = models.Certificate.objects(
+            class_=class_
+        ).count()
+
     return render_template(
         "/admin/certificates/index.html",
+        classes=classes,
+        certificate_stat=certificate_stat,
+    )
+
+
+@module.route("/classes/<class_id>")
+@acl.roles_required("admin")
+def view_in_class(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    certificates = models.Certificate.objects(class_=class_).exclude("file")
+
+    return render_template(
+        "/admin/certificates/view.html",
         certificates=certificates,
     )
 
