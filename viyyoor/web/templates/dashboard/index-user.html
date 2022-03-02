@@ -13,10 +13,14 @@
         <div class="content">
           <div class="header">{{ certificate.class_.name }}</div>
           <div class="description">
-            <p>{{ certificate.class_.description }}</p>
             {% if certificate.class_.instructors %}
               <p><b>Instructor: </b> {{ certificate.class_.instructors | join(',') }}</p>
             {% endif %}
+            {% if 'project_name' in certificate.get_participant().extra %}
+              <p><b>Project: </b> {{ certificate.get_participant().extra['project_name'] }}</p>
+            {% endif %}
+              <p><b>Issued Date: </b> {{ certificate.issued_date.date() }}</p>
+            <p>{{ certificate.class_.description }}</p>
           </div>
         </div>
         <a class="ui bottom attached primary button" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank">
@@ -24,8 +28,7 @@
           View
         </a>
       </div>
-    </div>
-    {% endfor %}
+      {% endfor %}
   </div>
 </div>
 {% endblock %}

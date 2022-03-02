@@ -511,7 +511,7 @@ def export_certificate(class_id):
     job = redis_rq.redis_queue.queue.enqueue(
         pdf_utils.export_certificates,
         args=(class_, required_signature),
-        kwargs=dict(filename=filename),
+        kwargs=kwargs,
         job_id=f"export_certificates_{class_.id}_{txt_signature}",
         timeout=600,
         job_timeout=600,
