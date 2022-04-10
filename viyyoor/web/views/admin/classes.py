@@ -410,7 +410,7 @@ def prepare_certificate(class_id):
         "validated_url_template": request.host_url[:-1]
         + parse.unquote(url_for("certificates.view", certificate_id="{certificate_id}"))
     }
-    certificate_utils.create_certificates(class_, current_user._get_current_object())
+
     job = redis_rq.redis_queue.queue.enqueue(
         certificate_utils.create_certificates,
         args=(class_, current_user._get_current_object()),
