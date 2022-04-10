@@ -22,7 +22,7 @@ class RecordingPDFSurface(PDFSurface):
 def generate_certificates(
     class_,
     required_signature=True,
-    dpi=300,
+    dpi=100,
     validated_url_template="http://localhost/certificates/{certificate_id}",
 ):
 
@@ -58,7 +58,7 @@ def generate_certificates(
 def export_certificates(
     class_,
     required_signature=True,
-    dpi=300,
+    dpi=100,
     filename="",
     validated_url_template="http://localhost/certificates/{certificate_id}",
 ):
