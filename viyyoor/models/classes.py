@@ -16,6 +16,7 @@ PARTICIPANT_GROUP = [
     ("first_runner_up", "First Runner-up"),
     ("second_runner_up", "Second Runner-up"),
     ("honorable_mention_prize", "Honorable Mention Prize"),
+    ("advisor", "Advisor"),
 ]
 
 ENDORSER_POSITIONS = [
