@@ -1,0 +1,31 @@
+{% extends '/admin/organizations/index.html' %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block dashboard_title %}
+{{ organization.name }}
+{# <a class="bug popup icon item" data-content="Edit This Page" href="{{ url_for('organizations.edit', organization_id=organization.id) }}">
+    <h3><i class="edit icon"></i></h3>
+</a>
+#}
+{% endblock %}
+
+{% block breadcrumbs %}
+{{ super() }}
+{% if request.endpoint == 'admin.organizations.view' %}
+<div class="active section">{{ organization.name }}</div>
+{% else %}
+<a href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
+<div class="divider"> / </div>
+{% endif %}
+{% endblock %}
+
+
+
+{% block content %}
+<div class='ui segment'>
+    <b>Organization:</b> {{ organization.name }} <br>
+    <b>Description:</b> {{ organization.description }}      
+</div>
+
+{% endblock %}

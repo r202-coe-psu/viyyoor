@@ -1,0 +1,51 @@
+{% extends "/admin/organizations/index.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block title %}
+{{ 'Create' if 'create' in request.path else 'Edit' }}
+ Organization
+ {% endblock %}
+
+{% block dashboard_title %}
+{{ 'Create' if 'create' in request.path else 'Edit' }}
+ Organization
+ {% endblock %} 
+
+{% block breadcrumbs %}
+
+{{ super() }}
+{% if request.endpoint == 'admin.organizations.create_or_edit' %}
+<div class="active section">
+{{ 'Create' if 'create' in request.path else 'Edit' }} Organization
+</div>
+{% else %}
+<a href="{{ url_for('admin.organizations.create_or_edit') }}" class="section">
+{{ 'Create' if 'create' in request.path else 'Edit' }} Organization
+</a>
+<div class="divider"> / </div>
+{% endif %}
+
+{% endblock %} 
+
+{% block content %}
+<div class="ui segment">
+    {# <h2>{{ 'Create' if 'create' in request.path else 'Edit' }} Organization</h2> #}
+    <form method="POST" class="ui form">
+        {{ form.csrf_token }}
+        <div class="field two column">
+            <div class="two field">
+              {{ renderer.render_field(form.name) }}
+            </div>
+            <div class="two field">
+              {{ renderer.render_field(form.description) }}
+            </div>
+        </div>
+        <div style="margin-top: 2%;">
+            <button name="create" type="submit" class="ui primary button">
+              <i class="icon save"></i>
+              {{ 'Create' if 'create' in request.path else 'Edit' }}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

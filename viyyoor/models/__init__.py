@@ -7,6 +7,7 @@ from .templates import Template
 from .signatures import Signature
 from .certificates import Certificate, Endorsement
 from .digital_certificates import DigitalCertificate
+from .organizations import Organization
 
 db = MongoEngine()
 
