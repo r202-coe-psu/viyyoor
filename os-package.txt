@@ -1,4 +1,4 @@
-sudo apt install swig zip curl cairosvg
+sudo apt install swig zip curl cairosvg poppler-utils
 mkdir ~/.fonts
 wget https://cdn.discordapp.com/attachments/949685788386422864/1021143688556056616/PSU_Stidti_Desktop.zip
 unzip PSU_Stidti_Desktop.zip -d ~/.fonts && rm -rf ~/.fonts/__MACOSX PSU_Stidti_Desktop.zip
