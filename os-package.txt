@@ -1,5 +1,6 @@
 sudo apt install swig zip curl
 mkdir ~/.fonts
-wget https://cdn.discordapp.com/attachments/949685788386422864/1021143688556056616/PSU_Stidti_Desktop.zip -d ~/.fonts && rm -rf __MACOSX PSU_Stidti_Desktop.zip
+wget https://cdn.discordapp.com/attachments/949685788386422864/1021143688556056616/PSU_Stidti_Desktop.zip
+unzip PSU_Stidti_Desktop.zip -d ~/.fonts && rm -rf ~/.fonts/__MACOSX PSU_Stidti_Desktop.zip
 docker run --name redis-server -p 6379:6379 -d redis
 docker run --name mongodb -p 27017:27017 -v $(pwd)/mongodb:/data/db -d mongo
