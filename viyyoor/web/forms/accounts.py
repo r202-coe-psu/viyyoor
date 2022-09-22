@@ -107,6 +107,7 @@ BaseUserForm = model_form(
         "roles",
         # "status",
         "resources",
+        "dashboard_setting",
     ],
     field_args={
         "title": {"label": "Title"},

@@ -23,7 +23,7 @@ def index_admin():
     classes_set = set()
     endorsed_query = dict()
     endorses_query = dict()
-
+   
     for ep in endorser_positions:
         queries = {f"endorsers__{ep[0]}__user": current_user._get_current_object()}
         endorsed_query[

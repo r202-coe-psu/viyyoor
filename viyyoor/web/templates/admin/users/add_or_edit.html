@@ -23,9 +23,10 @@ User
         {{ renderer.render_field(form.citizen_id) }}
         {{ renderer.render_field(form.email) }}
       </div>
-      <div class="two fields">
+      <div class="three fields">
         {{ renderer.render_field(form.roles) }}
         {{ renderer.render_field(form.status) }}
+        {{ renderer.render_field(org_form.organization) }}
       </div>
       <div class="three fields">
         {{ renderer.render_field(form.title) }}

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user
 
 import datetime
@@ -26,23 +26,33 @@ def index():
 @acl.roles_required("admin")
 def add_or_edit(user_id):
     form = forms.accounts.UserForm()
+    org_form = forms.dashboard.DashboardSetting()
     user = None
+
     if user_id:
         user = models.User.objects(id=user_id).first()
         form = forms.accounts.UserForm(obj=user)
+        org_form = forms.dashboard.DashboardSetting(obj=user.dashboard_setting)
+    
+    if request.method == "GET" and user.dashboard_setting.organization:
+        org_form.organization.data = user.dashboard_setting.organization
 
     if not form.validate_on_submit():
         return render_template(
             "/admin/users/add_or_edit.html",
             user=user,
             form=form,
+            org_form=org_form,
         )
 
     if not user:
         user = models.User()
 
-    form.populate_obj(user)
 
+    form.populate_obj(user)
+    org_form.populate_obj(user.dashboard_setting)
+
+    user.dashboard_setting.updated_date = datetime.datetime.now()
     user.save()
 
     return redirect(url_for("admin.users.index"))
