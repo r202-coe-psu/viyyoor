@@ -34,8 +34,8 @@ Profile
 
       <div class="twelve wide column">
         <div>
-          <h3 class="ui header">{{ user.first_name }} {{ user.last_name }}</h3>
-          <h3 class="ui header">{{ user.first_name_th if user.first_name_th else "ยังไม่ได้ตั้งค่าชื่อ-นามสกุลภาษาไทย" }} {{ user.last_name_th if user.last_name_th else ""}}</h3>
+          <h3 class="ui header">{{ user.first_name }} {{ user.last_name }}<br>
+          {{ user.first_name_th if user.first_name_th else "" }} {{ user.last_name_th if user.last_name_th else ""}}</h3>
           Email:
           <div class="ui label large">
             <i class="mail icon"></i>
