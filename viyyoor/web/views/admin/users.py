@@ -26,13 +26,13 @@ def index():
 @acl.roles_required("admin")
 def add_or_edit(user_id):
     form = forms.accounts.UserForm()
-    org_form = forms.dashboard.DashboardSetting()
+    org_form = forms.accounts.DashboardSetting()
     user = None
 
     if user_id:
         user = models.User.objects(id=user_id).first()
         form = forms.accounts.UserForm(obj=user)
-        org_form = forms.dashboard.DashboardSetting(obj=user.dashboard_setting)
+        org_form = forms.accounts.DashboardSetting(obj=user.dashboard_setting)
     
     if request.method == "GET" and user.dashboard_setting.organization:
         org_form.organization.data = user.dashboard_setting.organization

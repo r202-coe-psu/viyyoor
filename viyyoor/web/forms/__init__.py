@@ -4,7 +4,6 @@ from . import templates
 from . import signatures
 from . import digital_certificates
 from . import organizations
-from . import dashboard
 
 __all__ = [
     accounts,
@@ -13,5 +12,4 @@ __all__ = [
     signatures,
     digital_certificates,
     organizations,
-    dashboard,
 ]
