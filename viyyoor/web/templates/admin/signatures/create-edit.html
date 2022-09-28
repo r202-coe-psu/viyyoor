@@ -1,4 +1,4 @@
-{% extends '/admin/classes/index.html' %}
+{% extends '/admin/signatures/index.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block additional_js %}
@@ -30,7 +30,7 @@
 
 {% block breadcrumbs %}
   {{ super() }}
-  <i class="right angle icon divider"></i>
+  <div class="divider"> / </div>
   {% if 'edit' in request.path %}
     <div class="active section">Edit Signature: {{ signature.owner.first_mname }} {{ signature.owner.last_name }}</div>
   {% else %}

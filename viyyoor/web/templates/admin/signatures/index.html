@@ -1,7 +1,12 @@
 {% extends '/base/default-dashboard.html' %}
 
 {% block breadcrumbs %}
-<a href="{{ url_for('admin.signatures.index') }}" signature="section">Signature</a>
+{% if request.endpoint == 'admin.signatures.index' %}
+  <div class="active section">Signatures</div>
+{% else %}
+  <a href="{{ url_for('admin.signatures.index')}}" class="section">Signatures</a>
+{% endif %}
+
 {% endblock %}
 
 {% block _title %}

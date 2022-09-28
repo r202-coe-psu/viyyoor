@@ -1,4 +1,4 @@
-{% extends '/admin/classes/index.html' %}
+{% extends '/admin/templates/index.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block additional_js %}
@@ -30,7 +30,7 @@
 
 {% block breadcrumbs %}
   {{ super() }}
-  <i class="right angle icon divider"></i>
+  <span class="divider">/</span>
   {% if 'edit' in request.path %}
     <div class="active section">Edit Template: {{ form.name.data }}</div>
   {% else %}

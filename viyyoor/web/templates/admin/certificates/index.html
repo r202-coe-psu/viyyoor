@@ -1,7 +1,11 @@
 {% extends '/base/default-dashboard.html' %}
 
 {% block breadcrumbs %}
-<a href="{{ url_for('admin.certificates.index') }}" class="section">Certificate</a>
+{% if request.endpoint == 'admin.certificates.index' %}
+  <div class="active section">Certificate</div>
+{% else %}
+  <a href="{{ url_for('admin.certificates.index')}}" class="section">Certificate</a>
+{% endif %}
 {% endblock %}
 
 {% block _title %}

@@ -1,4 +1,4 @@
-{% extends '/admin/index.html' %}
+{% extends '/base/default-dashboard.html' %}
 {% import '/base/error-handler.html' as eh %}
 {% import '/base/html-renderer.html' as renderer %}
 
@@ -6,10 +6,17 @@
   Digital Certificate
 {% endblock %}
 
+{% block dashboard_title %}
+  Digital Certificate
+{% endblock %}
+
+
 {% block breadcrumbs %}
-{{ super() }}
-<i class="right angle icon divider"></i>
-<div class="active section">Digital Certificate</div>
+{% if request.endpoint == 'admin.digital_certificates.index' %}
+  <div class="active section">Digital Certificate</div>
+{% else %}
+  <a href="{{ url_for('admin.digital_certificates.index')}}" class="section">Digital Certificate</a>
+{% endif %}
 {% endblock %}
 
 {% block content %}

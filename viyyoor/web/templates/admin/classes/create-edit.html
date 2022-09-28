@@ -47,7 +47,7 @@
 
 {% block breadcrumbs %}
   {{ super() }}
-  <i class="right angle icon divider"></i>
+  <div class="divider"> / </div>
   {% if 'edit' in request.path %}
     <div class="active section">Edit Class: {{ form.name.data }}</div>
   {% else %}

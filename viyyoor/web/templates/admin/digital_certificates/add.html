@@ -1,4 +1,4 @@
-{% extends '/accounts/index.html' %}
+{% extends '/admin/digital_certificates/index.html' %}
 {% import '/base/error-handler.html' as eh %}
 {% import '/base/html-renderer.html' as renderer %}
 
@@ -8,7 +8,7 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-<i class="right angle icon divider"></i>
+<div class="divider"> / </div>
 <div class="active section">Add Digital Signature</div>
 {% endblock %}
 

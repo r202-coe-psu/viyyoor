@@ -1,7 +1,11 @@
 {% extends '/base/default-dashboard.html' %}
 
 {% block breadcrumbs %}
-<a href="{{ url_for('admin.classes.index') }}" class="section">Classes</a>
+{% if request.endpoint == 'admin.classes.index' %}
+  <div class="active section">Classes</div>
+{% else %}
+  <a href="{{ url_for('admin.classes.index')}}" class="section">Classes</a>
+{% endif %}
 {% endblock %}
 
 {% block dashboard_title %}
