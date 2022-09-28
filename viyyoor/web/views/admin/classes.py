@@ -187,7 +187,7 @@ def delete_endorser(class_id, endorser_id):
         class_.endorsers.pop(endorser_id)
         class_.save()
 
-    return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
+    return redirect(url_for("admin.classes.add_or_edit_endorser", class_id=class_.id))
 
 
 @module.route(

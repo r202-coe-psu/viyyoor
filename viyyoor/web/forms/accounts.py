@@ -74,6 +74,7 @@ BaseProfileForm = model_form(
         "username",
         "resources",
         "other_ids",
+        "dashboard_setting",
     ],
     field_args={
         "title": {"label": "Title"},
@@ -107,6 +108,7 @@ BaseUserForm = model_form(
         "roles",
         # "status",
         "resources",
+        "dashboard_setting",
     ],
     field_args={
         "title": {"label": "Title"},
@@ -126,3 +128,17 @@ BaseUserForm = model_form(
 
 class UserForm(BaseUserForm):
     roles = TagListField("Roles", default=["user"])
+
+
+BaseDashboardSettingForm = model_form(
+    models.users.DashboardSetting,
+    FlaskForm,
+    exclude=["updated_date"],
+    field_args={
+        "organization": {"label": "Organization", "label_modifier": lambda o: o.name},
+    },
+)
+
+
+class DashboardSetting(BaseDashboardSettingForm):
+    pass
