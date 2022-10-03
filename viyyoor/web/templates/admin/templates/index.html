@@ -46,5 +46,36 @@ Templates
     </table>
   </div>
 
+  <div style="margin-top: 5ex;">
+    <div class="ui link cards">
+      {% for template in templates %}
+      <div class="card">
+        <div class="image">
+          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
+        </div>
+        <div class="content">
+          <div class="header">{{ template.name }}</div>
+          <div class="meta">
+            <a>{{ template.tags | join(', ') }}</a>
+          </div>
+          <div class="description">
+            {{ template.description }}
+          </div>
+          <div class="owner"> 
+            <b>Owner : </b> {{ template.owner.first_name }} {{ template.owner.last_name }}
+          </div>
+        </div>
+        <div class="extra content">
+          <button class="ui primary button">
+            Use
+          </button>
+          <button class="ui button">
+            Share
+          </button>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
 
 {% endblock %}
