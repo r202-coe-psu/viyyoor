@@ -17,34 +17,6 @@ Templates
     <a href="{{ url_for('admin.templates.create_or_edit') }}" class="item"><i class="add icon"></i>Add</a>
   </div>
 
-  <div style="margin-top: 1ex;">
-    <table class="ui celled table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Operation</th>
-        </tr>
-      </thead>
-      <tbody>
-    {% for template in templates %}
-        <tr>
-          <td>
-            <a href="{{ url_for('admin.templates.view', template_id=template.id) }}">{{ template.name }}</a>
-          </td>
-          <td>
-            {{ template.description }}
-          </td>
-          <td class="single line">
-            <a class="ui circular button primary icon" href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i></a>
-            <a class="ui circular button primary icon" href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i></a>
-            <a class="ui circular button negative icon" href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i></a>
-          </td>
-        </tr>
-    {% endfor %}
-      </tbody>
-    </table>
-  </div>
 
   <div style="margin-top: 5ex;">
     <div class="ui link cards">
@@ -72,6 +44,24 @@ Templates
           <button class="ui button">
             Share
           </button>
+          <div class="ui dropdown">
+            <div class="text"></div>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+              <div class="item">
+                <span class="description">Edit</span>
+                <a class="ui circular button primary icon" href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i></a>
+              </div>
+              <div class="item">
+                <span class="description">Detail</span>
+                <a class="ui circular button primary icon" href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i></a>
+              </div>
+              <div class="item">
+                <span class="description">Delete</span>
+                <a class="ui circular button negative icon" href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i></a>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
     {% endfor %}
