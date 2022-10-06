@@ -25,6 +25,7 @@ Endorsers
       <thead>
         <tr>
           <th>Name</th>
+          <th>Organization</th>
           <th>Operation</th>
         </tr>
       </thead>
@@ -32,6 +33,7 @@ Endorsers
       {% for user in endorsers %}
         <tr>
           <td>{{ user.first_name }} {{ user.last_name }}</td>
+          <td>{{ user.user_setting.organization.name }}</td>
           <td class="single line">
             <a class="ui circular icon negative button" href="{{ url_for('admin.endorsers.delete', user_id=user.id) }}"><i class="trash icon"></i></a>
           </td>

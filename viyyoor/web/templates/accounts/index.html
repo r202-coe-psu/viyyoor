@@ -36,7 +36,7 @@ Profile
         <div>
           <h3 class="ui header">{{ user.first_name }} {{ user.last_name }}<br>
           {{ user.first_name_th if user.first_name_th else "" }} {{ user.last_name_th if user.last_name_th else ""}}<br>
-          {{ user.dashboard_setting.organization.name if user.dashboard_setting.organization else "" }}</h3>
+          {{ user.user_setting.organization.name if user.user_setting.organization else "" }}</h3>
           Email:
           <div class="ui label large">
             <i class="mail icon"></i>
