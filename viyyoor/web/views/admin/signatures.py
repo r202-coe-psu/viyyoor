@@ -40,6 +40,7 @@ def create_or_edit(signature_id):
     if signature_id:
         signature = models.Signature.objects.get(id=signature_id)
         form = forms.signatures.SignatureAdminForm(obj=signature)
+        form.user.data = str(signature.owner.id)
 
     endorsers = models.User.objects(roles="endorser")
     form.user.choices = [
