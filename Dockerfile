@@ -7,8 +7,6 @@ RUN sed -i '/th_TH.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 ENV LANG th_TH.UTF-8 
 ENV LANGUAGE th_TH:en 
 # ENV LC_ALL th_TH.UTF-8
-COPY . /app
-WORKDIR /app
 
 RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
 RUN npm install --prefix viyyoor/web/static
