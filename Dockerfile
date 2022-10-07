@@ -13,19 +13,27 @@ WORKDIR /app
 RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
 RUN npm install --prefix viyyoor/web/static
 
+
+RUN python3 -m venv /venv
+ENV PYTHON=/venv/bin/python3
+RUN $PYTHON -m pip install wheel poetry gunicorn
+
+WORKDIR /app
+COPY poetry.lock pyproject.toml /app/
+RUN $PYTHON -m poetry config virtualenvs.create false && $PYTHON -m poetry install --no-interaction --no-dev
+
+COPY viyyoor/web/static/package.json viyyoor/web/static/package-lock.json viyyoor/web/static/
+RUN npm install --prefix viyyoor/web/static
+
+COPY . /app
 ENV VIYYOOR_SETTINGS=/app/viyyoor-production.cfg
 
-RUN ln -s $(command -v python3) /usr/bin/python
-RUN pip3 install poetry uwsgi
-RUN poetry config virtualenvs.create false && poetry install --no-interaction
-ENV PYTHONPATH $(pwd):/usr/lib/python3.9/site-packages:$PYTHONPATH
-
 # For brython
-# RUN cd /app/viyyoor/web/static/brython; \
-#     for i in $(ls -d */); \
-#     do \
-#     cd $i; \
-#     python3 -m brython --make_package ${i%%/}; \
-#     mv *.brython.js ..; \
-#     cd ..; \
-#     done
+RUN cd /app/kampan/web/static/brython; \
+    for i in $(ls -d */); \
+    do \
+    cd $i; \
+    python3 -m brython --make_package ${i%%/}; \
+    mv *.brython.js ..; \
+    cd ..; \
+    done
