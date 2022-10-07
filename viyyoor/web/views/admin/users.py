@@ -26,17 +26,20 @@ def index():
 @acl.roles_required("admin")
 def add_or_edit(user_id):
     form = forms.accounts.UserForm()
-    org_form = forms.accounts.DashboardSetting()
+    org_form = forms.accounts.UserSetting()
+    organizations = models.Organization.objects()
     user = None
+    org_form.organization.choices.extend([(str(org.id), org.name) for org in organizations])
 
     if user_id:
         user = models.User.objects(id=user_id).first()
         form = forms.accounts.UserForm(obj=user)
-        org_form = forms.accounts.DashboardSetting(obj=user.dashboard_setting)
-    
-    if request.method == "GET" and user.dashboard_setting.organization:
-        org_form.organization.data = user.dashboard_setting.organization
+        org_form = forms.accounts.UserSetting(obj=user.user_setting)
+        org_form.organization.choices.extend([(str(org.id), org.name) for org in organizations])
 
+        if request.method == "GET" and user.user_setting.organization:
+            org_form.organization.data = str(user.user_setting.organization.id)
+    
     if not form.validate_on_submit():
         return render_template(
             "/admin/users/add_or_edit.html",
@@ -50,9 +53,15 @@ def add_or_edit(user_id):
 
 
     form.populate_obj(user)
-    org_form.populate_obj(user.dashboard_setting)
+    org_form.populate_obj(user.user_setting)
+    if org_form.organization.data != "-":
+        user.user_setting.organization = models.Organization.objects.get(
+            id=org_form.organization.data
+            )
+    else:
+        user.user_setting.organization = None
 
-    user.dashboard_setting.updated_date = datetime.datetime.now()
+    user.user_setting.updated_date = datetime.datetime.now()
     user.save()
 
     return redirect(url_for("admin.users.index"))

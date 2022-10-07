@@ -4,7 +4,7 @@ import datetime
 from flask_login import UserMixin
 from flask import url_for
 
-class DashboardSetting(me.EmbeddedDocument):
+class UserSetting(me.EmbeddedDocument):
     organization = me.ReferenceField("Organization", dbref=True)
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
@@ -38,8 +38,8 @@ class User(me.Document, UserMixin):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
-    dashboard_setting = me.EmbeddedDocumentField(
-        "DashboardSetting", default=DashboardSetting
+    user_setting = me.EmbeddedDocumentField(
+        "UserSetting", default=UserSetting
     )
 
     resources = me.DictField()
