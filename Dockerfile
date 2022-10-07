@@ -23,6 +23,7 @@ COPY viyyoor/web/static/package.json viyyoor/web/static/package-lock.json viyyoo
 RUN npm install --prefix viyyoor/web/static
 
 COPY . /app
+RUN $PYTHON -m poetry update
 ENV VIYYOOR_SETTINGS=/app/viyyoor-production.cfg
 
 # For brython
