@@ -18,7 +18,7 @@ RUN $PYTHON -m pip install wheel poetry gunicorn
 
 WORKDIR /app
 COPY poetry.lock pyproject.toml /app/
-RUN $PYTHON -m poetry config virtualenvs.create false && $PYTHON -m poetry install --no-interaction --no-dev
+RUN $PYTHON -m poetry config virtualenvs.create false && $PYTHON -m poetry install --no-interaction --only main
 
 COPY viyyoor/web/static/package.json viyyoor/web/static/package-lock.json viyyoor/web/static/
 RUN npm install --prefix viyyoor/web/static
