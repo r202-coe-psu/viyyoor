@@ -63,7 +63,7 @@ services:
         environment:
             VIYYOOR_SETTINGS: /app/viyyoor-production.cfg
         command:
-            viyyoor-worker
+            /venv/bin/viyyoor-worker
         logging:
             options:
                 max-size: "10m"
