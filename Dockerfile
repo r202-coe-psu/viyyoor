@@ -8,15 +8,14 @@ ENV LANG th_TH.UTF-8
 ENV LANGUAGE th_TH:en 
 # ENV LC_ALL th_TH.UTF-8
 
-RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
-RUN npm install --prefix viyyoor/web/static
-
-
 RUN python3 -m venv /venv
 ENV PYTHON=/venv/bin/python3
 RUN $PYTHON -m pip install wheel poetry gunicorn
 
 WORKDIR /app
+COPY fonts /app/fonts
+RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
+
 COPY poetry.lock pyproject.toml /app/
 RUN $PYTHON -m poetry config virtualenvs.create false && $PYTHON -m poetry install --no-interaction --only main
 
