@@ -16,6 +16,7 @@ WORKDIR /app
 COPY fonts /app/fonts
 RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
 
+COPY viyyoor/cmd /app/viyyoor/cmd
 COPY poetry.lock pyproject.toml /app/
 RUN $PYTHON -m poetry config virtualenvs.create false && $PYTHON -m poetry install --no-interaction --only main
 
@@ -23,7 +24,6 @@ COPY viyyoor/web/static/package.json viyyoor/web/static/package-lock.json viyyoo
 RUN npm install --prefix viyyoor/web/static
 
 COPY . /app
-RUN $PYTHON -m poetry update
 ENV VIYYOOR_SETTINGS=/app/viyyoor-production.cfg
 
 # For brython
