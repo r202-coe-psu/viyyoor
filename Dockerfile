@@ -26,11 +26,11 @@ COPY . /app
 ENV VIYYOOR_SETTINGS=/app/viyyoor-production.cfg
 
 # For brython
-RUN cd /app/kampan/web/static/brython; \
-    for i in $(ls -d */); \
-    do \
-    cd $i; \
-    python3 -m brython --make_package ${i%%/}; \
-    mv *.brython.js ..; \
-    cd ..; \
-    done
+# RUN cd /app/kampan/web/static/brython; \
+#     for i in $(ls -d */); \
+#     do \
+#     cd $i; \
+#     python3 -m brython --make_package ${i%%/}; \
+#     mv *.brython.js ..; \
+#     cd ..; \
+#     done
