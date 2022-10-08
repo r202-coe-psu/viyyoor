@@ -290,14 +290,15 @@ Flask = "*"
 
 [[package]]
 name = "Flask-Login"
-version = "0.5.0"
-description = "User session management for Flask"
+version = "0.6.2"
+description = "User authentication and session management for Flask."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 
 [package.dependencies]
-Flask = "*"
+Flask = ">=1.0.4"
+Werkzeug = ">=1.0.1"
 
 [[package]]
 name = "flask-mongoengine"
@@ -374,18 +375,6 @@ MarkupSafe = ">=2.0"
 
 [package.extras]
 i18n = ["Babel (>=2.7)"]
-
-[[package]]
-name = "loginpass"
-version = "0.5"
-description = "Social connections powered by Authlib for Flask and Django"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-Authlib = ">=0.14.3"
-requests = "*"
 
 [[package]]
 name = "lxml"
@@ -811,7 +800,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "31f62cfa72948a45dff04ebeb7fda255ad4def787489299eaa9b77b27e38bedf"
+content-hash = "b47963a81e9885f4e955fcd6fb9f9bb4baf2f8c2556db09e32ec2aa5994862f8"
 
 [metadata.files]
 asn1crypto = [
@@ -1001,8 +990,8 @@ Flask-Caching = [
     {file = "Flask_Caching-1.11.1-py3-none-any.whl", hash = "sha256:36592812eec6cba86eca48bcda74eff24bfd6c8eaf6056ca0184474bb78c0dc4"},
 ]
 Flask-Login = [
-    {file = "Flask-Login-0.5.0.tar.gz", hash = "sha256:6d33aef15b5bcead780acc339464aae8a6e28f13c90d8b1cf9de8b549d1c0b4b"},
-    {file = "Flask_Login-0.5.0-py2.py3-none-any.whl", hash = "sha256:7451b5001e17837ba58945aead261ba425fdf7b4f0448777e597ddab39f4fba0"},
+    {file = "Flask-Login-0.6.2.tar.gz", hash = "sha256:c0a7baa9fdc448cdd3dd6f0939df72eec5177b2f7abe6cb82fc934d29caac9c3"},
+    {file = "Flask_Login-0.6.2-py3-none-any.whl", hash = "sha256:1ef79843f5eddd0f143c2cd994c1b05ac83c0401dc6234c143495af9a939613f"},
 ]
 flask-mongoengine = [
     {file = "flask-mongoengine-1.0.0.tar.gz", hash = "sha256:ce68726d2be8d88006e88f17e4be3b7ad07c79ca8dedb60653d3dab5d9485840"},
@@ -1027,10 +1016,6 @@ itsdangerous = [
 Jinja2 = [
     {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
     {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
-]
-loginpass = [
-    {file = "loginpass-0.5-py2.py3-none-any.whl", hash = "sha256:24137ef5a3169f4b2873063f766dc90e34f2dc48de9130d58dafad767d0aabf1"},
-    {file = "loginpass-0.5.tar.gz", hash = "sha256:cf6a1e8129c632cfaa51dbeeeae10629b4678a65072935c7015fecae01a4e8fc"},
 ]
 lxml = [
     {file = "lxml-4.9.1-cp27-cp27m-macosx_10_15_x86_64.whl", hash = "sha256:98cafc618614d72b02185ac583c6f7796202062c41d2eeecdf07820bad3295ed"},

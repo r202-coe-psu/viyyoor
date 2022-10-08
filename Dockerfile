@@ -7,21 +7,27 @@ RUN sed -i '/th_TH.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 ENV LANG th_TH.UTF-8 
 ENV LANGUAGE th_TH:en 
 # ENV LC_ALL th_TH.UTF-8
-COPY . /app
-WORKDIR /app
 
+RUN python3 -m venv /venv
+ENV PYTHON=/venv/bin/python3
+RUN $PYTHON -m pip install wheel poetry gunicorn
+
+WORKDIR /app
+COPY fonts /app/fonts
 RUN mkdir -p /usr/share/fonts/opentype && cp -r fonts/* /usr/share/fonts/opentype/ && fc-cache -fv
+
+COPY viyyoor/cmd /app/viyyoor/cmd
+COPY poetry.lock pyproject.toml /app/
+RUN $PYTHON -m poetry config virtualenvs.create false && $PYTHON -m poetry install --no-interaction --only main
+
+COPY viyyoor/web/static/package.json viyyoor/web/static/package-lock.json viyyoor/web/static/
 RUN npm install --prefix viyyoor/web/static
 
+COPY . /app
 ENV VIYYOOR_SETTINGS=/app/viyyoor-production.cfg
 
-RUN ln -s $(command -v python3) /usr/bin/python
-RUN pip3 install poetry uwsgi
-RUN poetry config virtualenvs.create false && poetry install --no-interaction
-ENV PYTHONPATH $(pwd):/usr/lib/python3.9/site-packages:$PYTHONPATH
-
 # For brython
-# RUN cd /app/viyyoor/web/static/brython; \
+# RUN cd /app/kampan/web/static/brython; \
 #     for i in $(ls -d */); \
 #     do \
 #     cd $i; \
