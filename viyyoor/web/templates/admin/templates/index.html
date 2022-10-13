@@ -37,28 +37,28 @@ Templates
             <b>Owner : </b> {{ template.owner.first_name }} {{ template.owner.last_name }}
           </div>
         </div>
-        <div class="extra content">
-          <button class="ui primary button">
-            Use
-          </button>
-          <button class="ui button">
-            Share
-          </button>
-          <div class="ui dropdown">
-            <div class="text"></div>
-            <i class="dropdown icon"></i>
-            <div class="menu">
-              <div class="item">
-                <span class="description">Edit</span>
-                <a class="ui circular button primary icon" href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i></a>
-              </div>
-              <div class="item">
-                <span class="description">Detail</span>
-                <a class="ui circular button primary icon" href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i></a>
-              </div>
-              <div class="item">
-                <span class="description">Delete</span>
-                <a class="ui circular button negative icon" href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i></a>
+            <div class="extra content">
+              <button class="ui primary button">
+                Use
+              </button>
+              <button class="ui button">
+                Share
+              </button>
+          <div class="ui aligned grid">
+            <div class="right aligned sixteen wide column">
+              <div class="ui dropdown">
+                <i class="wrench icon"></i>
+                <div class="menu">
+                  <div class="item">
+                    <a href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i>Edit</a>
+                  </div>
+                    <div class="item">
+                    <a href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i>View</a>
+                  </div>
+                  <div class="item">
+                    <a href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i>Delete</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
