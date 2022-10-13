@@ -51,7 +51,6 @@ BaseEndorserForm = model_form(
     models.Endorser,
     FlaskForm,
     exclude=[
-        "user",
         "updated_date",
         "last_updated_by",
     ],
@@ -59,12 +58,16 @@ BaseEndorserForm = model_form(
         "position": {"label": "Position"},
         "endorser_id": {"label": "Endorse ID"},
         "name": {"label": "Name"},
+        "user": {
+            "label": "User",
+            "label_modifier": lambda u: f"{u.first_name} {u.last_name}",
+        },
     },
 )
 
 
 class EndorserForm(BaseEndorserForm):
-    user = fields.SelectField("User")
+    pass
 
 
 class EndorserGrantForm(FlaskForm):

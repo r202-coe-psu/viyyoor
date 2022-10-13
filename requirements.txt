@@ -1,8 +1,0 @@
-poetry
-qrcode[pil]
-cairosvg
-endesive
-flask
-flask-login
-flask_mongoengine
-flask_caching

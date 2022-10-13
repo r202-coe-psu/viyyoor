@@ -148,9 +148,7 @@ def add_or_edit_endorser(class_id, endorser_id):
         form = forms.classes.EndorserForm(obj=endorser)
 
     users = models.User.objects(roles="endorser").order_by("first_name")
-    form.user.choices = [
-        (str(user.id), f"{user.first_name} {user.last_name}") for user in users
-    ]
+    form.user.queryset = users
 
     if not form.validate_on_submit():
         return render_template(
@@ -169,7 +167,6 @@ def add_or_edit_endorser(class_id, endorser_id):
     class_.endorsers[form.endorser_id.data] = endorser
 
     form.populate_obj(endorser)
-    endorser.user = models.User.objects.get(id=form.user.data)
     endorser.last_updated_by = current_user._get_current_object()
     class_.save()
 

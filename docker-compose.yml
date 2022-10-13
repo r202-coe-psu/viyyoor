@@ -40,7 +40,8 @@ services:
         environment:
             VIYYOOR_SETTINGS: /app/viyyoor-production.cfg
         command:
-            uwsgi --lazy-apps --ini scripts/viyyoor-uwsgi.ini
+          #uwsgi --lazy-apps --ini scripts/viyyoor-uwsgi.ini
+          /venv/bin/gunicorn -w 2 --bind 0.0.0.0:9000 "viyyoor.web:create_app()"
         logging:
             options:
                 max-size: "10m"
@@ -62,7 +63,7 @@ services:
         environment:
             VIYYOOR_SETTINGS: /app/viyyoor-production.cfg
         command:
-            viyyoor-worker
+            /venv/bin/viyyoor-worker
         logging:
             options:
                 max-size: "10m"
