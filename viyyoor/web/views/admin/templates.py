@@ -103,7 +103,7 @@ def download(template_id, filename):
     if template:
         response = send_file(
             template.file,
-            attachment_filename=template.file.filename,
+            download_name=template.file.filename,
             # as_attachment=True,
             mimetype=template.file.content_type,
         )
