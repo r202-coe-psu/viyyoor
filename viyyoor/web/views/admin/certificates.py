@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user
 
 import datetime
@@ -47,4 +47,4 @@ def delete(certificate_id):
     certificate.file.delete()
     certificate.delete()
 
-    return redirect(url_for("admin.certificates.index"))
+    return redirect(request.referrer)
