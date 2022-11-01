@@ -12,6 +12,7 @@ from flask_login import current_user
 import datetime
 
 from viyyoor import models
+from viyyoor.models import organizations
 from viyyoor.web import acl, forms
 
 module = Blueprint("templates", __name__, url_prefix="/templates")
@@ -87,6 +88,7 @@ def create_or_edit(template_id):
             content_type=form.template_file.data.content_type,
         )
 
+    template.control.updated_by = current_user._get_current_object()
     template.save()
 
     return redirect(url_for("admin.templates.index"))
@@ -129,3 +131,33 @@ def download(template_id, filename):
         )
 
     return response
+
+@module.route("/<template_id>/set_control", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def set_control(template_id):
+    template = models.Template.objects.get(id=template_id)
+    form = forms.templates.ControlTemplateForm(obj=template)
+    form.organizations.choices = [
+            (str(o.id), o.name) for o in models.Organization.objects().order_by("-id")
+        ]
+
+
+    if not form.validate_on_submit():
+        form.status.data = template.control.status
+        if template.control.status == "shared":
+            form.organizations.data = [str(o.id) for o in template.control.organizations]
+        return render_template(
+            "/admin/templates/set-control.html",
+            form=form,
+        )
+
+    if form.status.data == "shared":
+        template.control.organizations = [
+            models.Organization.objects.get(id=oid) for oid in form.organizations.data
+        ]
+        if len(template.control.organizations) == 0:
+            form.status.data = "unshared"
+    template.control.status = form.status.data
+    template.save()
+
+    return redirect(url_for('admin.templates.index'))

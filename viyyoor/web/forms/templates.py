@@ -18,7 +18,7 @@ BaseTemplateForm = model_form(
         "owner",
         "status",
         "file",
-        "control",
+        "control"
     ],
     field_args={
         "name": {
@@ -34,6 +34,17 @@ BaseTemplateForm = model_form(
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
     template_file = file.FileField("Template File", validators=[file.FileRequired()])
+
+BaseControlTemplateForm = model_form(
+    models.Control,
+    FlaskForm,
+    only=["status"],
+    field_args={
+        "status": {"label": "Status"},
+    },
+)
+class ControlTemplateForm(BaseControlTemplateForm):
+    organizations = fields.SelectMultipleField()
 
 BaseCertificateTemplateForm = model_form(
     models.CertificateTemplate,
