@@ -19,6 +19,7 @@ BaseClassForm = model_form(
         "endorsers",
         "certificates",
         "status",
+        "organization",
     ],
     field_args={
         "name": {"label": "Name"},

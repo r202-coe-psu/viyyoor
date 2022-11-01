@@ -80,7 +80,7 @@ class Class(me.Document):
     name = me.StringField(required=True, max_length=256)
     printed_name = me.StringField(required=True, max_length=256)
     description = me.StringField()
-    organization = me.ReferenceField("Organization", dbref=True, required=True)
+    organization = me.ReferenceField("Organization", dbref=True)
 
     participants = me.MapField(field=me.EmbeddedDocumentField(Participant))
     endorsers = me.MapField(field=me.EmbeddedDocumentField(Endorser))
