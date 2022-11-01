@@ -55,7 +55,7 @@ Templates
                 </a>
                 {% if template.owner == current_user %}
                 <button class="ui button">
-                  {{ template.control.title() }}
+                  {{ template.control.status.title() }}
                 </button>
                 {% endif %}
               </div>

@@ -14,7 +14,6 @@ BaseOrganizationForm = model_form(
         "last_updated_by",
         "status",
         "endorsers",
-        "templates",
         "admins",
     ],
     field_args={
