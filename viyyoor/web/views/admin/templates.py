@@ -2,6 +2,7 @@ from flask import (
     Blueprint,
     render_template,
     redirect,
+    request,
     url_for,
     send_file,
     Response,
@@ -16,13 +17,32 @@ from viyyoor.web import acl, forms
 module = Blueprint("templates", __name__, url_prefix="/templates")
 
 
-@module.route("/")
+@module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
+    classes = models.Class.objects(status="active").order_by("-id")
     templates = models.Template.objects(status="active").order_by("-id")
-    return render_template(
-        "/admin/templates/index.html",
-        templates=templates,
+    form = forms.templates.CertificateTemplateForm()
+    form.classes.choices = [(str(c.id), c.name) for c in classes]
+
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/templates/index.html",
+            form=form,
+            templates=templates,
+        )
+
+    class_ = models.Class.objects.get(id=form.classes.data)
+    certificate_template = models.CertificateTemplate()
+    class_.certificate_templates[form.group.data] = certificate_template
+    
+    form.populate_obj(certificate_template)
+    certificate_template.template = models.Template.objects.get(id=request.form.get('template_id'))
+    certificate_template.last_updated_by = current_user._get_current_object()
+    class_.save()
+
+    return redirect(
+        url_for("admin.classes.add_or_edit_certificate_template", class_id=class_.id)
     )
 
 

@@ -1,4 +1,5 @@
 {% extends '/base/default-dashboard.html' %}
+{% import '/base/html-renderer.html' as renderer %}
 
 {% block breadcrumbs %}
 {% if request.endpoint == 'admin.templates.index' %}
@@ -49,9 +50,9 @@ Templates
               <div class="ui grid">
               
               <div class="left aligned twelve wide column">
-                <button class="ui primary button">
+                <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
                   Use
-                </button>
+                </a>
                 <button class="ui button">
                   {{ template.control.title() }}
                 </button>
@@ -74,12 +75,39 @@ Templates
                 </div>
                 </div>
                 </div>
-              
-            
         </div>
       </div>
+        <div class="ui modal {{template.id}}">
+          <div class="header">Use <span class="ui blue text">{{ template.name }}</span> template</div>
+          <div class="content">
+              <form method="POST" class="ui form">
+                {{ form.csrf_token }}
+          
+                {{ renderer.render_field(form.name) }}
+                {{ renderer.render_field(form.appreciate_text) }}
+                <div class="two fields">
+                  {{ renderer.render_select(form.group) }}
+                  {{ renderer.render_select(form.classes) }}
+                </div>
+                
+                <input type="hidden" name="template_id" value="{{template.id}}">
+                <button name="create" type="submit" class="ui button primary">Use</button>
+              </form>
+          </div>
+        </div>
       {% endfor %}
     </div>
   </div>
 
+{% endblock %}
+
+{% block additional_js %}
+<script>
+  function showUseTemplate(template_id) {
+    console.log(template_id)
+      $('.ui.modal.'+template_id)
+        .modal('show')
+    ;
+  }
+</script>
 {% endblock %}

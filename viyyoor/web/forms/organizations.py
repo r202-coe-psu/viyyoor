@@ -17,6 +17,7 @@ BaseOrganizationForm = model_form(
     field_args={
         "name": {"label": "Name"},
         "description": {"label": "Desctiption"},
+        "quota": {"label": "Quota"},
     },
 )
 
