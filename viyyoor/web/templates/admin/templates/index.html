@@ -22,50 +22,64 @@ Templates
     <div class="ui link cards">
       {% for template in templates %}
       <div class="card">
+
+
         <div class="image">
-          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
+          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}" width="800" height="600"/>
         </div>
+
         <div class="content">
+          
           <div class="header">{{ template.name }}</div>
+
           <div class="meta">
             <a>{{ template.tags | join(', ') }}</a>
           </div>
+
           <div class="description">
             {{ template.description }}
           </div>
+
           <div class="owner"> 
             <b>Owner : </b> {{ template.owner.first_name }} {{ template.owner.last_name }}
           </div>
+
         </div>
-            <div class="ui content">
-              <button class="ui primary button">
-                Use
-              </button>
-              <button class="ui button">
-                Share
-              </button>
-          <div class="ui aligned grid">
-            <div class="right aligned sixteen wide column">
-              <div class="ui dropdown">
-                <i class="wrench icon"></i>
-                <div class="menu">
-                  <div class="item">
-                    <a href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i>Edit</a>
-                  </div>
+              <div class="ui content" >
+              <div class="ui grid">
+              
+              <div class="left aligned twelve wide column">
+                <button class="ui primary button">
+                  Use
+                </button>
+                <button class="ui button">
+                  Share
+                </button>
+              </div>
+              
+                <div class="middle aligned four wide column" style="text-align:right;">
+                <div class="ui dropdown">
+                  <i class="cog icon"></i>
+                  <div class="menu">
                     <div class="item">
-                    <a href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i>View</a>
-                  </div>
-                  <div class="item">
-                    <a href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i>Delete</a>
+                      <a href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i>Edit</a>
+                    </div>
+                      <div class="item">
+                      <a href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i>View</a>
+                    </div>
+                    <div class="item">
+                      <a href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i>Delete</a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
+                </div>
+                </div>
+              
+            
         </div>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
-</div>
 
 {% endblock %}
