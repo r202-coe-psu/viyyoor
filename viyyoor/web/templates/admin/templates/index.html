@@ -52,9 +52,11 @@ Templates
                 <button class="ui primary button">
                   Use
                 </button>
+                {% if template.owner == current_user %}
                 <button class="ui button">
                   {{ template.control.title() }}
                 </button>
+                {% endif %}
               </div>
               
                 <div class="middle aligned four wide column" style="text-align:right;">
