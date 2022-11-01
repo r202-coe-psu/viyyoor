@@ -11,7 +11,7 @@ module = Blueprint("site", __name__)
 @caches.cache.cached(timeout=600)
 def index():
     now = datetime.datetime.now()
-    class_count = models.Class.objects.count()
+    class_count = models.Class.objects(status="active").count()
     certificate_count = models.Certificate.objects(status="completed").count()
     return render_template(
         "/sites/index.html",
