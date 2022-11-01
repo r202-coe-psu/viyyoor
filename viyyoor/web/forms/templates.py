@@ -1,6 +1,6 @@
 from flask_mongoengine.wtf import model_form
 from flask_wtf import FlaskForm, file
-from wtforms import fields, widgets
+from wtforms import fields, widgets, validators
 
 import datetime
 
@@ -34,3 +34,17 @@ BaseTemplateForm = model_form(
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
     template_file = file.FileField("Template File", validators=[file.FileRequired()])
+
+BaseCertificateTemplateForm = model_form(
+    models.CertificateTemplate,
+    FlaskForm,
+    exclude=["updated_date", "last_updated_by", "template"],
+    field_args={
+        "name": {"label": "Name"},
+        "appreciate_text": {"label": "Appreciate Text"},
+        "group": {"label": "Group"},
+    },
+)
+
+class CertificateTemplateForm(BaseCertificateTemplateForm):
+    classes = fields.SelectField("Class", validators=[validators.InputRequired()])

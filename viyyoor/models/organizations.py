@@ -2,6 +2,7 @@ import mongoengine as me
 import datetime
 
 
+
 class Endorser(me.EmbeddedDocument):
     user = me.ReferenceField("User", dbref=True, required=True) 
     created_by = me.ReferenceField("User", dbref=True)
@@ -35,6 +36,7 @@ class Organization(me.Document):
     status = me.StringField(required=True, default="active")
     endorsers = me.ListField(me.EmbeddedDocumentField(Endorser))
     templates = me.ListField(me.EmbeddedDocumentField(CertificateTemplate))
+    quota = me.IntField(require=True, default=0)
     admins = me.ListField(me.EmbeddedDocumentField(Administrator))
 
     created_by = me.ReferenceField("User", dbref=True)
