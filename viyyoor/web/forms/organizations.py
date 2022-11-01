@@ -13,6 +13,9 @@ BaseOrganizationForm = model_form(
         "created_by",
         "last_updated_by",
         "status",
+        "endorsers",
+        "templates",
+        "admins",
     ],
     field_args={
         "name": {"label": "Name"},

@@ -19,6 +19,14 @@ class CertificateTemplate(me.EmbeddedDocument):
     )
 
 
+class Administrator(me.EmbeddedDocument):
+    users = me.ReferenceField("User", dbref=True, required=True)
+    added_by = me.ReferenceField("User", dbref=True, required=True)
+    updated_date = me.DateTimeField(
+        required=True, auto_now=True, default=datetime.datetime.now
+    )
+
+
 class Organization(me.Document):
     meta = {"collection": "organizations"}
 
@@ -27,6 +35,7 @@ class Organization(me.Document):
     status = me.StringField(required=True, default="active")
     endorsers = me.ListField(me.EmbeddedDocumentField(Endorser))
     templates = me.ListField(me.EmbeddedDocumentField(CertificateTemplate))
+    admins = me.ListField(me.EmbeddedDocumentField(Administrator))
 
     created_by = me.ReferenceField("User", dbref=True)
     last_updated_by = me.ReferenceField("User", dbref=True)
