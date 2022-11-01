@@ -5,7 +5,6 @@ import datetime
 
 class Control(me.EmbeddedDocument):
     status = me.StringField(required=True, default="unshared")
-    organizations = me.ListField(me.ReferenceField("Organization", dbref=True))
     updated_by = me.ReferenceField("User", dbref=True, required=True)
     updated_date = me.DateTimeField(
         required=True, auto_now=True, default=datetime.datetime.now
