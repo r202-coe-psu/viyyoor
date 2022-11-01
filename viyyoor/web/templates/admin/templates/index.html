@@ -51,11 +51,13 @@ Templates
               
               <div class="left aligned twelve wide column">
                 <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
-                  Use
+                  Use 
                 </a>
+                {% if template.owner == current_user %}
                 <button class="ui button">
                   {{ template.control.title() }}
                 </button>
+                {% endif %}
               </div>
               
                 <div class="middle aligned four wide column" style="text-align:right;">
