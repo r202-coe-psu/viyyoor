@@ -1,8 +1,6 @@
-from email.policy import default
 import mongoengine as me
 import datetime
 
-from viyyoor.models import organizations
 
 
 class Control(me.EmbeddedDocument):
