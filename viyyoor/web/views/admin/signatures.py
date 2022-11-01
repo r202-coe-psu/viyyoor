@@ -115,7 +115,7 @@ def download(signature_id, filename):
     if signature:
         response = send_file(
             signature.file,
-            attachment_filename=signature.file.filename,
+            download_name=signature.file.filename,
             # as_attachment=True,
             mimetype=signature.file.content_type,
         )
