@@ -13,6 +13,16 @@ class Control(me.EmbeddedDocument):
         required=True, auto_now=True, default=datetime.datetime.now
     )
 
+
+class Control(me.EmbeddedDocument):
+    status = me.StringField(required=True, default="unshared")
+    updated_by = me.ReferenceField("User", dbref=True, required=True)
+    updated_date = me.DateTimeField(
+        required=True, auto_now=True, default=datetime.datetime.now
+    )
+
+
+
 class Template(me.Document):
     meta = {"collection": "templates"}
 
