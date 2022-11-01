@@ -18,6 +18,7 @@ BaseTemplateForm = model_form(
         "owner",
         "status",
         "file",
+        "control",
     ],
     field_args={
         "name": {
