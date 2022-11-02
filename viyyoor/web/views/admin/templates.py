@@ -157,7 +157,10 @@ def set_control(template_id):
         ]
         if len(template.control.organizations) == 0:
             form.status.data = "unshared"
+            form.organizations = None
     template.control.status = form.status.data
+    template.control.updated_date = datetime.datetime.now
+    template.control.last_updated_by = current_user._get_current_object()
     template.save()
 
     return redirect(url_for('admin.templates.index'))

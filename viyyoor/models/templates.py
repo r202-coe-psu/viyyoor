@@ -9,6 +9,7 @@ class Control(me.EmbeddedDocument):
     status = me.StringField(choices=CONTROL_CHOICES, default="unshared", required=True)
     organizations = me.ListField(me.ReferenceField('Organization', dbref=True))
     updated_by = me.ReferenceField("User", dbref=True, required=True)
+    last_updated_by = me.ReferenceField("User", dbref=True, required=True)
     updated_date = me.DateTimeField(
         required=True, auto_now=True, default=datetime.datetime.now
     )
