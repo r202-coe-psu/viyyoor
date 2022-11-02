@@ -1,4 +1,3 @@
-from email.policy import default
 import mongoengine as me
 import datetime
 
