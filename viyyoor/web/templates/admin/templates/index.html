@@ -25,8 +25,13 @@ Templates
 
 
         <div class="image">
-          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}" width="800" height="600"/>
+          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
         </div>
+
+
+        <!-- <div class="image">
+          <img src="{{ url_for('admin.templates.thumbnail_show', template_id=template.id, thumbnail=template.thumbnail.filename) }}"/>
+        </div> -->
 
         <div class="content">
           

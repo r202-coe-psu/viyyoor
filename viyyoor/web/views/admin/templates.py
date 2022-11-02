@@ -59,14 +59,26 @@ def create_or_edit(template_id):
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
+        template.thumbnail.put(
+            form.thumbnail_file.data,
+            filename=form.thumbnail_file.data.filename,
+            content_type=form.thumbnail_file.data.content_type,
+        )
     else:
-
         template.file.replace(
             form.template_file.data,
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
+        template.thumbnail.replace(
+            form.thumbnail_file.data,
+            filename=form.thumbnail_file.data.filename,
+            content_type=form.thumbnail_file.data.content_type,
+        )
 
+    print(form.thumbnail_file.data)
+    print(template.file)
+    print(template.thumbnail)
     template.save()
 
     return redirect(url_for("admin.templates.index"))
@@ -104,6 +116,25 @@ def download(template_id, filename):
         response = send_file(
             template.file,
             download_name=template.file.filename,
+            # as_attachment=True,
+            mimetype=template.file.content_type,
+        )
+
+    return response
+
+
+@module.route("/<template_id>/<thumbnail>")
+@acl.roles_required("admin")
+def thumbnail_show(template_id, thumbnail):
+    response = Response()
+    response.status_code = 404
+
+    template = models.Template.objects.get(id=template_id)
+
+    if template:
+        response = send_file(
+            template.file,
+            thumbnail_name=template.file.thumbnail,
             # as_attachment=True,
             mimetype=template.file.content_type,
         )

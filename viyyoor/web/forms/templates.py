@@ -33,4 +33,16 @@ BaseTemplateForm = model_form(
 
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
-    template_file = file.FileField("Template File", validators=[file.FileRequired()])
+    template_file = file.FileField(
+        "Template File",
+        validators=[
+            file.FileRequired(),
+            file.FileAllowed(["svg"], "รับเฉพาะไฟล์ svg เท่านั้น"),
+        ],
+    )
+    thumbnail_file = file.FileField(
+        "Thumbnail File",
+        validators=[
+            file.FileAllowed(["png", "jpg"], "รับเฉพาะไฟล์ png เเละ jpg เท่านั้น"),
+        ],
+    )
