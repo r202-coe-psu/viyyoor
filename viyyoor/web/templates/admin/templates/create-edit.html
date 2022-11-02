@@ -12,10 +12,20 @@
     $(this).parent().find("#template_file").click();
   });
 
+  $(".attach-file-thumbnail_file").click(function() {
+    $(this).parent().find("#thumbnail_file").click();
+  });
+
   $('#template_file')
     .on('change', function(e) {
       var name = e.target.files[0].name;
       $('.attach-file-template_file', $(e.target).parent()).val(name);
+    });
+
+    $('#thumbnail_file')
+    .on('change', function(e) {
+      var name = e.target.files[0].name;
+      $('.attach-file-thumbnail_file', $(e.target).parent()).val(name);
     });
 	</script>
 {% endblock %}
@@ -48,6 +58,8 @@
       {{ renderer.render_field(form.description) }}
       {{ renderer.render_field(form.tags) }}
       {{ renderer.render_fileinput(form.template_file) }}
+      {{ renderer.render_fileinput(form.thumbnail_file) }}
+      
 
       <button name="create" type="submit" class="ui button primary">{{ 'Create' if 'create' in request.path else 'Edit' }}</button>
     </form>
