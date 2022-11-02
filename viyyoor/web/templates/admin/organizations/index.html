@@ -22,6 +22,7 @@
               <tr class="left aligned">
                 <th>Name</th>
                 <th>Description</th>
+                <th>Quota</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -34,12 +35,28 @@
                         </a>
                     </td>
                     <td>{{ organization.description }}</td>
+                    <td>{{ organization.remaining_quota }}/{{ organization.quota }}</td>
                     <td>
                         <a class="ui primary icon button" href="{{ url_for('admin.organizations.create_or_edit', organization_id=organization.id) }}">
                             <i class="edit icon"></i>
                         </a>
+                        <a class="ui negative icon button" onclick="showDeleteModal('{{organization.id}}')">
+                            <i class="trash icon"></i>
+                        </a>
                     </td>
                   </tr>
+                  <div class="ui small modal {{organization.id}}">
+                    <div class="header">Delete Organization</div>
+                    <div class="content">
+                        <h4 class="ui headers" >
+                            Are you sure you want to delete <span class="ui red text">{{ organization.name }}</span> organization?
+                        </h4>
+                        <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete', organization_id=organization.id) }}">
+                            Delete</i>
+                        </a>
+                        <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+                    </div>
+                  </div>
                 {% endfor %}
             </tbody>
         </table>
@@ -49,4 +66,13 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function showDeleteModal(organization_id) {
+        organization_id ?  $('.ui.small.modal.'+organization_id).modal('show') : $('.ui.small.modal').modal('hide') 
+    ;
+    }
+</script>
 {% endblock %}

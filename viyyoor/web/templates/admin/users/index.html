@@ -4,15 +4,15 @@
 {% block breadcrumbs %}
   {{ super() }}
   {% if request.path == url_for('admin.users.index') %}
-    <div class="section active">User</div>
+    <div class="section active">Users</div>
   {% else %}
-    <a class="active" href="{{ url_for('admin.users.index') }}">User</a>
+    <a class="active" href="{{ url_for('admin.users.index') }}">Users</a>
     <span class="divider">/</span>
   {% endif %}
 {% endblock %}
 
 {% block dashboard_title %}
-  User
+  Users
 {% endblock %}
 
 {% block content %}

@@ -1,3 +1,4 @@
+from email.policy import default
 import mongoengine as me
 import datetime
 
@@ -27,13 +28,18 @@ class Organization(me.Document):
     description = me.StringField()
     status = me.StringField(required=True, default="active")
     endorsers = me.ListField(me.EmbeddedDocumentField(Endorser))
-
-    quota = me.IntField(require=True, default=0)
     admins = me.ListField(me.EmbeddedDocumentField(Administrator))
+
+    number_of_uses = me.IntField(require=True, default=0)
+    quota = me.IntField(require=True, default=0)
 
     created_by = me.ReferenceField("User", dbref=True)
     last_updated_by = me.ReferenceField("User", dbref=True)
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+
+    @property
+    def remaining_quota(self):
+        return self.quota - self.number_of_uses
 
