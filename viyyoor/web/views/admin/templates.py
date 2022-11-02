@@ -82,7 +82,7 @@ def create_or_edit(template_id):
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
-        if template.thumbnail:
+        if form.thumbnail_file.data:
             template.thumbnail.put(
                 form.thumbnail_file.data,
                 filename=form.thumbnail_file.data.filename,
@@ -94,7 +94,7 @@ def create_or_edit(template_id):
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
-        if template.thumbnail:
+        if form.thumbnail_file.data:
             template.thumbnail.replace(
                 form.thumbnail_file.data,
                 filename=form.thumbnail_file.data.filename,
@@ -153,13 +153,15 @@ def thumbnail_show(template_id, thumbnail):
     response.status_code = 404
 
     template = models.Template.objects.get(id=template_id)
+    print(template.thumbnail)
+    print(template.file)
 
     if template:
         response = send_file(
-            template.file,
-            thumbnail_name=template.file.thumbnail,
+            template.thumbnail,
+            thumbnail_name=template.thumbnail.filename,
             # as_attachment=True,
-            mimetype=template.file.content_type,
+            mimetype=template.thumbnail.content_type,
         )
 
     return response
