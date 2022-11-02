@@ -2,25 +2,29 @@
 
 {% block content %}
 
-  <div class="ui container">
-    <div class="ui segment" style="min-height:50vh; padding-top: 10vh;">
+  <div class="ui container" style="padding-top: 3vh;">
+    <div class="ui segment" style="min-height:50vh; padding-top: 20vh;">
       <div class="ui centered middle grid aligned">
         <div class="row">
-          <div class="ui huge statistics">
+          <div class="ui statistics">
             <div class="statistic">
               <div class="value">
                 <i class="users icon"></i> {{ '{:,}'.format(class_count) }}
               </div>
-              <div class="label">
-                Classes
+              <div class="label" style="padding-top: 3vh;">
+                <div class="ui primary button">
+                  Classes
+                </div>
               </div>
             </div>
             <div class="statistic">
               <div class="value">
                 <i class="certificate icon"></i> {{ '{:,}'.format(certificate_count) }}
               </div>
-              <div class="label">
-                Certificats
+              <div class="label" style="padding-top: 3vh;">
+                <div class="ui primary button">
+                  Certificats
+                </div>
               </div>
             </div>
           </div>
