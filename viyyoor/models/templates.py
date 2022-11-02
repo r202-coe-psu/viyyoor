@@ -31,6 +31,6 @@ class Template(me.Document):
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
 
     status = me.StringField(required=True, default="active")
-    control = me.EmbeddedDocumentField(Control, default=Control)
+    control = me.EmbeddedDocumentField("Control", default=Control)
 
     file = me.FileField(required=True)
