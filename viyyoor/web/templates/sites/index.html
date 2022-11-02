@@ -2,30 +2,24 @@
 
 {% block content %}
 
-  <div class="ui container" style="padding-top: 3vh;">
-    <div class="ui segment" style="min-height:50vh; padding-top: 20vh;">
-      <div class="ui centered middle grid aligned">
-        <div class="row">
-          <div class="ui statistics">
-            <div class="statistic">
-              <div class="value">
-                <i class="users icon"></i> {{ '{:,}'.format(class_count) }}
-              </div>
-              <div class="label" style="padding-top: 3vh;">
-                <div class="ui primary button">
-                  Classes
-                </div>
-              </div>
+  <div class="ui segment" style="min-height:50vh; padding-top: 20vh;">
+    <div class="ui centered middle grid aligned">
+      <div class="row">
+        <div class="ui statistics">
+          <div class="statistic">
+            <div class="value">
+              <i class="users icon"></i> {{ '{:,}'.format(class_count) }}
             </div>
-            <div class="statistic">
-              <div class="value">
-                <i class="certificate icon"></i> {{ '{:,}'.format(certificate_count) }}
-              </div>
-              <div class="label" style="padding-top: 3vh;">
-                <div class="ui primary button">
-                  Certificats
-                </div>
-              </div>
+            <div class="label" style="padding-top: 3vh;">
+                Classes
+            </div>
+          </div>
+          <div class="statistic">
+            <div class="value">
+              <i class="certificate icon"></i> {{ '{:,}'.format(certificate_count) }}
+            </div>
+            <div class="label" style="padding-top: 3vh;">
+                Certificats
             </div>
           </div>
         </div>
