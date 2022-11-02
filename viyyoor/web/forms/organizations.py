@@ -13,10 +13,13 @@ BaseOrganizationForm = model_form(
         "created_by",
         "last_updated_by",
         "status",
+        "endorsers",
+        "admins",
     ],
     field_args={
         "name": {"label": "Name"},
         "description": {"label": "Desctiption"},
+        "quota": {"label": "Quota"},
     },
 )
 

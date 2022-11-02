@@ -1,0 +1,45 @@
+{% extends '/admin/templates/index.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block dashboard_title %}
+  Set Control
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <span class="divider">/</span>
+    <div class="active section">Control</div>
+  {% endblock %}
+
+
+{% block content %}
+<div class="">
+  <div class="ui segment">
+    <form method="POST" class="ui form" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      {{ form.hidden_tag() }}
+      <b style="font-size: 0.93em;">Status</b> <br>
+      {{ form.status(class_='ui dropdown', onchange='myFunction()') }} <br>
+      <div style="display: {{'block' if form.status.data == 'shared' else 'none'}}; margin-top: 0.5em; " id="organizations-form">
+        {{ renderer.render_multiple_select(form.organizations) }}
+      </div>
+      <button name="create" type="submit" style="margin-top: 0.5em" class="ui button primary">Set</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function myFunction() {
+        var status = document.getElementById("status").value;
+        var organizations_form = document.getElementById("organizations-form")
+        if (status == "shared") {
+            organizations_form .style.display = "block";
+        } else {
+            organizations_form .style.display = "none";
+        }
+      }
+</script>
+{% endblock %}

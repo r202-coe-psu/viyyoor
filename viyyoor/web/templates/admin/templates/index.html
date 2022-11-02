@@ -1,4 +1,5 @@
 {% extends '/base/default-dashboard.html' %}
+{% import '/base/html-renderer.html' as renderer %}
 
 {% block breadcrumbs %}
 {% if request.endpoint == 'admin.templates.index' %}
@@ -21,7 +22,7 @@ Templates
   <div style="margin-top: 5ex;">
     <div class="ui link cards">
       {% for template in templates %}
-      <div class="card">
+      <div class="card" style="width: 24em;">
 
 
         <div class="image">
@@ -50,21 +51,28 @@ Templates
           </div>
 
         </div>
-              <div class="ui content" >
-              <div class="ui grid">
-              
-              <div class="left aligned twelve wide column">
-                <button class="ui primary button">
-                  Use
-                </button>
-                <button class="ui button">
-                  Share
-                </button>
-              </div>
-              
-                <div class="middle aligned four wide column" style="text-align:right;">
+        <div class="ui content" >
+          <div class="ui grid">
+            <div class="left aligned twelve wide column">
+              <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
+                Use 
+              </a>
+              {% if template.owner == current_user %}
+              <a 
+                class=" 
+                {{'green' if template.control.status == 'public'}} 
+                {{'teal' if template.control.status == 'shared'}} 
+                ui right labeled icon button"
+                href="{{ url_for('admin.templates.set_control', template_id=template.id) }}" 
+                style="width: fit-content; ">
+                {{ template.control.get_status_display()  }}
+                <i class="edit icon"></i>
+              </a>
+              {% endif %}
+            </div>
+              <div class="middle aligned four wide column" style="text-align:right;">
                 <div class="ui dropdown">
-                  <i class="cog icon"></i>
+                  <i class="large cog icon"></i>
                   <div class="menu">
                     <div class="item">
                       <a href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i>Edit</a>
@@ -77,14 +85,48 @@ Templates
                     </div>
                   </div>
                 </div>
-                </div>
-                </div>
-              
-            
+              </div>
+            </div>
         </div>
       </div>
+        <div class="ui modal {{template.id}}">
+          <div class="header">Use <span class="ui blue text">{{ template.name }}</span> template</div>
+          <div class="content">
+              <form method="POST" class="ui form">
+                {{ form.csrf_token }}
+          
+                {{ renderer.render_field(form.name) }}
+                {{ renderer.render_field(form.appreciate_text) }}
+                <div class="two fields">
+                  {{ renderer.render_select(form.group) }}
+                  {{ renderer.render_select(form.classes) }}
+                </div>
+                
+                <input type="hidden" name="template_id" value="{{template.id}}">
+                <button name="create" type="submit" class="ui button primary">Use</button>
+              </form>
+          </div>
+        </div>
       {% endfor %}
     </div>
   </div>
 
+{% endblock %}
+
+{% block additional_js %}
+<script>
+  function showUseTemplate(template_id) {
+    console.log(template_id)
+      $('.ui.modal.'+template_id)
+        .modal('show')
+    ;
+  }
+  $('.icon.link.pop')
+      .popup({
+          delay: {
+              show: 50,
+              hide: 0
+          }
+      });
+</script>
 {% endblock %}

@@ -1,6 +1,6 @@
 from flask_mongoengine.wtf import model_form
 from flask_wtf import FlaskForm, file
-from wtforms import fields, widgets
+from wtforms import fields, widgets, validators
 
 import datetime
 
@@ -46,3 +46,33 @@ class TemplateForm(BaseTemplateForm):
             file.FileAllowed(["png", "jpg"], "รับเฉพาะไฟล์ png เเละ jpg เท่านั้น"),
         ],
     )
+
+
+BaseControlTemplateForm = model_form(
+    models.Control,
+    FlaskForm,
+    only=["status"],
+    field_args={
+        "status": {"label": "Status"},
+    },
+)
+
+
+class ControlTemplateForm(BaseControlTemplateForm):
+    organizations = fields.SelectMultipleField()
+
+
+BaseCertificateTemplateForm = model_form(
+    models.CertificateTemplate,
+    FlaskForm,
+    exclude=["updated_date", "last_updated_by", "template"],
+    field_args={
+        "name": {"label": "Name"},
+        "appreciate_text": {"label": "Appreciate Text"},
+        "group": {"label": "Group"},
+    },
+)
+
+
+class CertificateTemplateForm(BaseCertificateTemplateForm):
+    classes = fields.SelectField("Class", validators=[validators.InputRequired()])

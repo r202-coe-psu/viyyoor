@@ -134,7 +134,7 @@ def render_certificate(class_id, participant_id, extension):
 
     response = send_file(
         image_io,
-        attachment_filename=f"{class_.id}-{participant_id}.{extension}",
+        download_name=f"{class_.id}-{participant_id}.{extension}",
         # as_attachment=True,
         mimetype=mimetype,
     )

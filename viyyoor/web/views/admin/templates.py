@@ -2,6 +2,7 @@ from flask import (
     Blueprint,
     render_template,
     redirect,
+    request,
     url_for,
     send_file,
     Response,
@@ -11,18 +12,40 @@ from flask_login import current_user
 import datetime
 
 from viyyoor import models
+from viyyoor.models import organizations
 from viyyoor.web import acl, forms
 
 module = Blueprint("templates", __name__, url_prefix="/templates")
 
 
-@module.route("/")
+@module.route("/", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def index():
+    classes = models.Class.objects(status="active").order_by("-id")
     templates = models.Template.objects(status="active").order_by("-id")
-    return render_template(
-        "/admin/templates/index.html",
-        templates=templates,
+    form = forms.templates.CertificateTemplateForm()
+    form.classes.choices = [(str(c.id), c.name) for c in classes]
+
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/templates/index.html",
+            form=form,
+            templates=templates,
+        )
+
+    class_ = models.Class.objects.get(id=form.classes.data)
+    certificate_template = models.CertificateTemplate()
+    class_.certificate_templates[form.group.data] = certificate_template
+
+    form.populate_obj(certificate_template)
+    certificate_template.template = models.Template.objects.get(
+        id=request.form.get("template_id")
+    )
+    certificate_template.last_updated_by = current_user._get_current_object()
+    class_.save()
+
+    return redirect(
+        url_for("admin.classes.add_or_edit_certificate_template", class_id=class_.id)
     )
 
 
@@ -76,9 +99,7 @@ def create_or_edit(template_id):
             content_type=form.thumbnail_file.data.content_type,
         )
 
-    print(form.thumbnail_file.data)
-    print(template.file)
-    print(template.thumbnail)
+    template.control.updated_by = current_user._get_current_object()
     template.save()
 
     return redirect(url_for("admin.templates.index"))
@@ -140,3 +161,38 @@ def thumbnail_show(template_id, thumbnail):
         )
 
     return response
+
+
+@module.route("/<template_id>/set_control", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def set_control(template_id):
+    template = models.Template.objects.get(id=template_id)
+    form = forms.templates.ControlTemplateForm(obj=template)
+    form.organizations.choices = [
+        (str(o.id), o.name) for o in models.Organization.objects().order_by("-id")
+    ]
+
+    if not form.validate_on_submit():
+        form.status.data = template.control.status
+        if template.control.status == "shared":
+            form.organizations.data = [
+                str(o.id) for o in template.control.organizations
+            ]
+        return render_template(
+            "/admin/templates/set-control.html",
+            form=form,
+        )
+
+    if form.status.data == "shared":
+        template.control.organizations = [
+            models.Organization.objects.get(id=oid) for oid in form.organizations.data
+        ]
+        if len(template.control.organizations) == 0:
+            form.status.data = "unshared"
+            form.organizations = None
+    template.control.status = form.status.data
+    template.control.updated_date = datetime.datetime.now
+    template.control.last_updated_by = current_user._get_current_object()
+    template.save()
+
+    return redirect(url_for("admin.templates.index"))
