@@ -33,4 +33,5 @@ class Template(me.Document):
     status = me.StringField(required=True, default="active")
     control = me.EmbeddedDocumentField("Control", default=Control)
 
+    thumbnail = me.FileField()
     file = me.FileField(required=True)

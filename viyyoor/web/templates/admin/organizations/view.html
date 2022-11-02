@@ -23,10 +23,24 @@
 
 
 {% block content %}
-<div class='ui segment'>
-    <b>Organization:</b> {{ organization.name }} <br>
-    <b>Description:</b> {{ organization.description }} <br>
-    <b>Quota: </b> {{ organization.quota }}
-</div>
+<table class="ui definition table">
+	<tbody>
+		<tr>
+			<td class="three wide column">Organization</td>
+			<td>{{ organization.name }}</td>
+		</tr>
+		<tr>
+			<td>Description</td>
+			<td>{{ organization.description }}</td>
+		</tr>
+		<tr>
+		</tr>
+		<tr>
+			<td>Quota Remaining</td>
+			<td>{{ organization.remaining_quota }}/{{ organization.quota }}</td>
+		</tr>
+		<tr>
+	</tbody>
+</table>
 
 {% endblock %}

@@ -36,9 +36,11 @@ def index():
     class_ = models.Class.objects.get(id=form.classes.data)
     certificate_template = models.CertificateTemplate()
     class_.certificate_templates[form.group.data] = certificate_template
-    
+
     form.populate_obj(certificate_template)
-    certificate_template.template = models.Template.objects.get(id=request.form.get('template_id'))
+    certificate_template.template = models.Template.objects.get(
+        id=request.form.get("template_id")
+    )
     certificate_template.last_updated_by = current_user._get_current_object()
     class_.save()
 
@@ -80,12 +82,21 @@ def create_or_edit(template_id):
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
+        template.thumbnail.put(
+            form.thumbnail_file.data,
+            filename=form.thumbnail_file.data.filename,
+            content_type=form.thumbnail_file.data.content_type,
+        )
     else:
-
         template.file.replace(
             form.template_file.data,
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
+        )
+        template.thumbnail.replace(
+            form.thumbnail_file.data,
+            filename=form.thumbnail_file.data.filename,
+            content_type=form.thumbnail_file.data.content_type,
         )
 
     template.control.updated_by = current_user._get_current_object()
@@ -132,20 +143,41 @@ def download(template_id, filename):
 
     return response
 
+
+@module.route("/<template_id>/<thumbnail>")
+@acl.roles_required("admin")
+def thumbnail_show(template_id, thumbnail):
+    response = Response()
+    response.status_code = 404
+
+    template = models.Template.objects.get(id=template_id)
+
+    if template:
+        response = send_file(
+            template.file,
+            thumbnail_name=template.file.thumbnail,
+            # as_attachment=True,
+            mimetype=template.file.content_type,
+        )
+
+    return response
+
+
 @module.route("/<template_id>/set_control", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def set_control(template_id):
     template = models.Template.objects.get(id=template_id)
     form = forms.templates.ControlTemplateForm(obj=template)
     form.organizations.choices = [
-            (str(o.id), o.name) for o in models.Organization.objects().order_by("-id")
-        ]
-
+        (str(o.id), o.name) for o in models.Organization.objects().order_by("-id")
+    ]
 
     if not form.validate_on_submit():
         form.status.data = template.control.status
         if template.control.status == "shared":
-            form.organizations.data = [str(o.id) for o in template.control.organizations]
+            form.organizations.data = [
+                str(o.id) for o in template.control.organizations
+            ]
         return render_template(
             "/admin/templates/set-control.html",
             form=form,
@@ -163,4 +195,4 @@ def set_control(template_id):
     template.control.last_updated_by = current_user._get_current_object()
     template.save()
 
-    return redirect(url_for('admin.templates.index'))
+    return redirect(url_for("admin.templates.index"))

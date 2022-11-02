@@ -26,8 +26,13 @@ Templates
 
 
         <div class="image">
-          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}" />
+          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
         </div>
+
+
+        <!-- <div class="image">
+          <img src="{{ url_for('admin.templates.thumbnail_show', template_id=template.id, thumbnail=template.thumbnail.filename) }}"/>
+        </div> -->
 
         <div class="content">
           
@@ -111,7 +116,6 @@ Templates
 {% block additional_js %}
 <script>
   function showUseTemplate(template_id) {
-    console.log(template_id)
       $('.ui.modal.'+template_id)
         .modal('show')
     ;
