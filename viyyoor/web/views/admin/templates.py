@@ -77,11 +77,12 @@ def create_or_edit(template_id):
     form.populate_obj(template)
 
     if not template_id:
-        template.file.put(
-            form.template_file.data,
-            filename=form.template_file.data.filename,
-            content_type=form.template_file.data.content_type,
-        )
+        if form.template_file.data:
+            template.file.put(
+                form.template_file.data,
+                filename=form.template_file.data.filename,
+                content_type=form.template_file.data.content_type,
+            )
         if form.thumbnail_file.data:
             template.thumbnail.put(
                 form.thumbnail_file.data,
@@ -89,11 +90,12 @@ def create_or_edit(template_id):
                 content_type=form.thumbnail_file.data.content_type,
             )
     else:
-        template.file.replace(
-            form.template_file.data,
-            filename=form.template_file.data.filename,
-            content_type=form.template_file.data.content_type,
-        )
+        if form.template_file.data:
+            template.file.replace(
+                form.template_file.data,
+                filename=form.template_file.data.filename,
+                content_type=form.template_file.data.content_type,
+            )
         if form.thumbnail_file.data:
             template.thumbnail.replace(
                 form.thumbnail_file.data,
@@ -127,7 +129,7 @@ def delete(template_id):
     return redirect(url_for("admin.templates.index"))
 
 
-@module.route("/<template_id>/<filename>")
+@module.route("/<template_id>/template/<filename>")
 @acl.roles_required("admin")
 def download(template_id, filename):
     response = Response()
@@ -146,7 +148,7 @@ def download(template_id, filename):
     return response
 
 
-@module.route("/<template_id>/<thumbnail>")
+@module.route("/<template_id>/thumbnail/<thumbnail>")
 @acl.roles_required("admin")
 def thumbnail_show(template_id, thumbnail):
     response = Response()
@@ -159,7 +161,7 @@ def thumbnail_show(template_id, thumbnail):
     if template:
         response = send_file(
             template.thumbnail,
-            thumbnail_name=template.thumbnail.filename,
+            download_name=template.thumbnail.filename,
             # as_attachment=True,
             mimetype=template.thumbnail.content_type,
         )

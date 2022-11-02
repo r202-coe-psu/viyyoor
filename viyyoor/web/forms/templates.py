@@ -36,7 +36,6 @@ class TemplateForm(BaseTemplateForm):
     template_file = file.FileField(
         "Template File",
         validators=[
-            file.FileRequired(),
             file.FileAllowed(["svg"], "รับเฉพาะไฟล์ svg เท่านั้น"),
         ],
     )
