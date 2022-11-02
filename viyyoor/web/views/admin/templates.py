@@ -82,24 +82,26 @@ def create_or_edit(template_id):
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
-        template.thumbnail.put(
-            form.thumbnail_file.data,
-            filename=form.thumbnail_file.data.filename,
-            content_type=form.thumbnail_file.data.content_type,
-        )
+        if template.thumbnail:
+            template.thumbnail.put(
+                form.thumbnail_file.data,
+                filename=form.thumbnail_file.data.filename,
+                content_type=form.thumbnail_file.data.content_type,
+            )
     else:
         template.file.replace(
             form.template_file.data,
             filename=form.template_file.data.filename,
             content_type=form.template_file.data.content_type,
         )
-        template.thumbnail.replace(
-            form.thumbnail_file.data,
-            filename=form.thumbnail_file.data.filename,
-            content_type=form.thumbnail_file.data.content_type,
-        )
+        if template.thumbnail:
+            template.thumbnail.replace(
+                form.thumbnail_file.data,
+                filename=form.thumbnail_file.data.filename,
+                content_type=form.thumbnail_file.data.content_type,
+            )
 
-    template.control.updated_by = current_user._get_current_object()
+    template.control.last_updated_by = current_user._get_current_object()
     template.save()
 
     return redirect(url_for("admin.templates.index"))
