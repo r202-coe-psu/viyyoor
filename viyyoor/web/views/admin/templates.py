@@ -77,30 +77,30 @@ def create_or_edit(template_id):
     form.populate_obj(template)
 
     if not template_id:
-        if form.template_file.data:
-            template.file.put(
-                form.template_file.data,
-                filename=form.template_file.data.filename,
-                content_type=form.template_file.data.content_type,
+        if form.uploaded_template_file.data:
+            template.template_file.put(
+                form.uploaded_template_file.data,
+                filename=form.uploaded_template_file.data.filename,
+                content_type=form.uploaded_template_file.data.content_type,
             )
-        if form.thumbnail_file.data:
-            template.thumbnail.put(
-                form.thumbnail_file.data,
-                filename=form.thumbnail_file.data.filename,
-                content_type=form.thumbnail_file.data.content_type,
+        if form.uploaded_thumbnail_file.data:
+            template.thumbnail_file.put(
+                form.uploaded_thumbnail_file.data,
+                filename=form.uploaded_thumbnail_file.data.filename,
+                content_type=form.uploaded_thumbnail_file.data.content_type,
             )
     else:
-        if form.template_file.data:
-            template.file.replace(
-                form.template_file.data,
-                filename=form.template_file.data.filename,
-                content_type=form.template_file.data.content_type,
+        if form.uploaded_template_file.data:
+            template.template_file.replace(
+                form.uploaded_template_file.data,
+                filename=form.uploaded_template_file.data.filename,
+                content_type=form.uploaded_template_file.data.content_type,
             )
-        if form.thumbnail_file.data:
-            template.thumbnail.replace(
-                form.thumbnail_file.data,
-                filename=form.thumbnail_file.data.filename,
-                content_type=form.thumbnail_file.data.content_type,
+        if form.uploaded_thumbnail_file.data:
+            template.thumbnail_file.replace(
+                form.uploaded_thumbnail_file.data,
+                filename=form.uploaded_thumbnail_file.data.filename,
+                content_type=form.uploaded_thumbnail_file.data.content_type,
             )
 
     template.control.last_updated_by = current_user._get_current_object()
@@ -131,39 +131,39 @@ def delete(template_id):
 
 @module.route("/<template_id>/template/<filename>")
 @acl.roles_required("admin")
-def download(template_id, filename):
+def download_template(template_id, filename):
     response = Response()
     response.status_code = 404
 
     template = models.Template.objects.get(id=template_id)
+    print("HEY BRO !!!")
+    print(template.template_file)
 
     if template:
         response = send_file(
-            template.file,
-            download_name=template.file.filename,
-            # as_attachment=True,
-            mimetype=template.file.content_type,
+            template.template_file,
+            download_name=template.template_file.filename,
+            mimetype=template.template_file.content_type,
         )
 
     return response
 
 
-@module.route("/<template_id>/thumbnail/<thumbnail>")
+@module.route("/<template_id>/thumbnail/<filename>")
 @acl.roles_required("admin")
-def thumbnail_show(template_id, thumbnail):
+def download_thumbnail(template_id, filename):
     response = Response()
     response.status_code = 404
 
     template = models.Template.objects.get(id=template_id)
-    print(template.thumbnail)
-    print(template.file)
+    print(template.thumbnail_file)
+    print(template.template_file)
 
     if template:
         response = send_file(
-            template.thumbnail,
-            download_name=template.thumbnail.filename,
-            # as_attachment=True,
-            mimetype=template.thumbnail.content_type,
+            template.thumbnail_file,
+            download_name=template.thumbnail_file.filename,
+            mimetype=template.thumbnail_file.content_type,
         )
 
     return response

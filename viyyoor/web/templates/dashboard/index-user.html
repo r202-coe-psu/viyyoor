@@ -19,7 +19,7 @@
             {% if 'project_name' in certificate.get_participant().extra %}
               <p><b>Project: </b> {{ certificate.get_participant().extra['project_name'] }}</p>
             {% endif %}
-              <p><b>Issued Date: </b> {{ certificate.issued_date.date() }}</p>
+              <p><b>Issued Date: </b> {{ certificate.issued_date }}</p>
             <p>{{ certificate.class_.description }}</p>
           </div>
         </div>

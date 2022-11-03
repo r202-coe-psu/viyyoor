@@ -78,8 +78,8 @@ def render_certificate(
     if not certificate_template:
         return None
 
-    certificate_template.template.file.seek(0)
-    data = certificate_template.template.file.read().decode()
+    certificate_template.template.template_file.seek(0)
+    data = certificate_template.template.template_file.read().decode()
     template = Template(data)
 
     text = [t.strip() for t in certificate_template.appreciate_text.split("\n")]

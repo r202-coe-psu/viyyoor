@@ -24,15 +24,15 @@ Templates
       {% for template in templates %}
       <div class="card" style="width: 24em;">
 
-
-        <!-- <div class="image">
-          <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
-        </div> -->
-
-
+        {% if template.thumbnail_file %} 
         <div class="image">
-          <img src="{{ url_for('admin.templates.thumbnail_show', template_id=template.id, thumbnail=template.thumbnail.filename) }}"/>
+          <img src="{{ url_for('admin.templates.download_thumbnail', template_id=template.id, filename=template.thumbnail_file.filename) }}"/>
         </div>
+        {% else %}
+        <div class="image">
+          <img src="{{ url_for('admin.templates.download_template', template_id=template.id, filename=template.template_file.filename) }}"/>
+        </div>
+        {% endif %}
 
         <div class="content">
           

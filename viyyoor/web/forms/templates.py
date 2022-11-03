@@ -17,7 +17,7 @@ BaseTemplateForm = model_form(
         "last_updated_by",
         "owner",
         "status",
-        "file",
+        "template_file",
         "control",
     ],
     field_args={
@@ -33,13 +33,13 @@ BaseTemplateForm = model_form(
 
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
-    template_file = file.FileField(
+    uploaded_template_file = file.FileField(
         "Template File",
         validators=[
             file.FileAllowed(["svg"], "รับเฉพาะไฟล์ svg เท่านั้น"),
         ],
     )
-    thumbnail_file = file.FileField(
+    uploaded_thumbnail_file = file.FileField(
         "Thumbnail File",
         validators=[
             file.FileAllowed(["png", "jpg"], "รับเฉพาะไฟล์ png เเละ jpg เท่านั้น"),
@@ -58,13 +58,13 @@ BaseControlTemplateForm = model_form(
 
 
 class ControlTemplateForm(BaseControlTemplateForm):
-    organizations = fields.SelectMultipleField()
+    organizations = fields.SelectMultipleField("Organizations")
 
 
 BaseCertificateTemplateForm = model_form(
     models.CertificateTemplate,
     FlaskForm,
-    exclude=["updated_date", "last_updated_by", "template"],
+    exclude=["updated_date", "last_updated_by"],
     field_args={
         "name": {"label": "Name"},
         "appreciate_text": {"label": "Appreciate Text"},

@@ -5,7 +5,8 @@ from flask_login import UserMixin
 from flask import url_for
 
 class UserSetting(me.EmbeddedDocument):
-    organization = me.ReferenceField("Organization", dbref=True)
+    organizations = me.ListField(me.ReferenceField("Organization", dbref=True))
+    current_organization = me.ReferenceField("Organization", dbref=True)
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
@@ -68,3 +69,9 @@ class User(me.Document, UserMixin):
         from .signatures import Signature
 
         return Signature.objects(owner=self).order_by("-id").first()
+
+    def get_organizations(self):
+        return self.user_setting.organizations
+
+    def get_current_organization(self):
+        return self.user_setting.current_organization

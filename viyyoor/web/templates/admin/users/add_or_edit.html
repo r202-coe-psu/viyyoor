@@ -26,7 +26,7 @@ User
       <div class="three fields">
         {{ renderer.render_field(form.roles) }}
         {{ renderer.render_field(form.status) }}
-        {{ renderer.render_field(org_form.organization) }}
+        {{ renderer.render_multiple_select(org_form.organizations) }}
       </div>
       <div class="three fields">
         {{ renderer.render_field(form.title) }}

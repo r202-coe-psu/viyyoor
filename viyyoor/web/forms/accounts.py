@@ -141,7 +141,4 @@ BaseUserSettingForm = model_form(
 
 
 class UserSetting(BaseUserSettingForm):
-    organization = fields.SelectField(
-        "Organization",
-        choices=[("-", "ไม่สังกัดหน่วยงาน")],
-    )
+    organizations = fields.SelectMultipleField("Organizations")
