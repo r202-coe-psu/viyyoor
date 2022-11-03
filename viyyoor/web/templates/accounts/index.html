@@ -21,6 +21,7 @@ Profile
 {% block content %}
 <div class="ui container">
 
+  {% if current_user.get_organizations() %}
   <div class="ui segment">
     <div class="ui two column very relaxed grid">
       <div class="four wide column">
@@ -35,6 +36,7 @@ Profile
       </div>
     </div>
   </div>
+  {% endif %}
 
   <div class="ui segment" id="ui-select-form" style="display: none">
     <form method="POST" class="ui form">
