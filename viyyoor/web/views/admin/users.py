@@ -26,7 +26,7 @@ def index():
 @acl.roles_required("admin")
 def add_or_edit(user_id):
     form = forms.accounts.UserForm()
-    org_form = forms.accounts.UserSetting()
+    org_form = forms.accounts.UserSettingForm()
     organizations = models.Organization.objects().order_by("-id")
     user = None
     org_form.organizations.choices = [
@@ -35,7 +35,7 @@ def add_or_edit(user_id):
     if user_id:
         user = models.User.objects(id=user_id).first()
         form = forms.accounts.UserForm(obj=user)
-        org_form = forms.accounts.UserSetting(obj=user.user_setting)
+        org_form = forms.accounts.UserSettingForm(obj=user.user_setting)
         org_form.organizations.choices = [
         (str(o.id), o.name) for o in organizations
     ]

@@ -1,3 +1,5 @@
+{% import '/base/html-renderer.html' as renderer %}
+
 {% if current_user.is_authenticated %}
   {% extends '/base/default-dashboard.html' %}
 {% else %}
@@ -17,48 +19,77 @@ Profile
 {% endblock %}
 
 {% block content %}
-<div class="ui container"> {# start div container #} 
-  <div class="ui segment">
-    <h2 class="ui header">Profile
-      {% if current_user.is_authenticated and current_user.id == user.id %}
-        <a class="btn-floating btn-large waves-effect waves-light" href="{{ url_for('accounts.edit_profile') }}" title='Edit profile.'><i class="edit icon"></i></a>
-      {% endif %}
-    </h2>
-    <div class="ui grid">
+<div class="ui container">
 
+  <div class="ui segment">
+    <div class="ui two column very relaxed grid">
+      <div class="four wide column">
+        <h2 class="ui header">Organization </h2>
+        <h3 class="ui blue header">{{ current_user.get_current_organization().name }}</h3> 
+      </div>
+      <div class="column">
+        <a class="ui blue labeled icon button" onclick="showHideForm()" style="margin-top: 3em">
+          Change Organization
+          <i class="edit icon"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui segment" id="ui-select-form" style="display: none">
+    <form method="POST" class="ui form">
+      {{ form.csrf_token }}
+      {{ renderer.render_select(form.current_organization) }}
+      <button name="submit" type="submit" class="ui labeled primary icon button"><i class="save icon"></i>Save</button>
+      <a class="ui button" onclick="showHideForm()">Close</a>
+    </form>
+  </div>
+
+  <div class="ui segment">
+    <div class="ui two column very relaxed grid">
       <div class="four wide column center aligned">
+        <h2 class="ui left aligned header">Profile</h2>
         <div class="ui small image">
           <img src="{{ user.get_picture() }}">
         </div>
       </div>
 
-      <div class="twelve wide column">
-        <div>
-          <h3 class="ui header">{{ user.first_name }} {{ user.last_name }}<br>
-          {{ user.first_name_th if user.first_name_th else "" }} {{ user.last_name_th if user.last_name_th else ""}}<br>
-          {{ user.user_setting.organization.name if user.user_setting.organization else "" }}</h3>
-          Email:
-          <div class="ui label large">
-            <i class="mail icon"></i>
-            {{ user.email }} 
-          </div>
-          <div style="margin-top: .5vh;">
-          {% if current_user.is_authenticated and current_user.id == user.id %}
-            Role: 
-            {% for role in user.roles %}
-              <div class="ui label">
-                {{ role }}
-              </div>
-            {% endfor %}
-          {% endif %}
-          </div>
-        </div>
-        <div style="margin-top: 2vh;">
-
-        </div>
+      <div class="column">
+        {% if current_user.is_authenticated and current_user.id == user.id %}
+          <a class="ui primary labeled icon button" href="{{ url_for('accounts.edit_profile') }}" title='Edit profile.'>Edit Profile <i class="edit icon"></i></a>
+        {% endif %}
+        <table class="ui single line table">
+          <tbody>
+            <tr>
+              <td class="five wide">
+                <div style="color: grey">NAME </div>
+                {{ user.first_name }} {{ user.last_name }}
+              </td>
+              <td >
+                <div style="color: grey">NAME_TH </div>
+                {{ user.first_name_th + " " + user.last_name_th if user.first_name_th and user.last_name_th else "-" }}
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="color: grey">EMAIL</div>
+                {{ user.email }}
+              </td>
+              <td>
+                <div style="color: grey">ROLE</div> 
+                {% for role in user.roles %}
+                  <div class="ui label">
+                    {{ role }}
+                  </div>
+                {% endfor %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+  
 
   {% if 'endorser' in current_user.roles %}
   <div class="ui segment">
@@ -92,4 +123,12 @@ Profile
 {% endif %}
 
 </div> {# end div container #}
+{% endblock %}
+
+{% block additional_js %}
+<script>
+  function showHideForm() {
+    $(document.getElementById("ui-select-form")).transition('fade down')
+  }
+</script>
 {% endblock %}

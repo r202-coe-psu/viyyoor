@@ -168,15 +168,29 @@ def profile(user_id):
     )
 
 
-@module.route("/accounts")
+@module.route("/accounts", methods=["GET", "POST"])
 @login_required
 def index():
-
     biography = ""
     if current_user.biography:
         biography = markdown.markdown(current_user.biography)
+
+    form = forms.accounts.SelectOrganizationForm(obj=current_user.user_setting)
+    form.current_organization.choices = [
+        (str(o.id), o.name) for o in current_user.user_setting.organizations
+    ]
+    if form.validate_on_submit():
+        current_user.user_setting.current_organization = (
+            models.Organization.objects.get(id=form.current_organization.data)
+        )
+        current_user.save()
+        return redirect(url_for("accounts.index"))
+
+    form.current_organization.data = str(
+        current_user.user_setting.current_organization.id
+    )
     return render_template(
-        "/accounts/index.html", user=current_user, biography=biography
+        "/accounts/index.html", user=current_user, biography=biography, form=form
     )
 
 

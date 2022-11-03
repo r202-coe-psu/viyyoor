@@ -140,5 +140,8 @@ BaseUserSettingForm = model_form(
 )
 
 
-class UserSetting(BaseUserSettingForm):
+class UserSettingForm(BaseUserSettingForm):
     organizations = fields.SelectMultipleField("Organizations")
+
+class SelectOrganizationForm(BaseUserSettingForm):
+    current_organization = fields.SelectField("Select Organization")
