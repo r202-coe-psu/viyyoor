@@ -74,14 +74,13 @@
         display: none !important;
       }
       .fixed.menu > .container {
-        width: 100%; !important;
+        width: 100% !important;
     }
 
   </style>
 
   <script type="text/javascript">
-  $(document)
-  .ready(function() {
+  $(document).ready(function() {
 
       $('.left.sidebar.menu')
         .sidebar('attach events', '.launch.icon.item', 'show')
@@ -108,7 +107,7 @@
 {# end slide menu #}
 
 {# begin top bar mobile #}
-<div class="ui fixed inverted main menu">
+<div class="ui fixed inverted main menu" style="background-color: rgb(25, 60, 108);">
   <div class="ui container">
     <a class="launch icon item">
       <i class="content icon"></i>
@@ -146,7 +145,7 @@
 
     {# begin default left side toc #}
     <div class="toc">
-      <div class="ui vertical inverted large menu">
+      <div class="ui vertical inverted large menu" style="background-color: rgb(25, 60, 108);">
         {% include "/base/toolbar-dashboard.html" with context %}
       </div>
     </div>
@@ -193,5 +192,3 @@
 </div>
 
 {% endblock body %}
-
-
