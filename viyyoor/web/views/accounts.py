@@ -186,9 +186,9 @@ def index():
         current_user.save()
         return redirect(url_for("accounts.index"))
 
-    form.current_organization.data = str(
-        current_user.user_setting.current_organization.id
-    )
+    current_organization = current_user.user_setting.current_organization
+    if current_organization:
+        form.current_organization.data = str(current_organization.id)
     return render_template(
         "/accounts/index.html", user=current_user, biography=biography, form=form
     )
