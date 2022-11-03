@@ -64,7 +64,7 @@ class ControlTemplateForm(BaseControlTemplateForm):
 BaseCertificateTemplateForm = model_form(
     models.CertificateTemplate,
     FlaskForm,
-    exclude=["updated_date", "last_updated_by"],
+    exclude=["updated_date", "last_updated_by", "template"],
     field_args={
         "name": {"label": "Name"},
         "appreciate_text": {"label": "Appreciate Text"},
