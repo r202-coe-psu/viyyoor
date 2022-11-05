@@ -7,9 +7,9 @@
       <i class="user icon"></i>
       {% endif -%}
   </a>
-  <a href="{{ url_for('accounts.index') }}">{{ current_user.email }}</a>
+  <a style="font-size: small;" href="{{ url_for('accounts.index') }}">{{ current_user.email }}</a>
   <br>
-  <a href="{{ url_for('accounts.index') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a>
+  <a style="font-size: small;" href="{{ url_for('accounts.index') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a>
   <br>
   <b style="font-size: small;color: rgb(250, 241, 210)">{{ current_user.user_setting.current_organization.name }}</b>
 </div>
