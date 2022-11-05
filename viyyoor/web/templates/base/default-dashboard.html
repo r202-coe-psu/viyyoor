@@ -156,9 +156,12 @@
       <header>
         <div class="ui vertical dividing segment">
           <div class="introduction">
-            <h1 class="ui header">
-              {{ self.dashboard_title() }}
-            </h1>
+            <div class="ui basic segment" style="padding-bottom: 2.5em">
+              <h1 class="ui left floated header">{{ self.dashboard_title() }}</h1>
+              <h1 class="ui right floated header">
+                {{ current_user.user_setting.current_organization.name }} Organization
+              </h1>
+            </div>
           </div>
         </div>
       </header>
