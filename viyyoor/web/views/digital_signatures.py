@@ -21,7 +21,7 @@ def sign_certificates(class_id):
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
 
-        organization.quota -= 1
+        organization.number_of_uses += 1
         organization.save()
 
 
