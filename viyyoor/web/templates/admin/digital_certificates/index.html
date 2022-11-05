@@ -19,22 +19,12 @@
 {% endif %}
 {% endblock %}
 
-{% block additional_js %}
-{{ super() }}
-<script type="text/javascript">
-  $().ready(function(){
-  $('.popupmsg')
-  .popup()
-  }
-  );
-</script>
-{% endblock %}
 
 {% block content %}
-  <div class="ui segment">
-    <a class="ui primary icon button" href="{{ url_for('admin.digital_certificates.add') }}"><i class="fingerprint icon"></i> Add Digital ID</a>
-    <table class="ui celled table">
-      <thead>
+<div class="ui segment">
+  <a class="ui primary icon button" href="{{ url_for('admin.digital_certificates.add') }}"><i class="fingerprint icon"></i> Add Digital ID</a>
+  <table class="ui celled table">
+    <thead>
         <tr>
           <th>Filename</th>
           <th>Date</th>
@@ -51,10 +41,30 @@
           <td><a target="_blank" class="ui button circular icon primary popupmsg"  href="{{ certificate.ca_download_url }}" data-content="{{ certificate.ca_download_url }}" data-position="right center"><i class="linkify icon"></i></a></td>
           <td class="popupmsg" data-title="Status" data-position="top left">{{ certificate.status.title() }}</td>
           <td>
+            {% if certificate.status == "active" %}
+            <a class="ui grey circular icon popupmsg button" href="{{ url_for('admin.digital_certificates.action', digital_certificate_id=certificate.id, action='deactivate') }}" data-content="Deactivate"><i class="ban icon"></i></a>
+            {% else %}
+            <a class="ui green circular icon popupmsg button" href="{{ url_for('admin.digital_certificates.action', digital_certificate_id=certificate.id, action='activate') }}" data-content="Activate"><i class="certificate icon"></i></a>
+            {% endif %}
+            {#
+              <a href="{{ url_for('admin.digital_certificates.action', action='delete', digital_certificate_id=certificate.id) }}" class="ui negative circular icon popupmsg button" data-content="Delete"><i class="trash icon"></i></a>
+            #}
+              
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-{% endblock content %}
+  {% endblock content %}
+  
+  {% block additional_js %}
+  {{ super() }}
+  <script type="text/javascript">
+    $().ready(function(){
+    $('.popupmsg')
+      .popup()
+    }
+    );
+  </script>
+  {% endblock %}
