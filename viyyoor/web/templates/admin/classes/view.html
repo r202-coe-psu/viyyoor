@@ -174,13 +174,13 @@
               {% endif %}
             </td>
           <td>
-            <a class="ui icon button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.id, extension='png') }}" target="_blank" title='view'><i class="certificate icon"></i></a>
+            <a class="ui icon link pop button circular primary" href="{{ url_for('classes.render_certificate', class_id=class_.id, participant_id=participant.id, extension='png') }}" target="_blank" data-content="open"><i class="certificate icon"></i></a>
             {% if certificate and certificate.status not in ['prepare', 'purge'] %}
-            <a class="ui icon button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank" tile><i class="certificate icon"></i></a>
+            <a class="ui icon link pop button circular green" href="{{ url_for('certificates.view', certificate_id=certificate.id) }}" target="_blank" tile data-content="view"><i class="certificate icon"></i></a>
             {% endif %}
             {% if certificate %}
-            <a class="ui icon button circular grey" href="{{ url_for('admin.classes.rebuild_certificate',class_id=class_.id, certificate_id=certificate.id) }}"><i class="undo icon"></i></a>
-            <a class="ui icon button circular negative" href="{{ url_for('admin.classes.purge_certificate',class_id=class_.id, certificate_id=certificate.id) }}"><i class="ban icon"></i></a>
+            <a class="ui icon link pop button circular grey" href="{{ url_for('admin.classes.rebuild_certificate',class_id=class_.id, certificate_id=certificate.id) }}" data-content="rebuild"><i class="undo icon"></i></a>
+            <a class="ui icon link pop button circular negative" href="{{ url_for('admin.classes.purge_certificate',class_id=class_.id, certificate_id=certificate.id) }}" data-content="purge"><i class="ban icon"></i></a>
             {% endif %}
 					</td>
 				</tr>
@@ -190,3 +190,10 @@
             	
 </div>
 {% endblock %}
+
+{% block additional_js %}
+<script>
+  $('.icon.link.pop')
+    .popup()
+</script>
+{% endblock%}
