@@ -7,8 +7,10 @@ import io
 from viyyoor import models
 
 
-def sign_certificates(class_):
+def sign_certificates(class_id):
+    class_ = models.Class.objects.get(id=class_id)
     certificates = models.Certificate.objects(class_=class_, status="signing")
+    organization = class_.organization
     for certificate in certificates:
         dc = models.DigitalCertificate.objects(status="active").order_by("-id").first()
         sign_digital_signature(certificate, dc)
@@ -18,6 +20,9 @@ def sign_certificates(class_):
 
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
+
+        organization.quota -= 1
+        organization.save()
 
 
 def sign_digital_signature(certificate, dc, reason=""):
