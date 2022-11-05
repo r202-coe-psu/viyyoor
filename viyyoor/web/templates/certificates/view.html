@@ -1,13 +1,16 @@
 {% extends '/base/default-page.html' %}
 
 {% set participant = certificate.get_participant() %}
+
 {% block title %}{{ participant.name }} Certificate{% endblock %}
 
+
 {% block content %}
-<div class="ui container">
-  <div style="background-color: white;">
+
+<div class="ui segment">
+  <div style="padding-top: 3vh">
     <div class="ui icon message">
-      <i class="certificate icon"></i>
+      <i class="big certificate icon"></i>
       <div class="content">
         <div class="header">
         {{ class_.printed_name }}
@@ -24,42 +27,37 @@
           </div>
           <div>
             <b>Certificate ID: </b> {{ certificate.id }}
-          </div>
         </div>
-      </div>
-    </div>
-
-
-    <div class="ui image">
-      <img src="{{ url_for('certificates.download', certificate_id=certificate.id, extension='png') }}">
-    </div>
-
-    
-    <div style="padding: 10px;">
-      <div class="ui grid">
-        <div class="two column row">
-          <div class="column">
-            <a class="ui primary button icon" href="{{ url_for('certificates.download', certificate_id=certificate.id, extension='pdf') }}"><i class="pdf file icon"></i> Download PDF with Digital Signature</a>
-            {% if certificate.ca_download_url %}
-              <a class="ui primary button icon" href="{{ certificate.ca_download_url }}"><i class="file icon"></i> Download CA</a>
-            {% endif %}
-          </div>
-          <div class="column">
-            <i class="globe icon"></i>
-            Validate URL: <a class="ui primary label" href="{{ certificate.validated_url }}"> {{ certificate.validated_url }}</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="ui segment">
-      <div class="ui message">
-        <div class="header">
-          About {{ class_.printed_name }}
-        </div>
-        <p>{{ class_.description }}</p>
       </div>
     </div>
   </div>
+
+  <div class="ui fluid image">
+    <img src="{{ url_for('certificates.download', certificate_id=certificate.id, extension='png') }}">
+  </div>
+
+  <div style="padding-top: 2vh">
+    <div class="ui grid">
+      <div class="two column row">
+        <div class="column">
+          <a class="ui primary button icon" href="{{ url_for('certificates.download', certificate_id=certificate.id, extension='pdf') }}"><i class="pdf file icon"></i> Download PDF with Digital Signature</a>
+          {% if certificate.ca_download_url %}
+            <a class="ui primary button icon" href="{{ certificate.ca_download_url }}"><i class="file icon"></i> Download CA</a>
+          {% endif %}
+        </div>
+        <div class="column">
+          <i class="globe icon"></i>
+          Validate URL: <a class="ui primary label" href="{{ certificate.validated_url }}"> {{ certificate.validated_url }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ui message">
+    <div class="header">
+      About {{ class_.printed_name }}
+    </div>
+    <p>{{ class_.description }}</p>
+  </div>
 </div>
+
 {% endblock %}
