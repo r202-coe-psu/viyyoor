@@ -51,7 +51,7 @@ def create_or_edit(organization_id):
 
     form.admins.choices = [(str(u.id), u.get_fullname()) for u in models.User.objects()]
     if not form.validate_on_submit():
-        if organization.admins:
+        if organization:
             form.admins.data = [str(a.user.id) for a in organization.admins]
 
         return render_template(
