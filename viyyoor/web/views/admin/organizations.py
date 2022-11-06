@@ -22,10 +22,15 @@ def index():
             status="active",
         )
     else:
-        organizations = models.Organization.objects(
-            created_by=current_user._get_current_object(),
+        organizations = []
+        all_organizations = models.Organization.objects(
             status="active",
         )
+        for o in all_organizations:
+            for a in o.admins:
+                if a.user == current_user:
+                    organizations.append(o)
+
     return render_template(
         "/admin/organizations/index.html",
         now=datetime.datetime.now,
@@ -80,7 +85,7 @@ def create_or_edit(organization_id):
 
 
 @module.route("/<organization_id>")
-@acl.roles_required("superadmin")
+@acl.roles_required("admin")
 def view(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
