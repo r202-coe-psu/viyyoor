@@ -141,3 +141,39 @@ def view_admins(organization_id):
         organization=organization,
         form=form,
     )
+
+
+@module.route("/<organization_id>/endorsers", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_endorsers(organization_id):
+    organization = models.organizations.Organization.objects.get(id=organization_id)
+
+    form = forms.organizations.OrganizationEndorsersForm()
+    form.endorsers.choices = [
+        (str(u.id), u.get_fullname()) for u in models.User.objects()
+    ]
+    if not form.validate_on_submit():
+        form.endorsers.data = [str(a.user.id) for a in organization.endorsers]
+
+        return render_template(
+            "/admin/organizations/view-endorsers.html",
+            organization=organization,
+            form=form,
+        )
+
+    from ....models.organizations import Endorser
+
+    organization.endorsers = [
+        Endorser(
+            user=models.User.objects.get(id=u_id),
+            created_by=current_user._get_current_object(),
+        )
+        for u_id in form.endorsers.data
+    ]
+    organization.save()
+
+    return render_template(
+        "/admin/organizations/view-endorsers.html",
+        organization=organization,
+        form=form,
+    )

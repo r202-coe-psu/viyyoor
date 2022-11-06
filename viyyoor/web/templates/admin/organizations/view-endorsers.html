@@ -5,24 +5,26 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-Admins
+Endorsers
 {% endblock %}
 
 
 
 {% block content %}
 <h2 class="ui header">
-	View Admins
+	View Endorsers
 </h2>
 
 <div class="ui divider"></div>
 
-<a class="ui primary labeled icon button" onclick="showManageAdminForm()"><i class="users cog icon"></i>Manage Admins</a>
-<div class="ui segment admin form" style="display: none;">
+<a class="ui primary labeled icon button" onclick="showManageEndorserForm()">
+    <i class="users cog icon"></i>Manage Endorsers
+</a>
+<div class="ui segment endorser form" style="display: none;">
 	<form method="POST" class="ui form" enctype="multipart/form-data">
-		<h4 class="ui header">Admin Management Section</h4>
+		<h4 class="ui header">Endorsers Management Section</h4>
 		{{ form.csrf_token }}
-		{{ renderer.render_multiple_select(form.admins)}}
+		{{ renderer.render_multiple_select(form.endorsers)}}
 		<button class="ui primary labeled icon small button" type="submit"><i class="save icon"></i>Save</button>
 	</form>
 </div>
@@ -32,16 +34,16 @@ Admins
 		<thead>
 			<tr>
 				<th></th>
-				<th>Admin Name</th>
-				<th>Added by</th>
+				<th>Endorsers Name</th>
+				<th>Created by</th>
 			</tr>
 		</thead>
 		<tbody>
-			{% for a in organization.admins %}
+			{% for a in organization.endorsers %}
 			<tr>
 				<td>{{ loop.index }}</td>
 				<td>{{ a.user.get_fullname() }}</td>
-				<td>{{ a.added_by.get_fullname() }}</td>
+				<td>{{ a.created_by.get_fullname() }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
@@ -51,8 +53,8 @@ Admins
 
 {% block additional_js %}
 <script>
-	function showManageAdminForm() {
-		$('.admin.form')
+	function showManageEndorserForm() {
+		$('.endorser.form')
 			.transition('fade down')
 	}
 </script>

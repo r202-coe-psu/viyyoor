@@ -30,3 +30,6 @@ class OrganizationForm(BaseOrganizationForm):
 
 class OrganizationAdminsForm(FlaskForm):
     admins = fields.SelectMultipleField("")
+
+class OrganizationEndorsersForm(FlaskForm):
+    endorsers = fields.SelectMultipleField("")
