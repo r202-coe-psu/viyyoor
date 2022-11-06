@@ -74,13 +74,19 @@ def create_or_edit(organization_id):
     organization.last_updated_date = datetime.datetime.now()
 
     organization.admins = [
-        models.Administrator(
+        Administrator(
             user=models.User.objects.get(id=u_id),
-            added_by=current_user._get_current_object(),
+            created_by=current_user._get_current_object(),
         )
         for u_id in form.admins.data
     ]
     organization.save()
+
+    for u_id in form.admins.data:
+        user = models.User.objects.get(id=u_id)
+        if organization not in user.organizations:
+            user.organizations.append(organization)
+            user.save()
 
     return redirect(url_for("admin.organizations.index"))
 
