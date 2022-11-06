@@ -8,7 +8,7 @@ from flask_login import current_user, login_required
 
 import datetime
 
-from viyyoor.web import forms
+from viyyoor.web import acl, forms
 from viyyoor import models
 
 
@@ -16,7 +16,6 @@ module = Blueprint("organizations", __name__, url_prefix="/organizations")
 
 
 @module.route("/")
-@login_required
 def index():
     if current_user.has_roles(["superadmin"]):
         organizations = models.Organization.objects(
@@ -40,7 +39,7 @@ def index():
     defaults={"organization_id": None},
 )
 @module.route("/<organization_id>/edit", methods=["GET", "POST"])
-@login_required
+@acl.roles_required("superadmin")
 def create_or_edit(organization_id):
     form = forms.organizations.OrganizationForm()
     organization = None
@@ -81,7 +80,7 @@ def create_or_edit(organization_id):
 
 
 @module.route("/<organization_id>")
-@login_required
+@acl.roles_required("superadmin")
 def view(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
@@ -94,7 +93,7 @@ def view(organization_id):
 
 
 @module.route("/<organization_id>/delete")
-@login_required
+@acl.roles_required("superadmin")
 def delete(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
