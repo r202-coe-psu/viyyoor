@@ -4,12 +4,14 @@ import datetime
 from flask_login import UserMixin
 from flask import url_for
 
+
 class UserSetting(me.EmbeddedDocument):
     organizations = me.ListField(me.ReferenceField("Organization", dbref=True))
     current_organization = me.ReferenceField("Organization", dbref=True)
     updated_date = me.DateTimeField(
         required=True, default=datetime.datetime.now, auto_now=True
     )
+
 
 class User(me.Document, UserMixin):
     meta = {"collection": "users", "strict": False}
@@ -39,9 +41,7 @@ class User(me.Document, UserMixin):
         required=True, default=datetime.datetime.now, auto_now=True
     )
 
-    user_setting = me.EmbeddedDocumentField(
-        "UserSetting", default=UserSetting
-    )
+    user_setting = me.EmbeddedDocumentField("UserSetting", default=UserSetting)
 
     resources = me.DictField()
 
@@ -50,6 +50,9 @@ class User(me.Document, UserMixin):
             if role in self.roles:
                 return True
         return False
+
+    def get_fullname(self):
+        return f"{self.first_name} {self.last_name}"
 
     def get_picture(self):
         if self.picture:

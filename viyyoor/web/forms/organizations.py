@@ -25,4 +25,4 @@ BaseOrganizationForm = model_form(
 
 
 class OrganizationForm(BaseOrganizationForm):
-   pass
+    admins = fields.SelectMultipleField("Admins")

@@ -46,14 +46,14 @@ def create_or_edit(organization_id):
     organization = None
 
     if organization_id:
-        organization = models.organizations.Organization.objects.get(
-            id=organization_id,
-        )
-        form = forms.organizations.OrganizationForm(
-            obj=organization,
-        )
+        organization = models.organizations.Organization.objects.get(id=organization_id)
+        form = forms.organizations.OrganizationForm(obj=organization)
 
+    form.admins.choices = [(str(u.id), u.get_fullname()) for u in models.User.objects()]
     if not form.validate_on_submit():
+        if organization.admins:
+            form.admins.data = [str(a.user.id) for a in organization.admins]
+
         return render_template(
             "/admin/organizations/create-edit.html",
             form=form,
@@ -68,6 +68,13 @@ def create_or_edit(organization_id):
     organization.last_updated_by = current_user._get_current_object()
     organization.last_updated_date = datetime.datetime.now()
 
+    organization.admins = [
+        models.Administrator(
+            user=models.User.objects.get(id=u_id),
+            added_by=current_user._get_current_object(),
+        )
+        for u_id in form.admins.data
+    ]
     organization.save()
 
     return redirect(url_for("admin.organizations.index"))
