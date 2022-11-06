@@ -177,7 +177,7 @@ def index():
 
     form = forms.accounts.SelectOrganizationForm(obj=current_user.user_setting)
     form.current_organization.choices = [
-        (str(o.id), o.name) for o in current_user.user_setting.organizations
+        (str(o.id), o.name) for o in current_user.organizations
     ]
     if form.validate_on_submit():
         current_user.user_setting.current_organization = (

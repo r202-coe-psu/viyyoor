@@ -37,9 +37,7 @@ def add_or_edit(user_id):
         org_form.organizations.choices = [(str(o.id), o.name) for o in organizations]
 
     if not form.validate_on_submit():
-        org_form.organizations.data = [
-            str(o.id) for o in user.user_setting.organizations
-        ]
+        org_form.organizations.data = [str(o.id) for o in user.organizations]
         return render_template(
             "/admin/users/add_or_edit.html",
             user=user,
@@ -53,15 +51,15 @@ def add_or_edit(user_id):
     form.populate_obj(user)
     org_form.populate_obj(user.user_setting)
 
-    user.user_setting.organizations = [
+    user.organizations = [
         models.Organization.objects.get(id=oid) for oid in org_form.organizations.data
     ]
     user.user_setting.updated_date = datetime.datetime.now()
 
     if not user.user_setting.current_organization:
-        user.user_setting.current_organization = user.user_setting.organizations[0]
+        user.user_setting.current_organization = user.organizations[0]
 
-    if not user.user_setting.organizations:
+    if not user.organizations:
         user.user_setting.current_organization = None
 
     user.save()

@@ -34,6 +34,7 @@ Admins
 				<th></th>
 				<th>Admin Name</th>
 				<th>Added by</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -41,7 +42,13 @@ Admins
 			<tr>
 				<td>{{ loop.index }}</td>
 				<td>{{ a.user.get_fullname() }}</td>
-				<td>{{ a.added_by.get_fullname() }}</td>
+				<td>{{ a.created_by.get_fullname() }}</td>
+				<td>
+					<a class="ui red icon circular button" 
+					   href="{{ url_for('admin.organizations.delete_admin', organization_id=organization.id, user_id=a.user.id) }}">
+					   <i class="trash icon"></i>
+					</a>
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>

@@ -36,6 +36,7 @@ Endorsers
 				<th></th>
 				<th>Endorsers Name</th>
 				<th>Created by</th>
+				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -44,6 +45,12 @@ Endorsers
 				<td>{{ loop.index }}</td>
 				<td>{{ a.user.get_fullname() }}</td>
 				<td>{{ a.created_by.get_fullname() }}</td>
+				<td>
+					<a class="ui red icon circular button" 
+					   href="{{ url_for('admin.organizations.delete_endorser', organization_id=organization.id, user_id=a.user.id) }}">
+					   <i class="trash icon"></i>
+					</a>
+				</td>
 			</tr>
 			{% endfor %}
 		</tbody>

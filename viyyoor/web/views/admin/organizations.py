@@ -10,6 +10,7 @@ import datetime
 
 from viyyoor.web import acl, forms
 from viyyoor import models
+from ....models.organizations import Endorser, Administrator
 
 
 module = Blueprint("organizations", __name__, url_prefix="/organizations")
@@ -117,29 +118,49 @@ def view_admins(organization_id):
     organization = models.organizations.Organization.objects.get(id=organization_id)
 
     form = forms.organizations.OrganizationAdminsForm()
-    form.admins.choices = [(str(u.id), u.get_fullname()) for u in models.User.objects()]
+    form.admins.choices = [
+        (str(u.id), u.get_fullname())
+        for u in models.User.objects(organizations__in=[organization])
+        if u not in [a.user for a in organization.admins]
+    ]
     if not form.validate_on_submit():
-        form.admins.data = [str(a.user.id) for a in organization.admins]
-
         return render_template(
             "/admin/organizations/view-admins.html",
             organization=organization,
             form=form,
         )
 
-    organization.admins = [
-        models.Administrator(
-            user=models.User.objects.get(id=u_id),
-            added_by=current_user._get_current_object(),
+    for u_id in form.admins.data:
+        organization.admins.append(
+            Administrator(
+                user=models.User.objects.get(id=u_id),
+                created_by=current_user._get_current_object(),
+            )
         )
-        for u_id in form.admins.data
-    ]
+
     organization.save()
 
-    return render_template(
-        "/admin/organizations/view-admins.html",
-        organization=organization,
-        form=form,
+    return redirect(
+        url_for(
+            "admin.organizations.view_admins",
+            organization_id=organization.id,
+            form=form,
+        )
+    )
+
+
+@module.route("/<organization_id>/admin/<user_id>/delete")
+@acl.roles_required("admin")
+def delete_admin(organization_id, user_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    user = models.User.objects.get(id=user_id)
+    for a in organization.admins:
+        if a.user == user:
+            organization.admins.remove(a)
+    organization.save()
+
+    return redirect(
+        url_for("admin.organizations.view_admins", organization_id=organization.id)
     )
 
 
@@ -150,30 +171,46 @@ def view_endorsers(organization_id):
 
     form = forms.organizations.OrganizationEndorsersForm()
     form.endorsers.choices = [
-        (str(u.id), u.get_fullname()) for u in models.User.objects()
+        (str(u.id), u.get_fullname())
+        for u in models.User.objects(organizations__in=[organization])
+        if u not in [e.user for e in organization.endorsers]
     ]
     if not form.validate_on_submit():
-        form.endorsers.data = [str(a.user.id) for a in organization.endorsers]
-
         return render_template(
             "/admin/organizations/view-endorsers.html",
             organization=organization,
             form=form,
         )
 
-    from ....models.organizations import Endorser
-
-    organization.endorsers = [
-        Endorser(
-            user=models.User.objects.get(id=u_id),
-            created_by=current_user._get_current_object(),
+    for u_id in form.endorsers.data:
+        organization.endorsers.append(
+            Endorser(
+                user=models.User.objects.get(id=u_id),
+                created_by=current_user._get_current_object(),
+            )
         )
-        for u_id in form.endorsers.data
-    ]
+
     organization.save()
 
-    return render_template(
-        "/admin/organizations/view-endorsers.html",
-        organization=organization,
-        form=form,
+    return redirect(
+        url_for(
+            "admin.organizations.view_endorsers",
+            organization_id=organization.id,
+            form=form,
+        )
+    )
+
+
+@module.route("/<organization_id>/endorsers/<user_id>/delete")
+@acl.roles_required("admin")
+def delete_endorser(organization_id, user_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    user = models.User.objects.get(id=user_id)
+    for a in organization.endorsers:
+        if a.user == user:
+            organization.endorsers.remove(a)
+    organization.save()
+
+    return redirect(
+        url_for("admin.organizations.view_endorsers", organization_id=organization.id)
     )
