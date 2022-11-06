@@ -13,40 +13,48 @@ Classes
 {% endblock %}
 
 {% block content %}
-    <div class="ui labeled icon menu">
-      <a href="{{ url_for('admin.classes.create_or_edit') }}" class="item"><i class="add icon"></i>Add</a>
-    </div>
 
-{% if classes %}
-  <div style="margin-top: 1ex;">
-    <table class="ui celled table">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Operation</th>
-        </tr>
-      </thead>
-      <tbody>
-    {% for class_ in classes %}
-        <tr>
-          <td>
-            <a href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a>
-          </td>
-          <td>
-            {{ class_.description }}
-          </td>
-          <td class="single line">
-            <a class="ui circular button primary icon" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i></a>
-            <a class="ui circular button primary icon" href="{{ url_for('admin.classes.view', class_id=class_.id) }}"><i class="eye icon"></i></a>
-            <a class="ui circular button primary icon" href="{{ url_for('admin.classes.copy', class_id=class_.id) }}"><i class="copy icon"></i></a>
-            <a class="ui circular button negative icon" href="{{ url_for('admin.classes.delete', class_id=class_.id) }}"><i class="trash icon"></i></a>
-          </td>
-        </tr>
-    {% endfor %}
-      </tbody>
-    </table>
+{% set organization = current_user.get_current_organization() %}
+{% if organization %}
+  <div class="ui labeled icon menu">
+    <a href="{{ url_for('admin.classes.create_or_edit') }}" class="item"><i class="add icon"></i>Add</a>
   </div>
+  {% if classes %}
+    <div style="margin-top: 1ex;">
+      <table class="ui celled table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+      {% for class_ in classes %}
+          <tr>
+            <td>
+              <a href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a>
+            </td>
+            <td>
+              {{ class_.description }}
+            </td>
+            <td class="single line">
+              <a class="ui circular button primary icon" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i></a>
+              <a class="ui circular button primary icon" href="{{ url_for('admin.classes.view', class_id=class_.id) }}"><i class="eye icon"></i></a>
+              <a class="ui circular button primary icon" href="{{ url_for('admin.classes.copy', class_id=class_.id) }}"><i class="copy icon"></i></a>
+              <a class="ui circular button negative icon" href="{{ url_for('admin.classes.delete', class_id=class_.id) }}"><i class="trash icon"></i></a>
+            </td>
+          </tr>
+      {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+{% else %}
+<div class="ui segment">
+    You need to select your organization in <a href=" {{ url_for('accounts.index') }}">Account Page</a> to show classes.
+</div>
 {% endif %}
 
 

@@ -103,9 +103,11 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
+    classes = models.Class.objects(organization=organization)
     return render_template(
         "/admin/organizations/view.html",
         organization=organization,
+        classes=classes,
     )
 
 

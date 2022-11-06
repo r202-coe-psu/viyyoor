@@ -33,10 +33,16 @@ module = Blueprint("classes", __name__, url_prefix="/classes")
 @module.route("/")
 @acl.roles_required("admin")
 def index():
+    organization = current_user.get_current_organization()
     classes = models.Class.objects(status="active").order_by("-id")
+    if not "superadmin" in current_user.roles:
+        classes = models.Class.objects(
+            organization=current_user.get_current_organization()
+        )
     return render_template(
         "/admin/classes/index.html",
         classes=classes,
+        organization=organization,
     )
 
 
@@ -48,18 +54,14 @@ def index():
 @module.route("/<class_id>/edit", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def create_or_edit(class_id):
+    organization = current_user.get_current_organization()
     form = forms.classes.ClassForm()
 
     class_ = None
     if class_id:
         class_ = models.Class.objects.get(id=class_id)
         form = forms.classes.ClassForm(obj=class_)
-        if class_.organization:
-            form.organization.data = str(class_.organization.id)
 
-    form.organization.choices = [
-        (str(o.id), o.name) for o in models.Organization.objects()
-    ]
     if not form.validate_on_submit():
         return render_template(
             "/admin/classes/create-edit.html",
@@ -71,7 +73,7 @@ def create_or_edit(class_id):
         class_.owner = current_user._get_current_object()
 
     form.populate_obj(class_)
-    class_.organization = models.Organization.objects.get(id=form.organization.data)
+    class_.organization = organization
     class_.save()
 
     return redirect(url_for("admin.classes.view", class_id=class_.id))

@@ -21,22 +21,29 @@ Profile
 {% block content %}
 <div class="ui container">
 
-  {% if current_user.get_organizations() %}
   <div class="ui segment">
     <div class="ui two column very relaxed grid">
       <div class="four wide column">
         <h2 class="ui header">Organization </h2>
-        <h3 class="ui blue header">{{ current_user.get_current_organization().name }}</h3> 
       </div>
       <div class="column">
-        <a class="ui blue labeled icon button" onclick="showHideForm()" style="margin-top: 3em">
+        {% if current_user.get_organizations() %}
+        <a class="ui blue labeled icon button" onclick="showHideForm()">
           Change Organization
           <i class="edit icon"></i>
         </a>
+        {% else %}
+        <a class="ui labeled icon button link pop" data-content="You are not affiliated with any organization.">
+          Change Organization
+          <i class="edit icon"></i>
+        </a>
+        {% endif %}
       </div>
     </div>
+    <h3 class="ui blue header">
+    {{ current_user.get_current_organization().name }}
+    </h3> 
   </div>
-  {% endif %}
 
   <div class="ui segment" id="ui-select-form" style="display: none">
     <form method="POST" class="ui form">
@@ -132,5 +139,7 @@ Profile
   function showHideForm() {
     $(document.getElementById("ui-select-form")).transition('fade down')
   }
+  $('.link.pop')
+    .popup()
 </script>
 {% endblock %}
