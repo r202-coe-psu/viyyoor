@@ -26,3 +26,7 @@ BaseOrganizationForm = model_form(
 
 class OrganizationForm(BaseOrganizationForm):
     admins = fields.SelectMultipleField("Admins")
+
+
+class OrganizationAdminsForm(FlaskForm):
+    admins = fields.SelectMultipleField("")

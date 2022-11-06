@@ -43,4 +43,9 @@
 	</tbody>
 </table>
 
+<div class="ui divider"></div>
+
+<div class="ui segment">
+	<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_admins', organization_id=organization.id) }}"><i class="users icon"></i>Admins</a>
+</div>
 {% endblock %}

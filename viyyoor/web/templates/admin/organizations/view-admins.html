@@ -1,0 +1,59 @@
+{% extends '/admin/organizations/view.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block breadcrumbs %}
+{{ super() }}
+Admins
+{% endblock %}
+
+
+
+{% block content %}
+<h2 class="ui header">
+	Admins
+</h2>
+
+<div class="ui divider"></div>
+
+<a class="ui primary labeled icon button" onclick="showAdminManageForm()"><i class="users cog icon"></i>Manage Admins</a>
+<div class="ui segment admin form" style="display: none;">
+	<form method="POST" class="ui form" enctype="multipart/form-data">
+		<h4 class="ui header">Admin Management Section</h4>
+		{{ form.csrf_token }}
+		{{ renderer.render_multiple_select(form.admins)}}
+		<button class="ui primary labeled icon small button" type="submit"><i class="save icon"></i>Save</button>
+	</form>
+</div>
+
+<div class="ui segment">
+	<table class="ui celled table">
+		<thead>
+			<tr>
+				<th></th>
+				<th>Admin Name</th>
+				<th>Added by</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for a in organization.admins %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td>{{ a.user.get_fullname() }}</td>
+				<td>{{ a.added_by.get_fullname() }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}
+
+{% block additional_js %}
+<script>
+	function showAdminManageForm() {
+		$('.admin.form')
+			.transition('fade down')
+	}
+</script>
+{% endblock %}

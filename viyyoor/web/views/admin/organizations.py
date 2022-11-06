@@ -84,6 +84,18 @@ def create_or_edit(organization_id):
     return redirect(url_for("admin.organizations.index"))
 
 
+@module.route("/<organization_id>/delete")
+@acl.roles_required("superadmin")
+def delete(organization_id):
+    organization = models.Organization.objects.get(
+        id=organization_id,
+    )
+    organization.status = "inactive"
+    organization.save()
+
+    return redirect(url_for("admin.organizations.index"))
+
+
 @module.route("/<organization_id>")
 @acl.roles_required("admin")
 def view(organization_id):
@@ -97,13 +109,33 @@ def view(organization_id):
     )
 
 
-@module.route("/<organization_id>/delete")
-@acl.roles_required("superadmin")
-def delete(organization_id):
-    organization = models.Organization.objects.get(
-        id=organization_id,
-    )
-    organization.status = "inactive"
+@module.route("/<organization_id>/admins", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_admins(organization_id):
+    organization = models.organizations.Organization.objects.get(id=organization_id)
+
+    form = forms.organizations.OrganizationAdminsForm()
+    form.admins.choices = [(str(u.id), u.get_fullname()) for u in models.User.objects()]
+    if not form.validate_on_submit():
+        form.admins.data = [str(a.user.id) for a in organization.admins]
+
+        return render_template(
+            "/admin/organizations/view-admins.html",
+            organization=organization,
+            form=form,
+        )
+
+    organization.admins = [
+        models.Administrator(
+            user=models.User.objects.get(id=u_id),
+            added_by=current_user._get_current_object(),
+        )
+        for u_id in form.admins.data
+    ]
     organization.save()
 
-    return redirect(url_for("admin.organizations.index"))
+    return render_template(
+        "/admin/organizations/view-admins.html",
+        organization=organization,
+        form=form,
+    )
