@@ -220,3 +220,43 @@ def delete_endorser(organization_id, user_id):
     return redirect(
         url_for("admin.organizations.view_endorsers", organization_id=organization.id)
     )
+
+
+@module.route("/<organization_id>/logos", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def add_logo(organization_id):
+
+    form = forms.organizations.OrganizationForm()
+    if organization_id:
+        organization = models.Organization.objects.get(id=organization_id)
+        form = forms.organizations.OrganizationForm(obj=organization)
+
+    if not form.validate_on_submit():
+        return render_template(
+            "/admin/organizations/add-logo.html",
+            organization=organization,
+            form=form,
+        )
+
+    form.populate(organization)
+
+    if not organization_id:
+        if form.uploaded_logos.data:
+            organization.logos.put(
+                form.uploaded_logos.data,
+                filename=form.uploaded_logosdata.filename,
+                content_type=form.uploaded_logos.data.content_type,
+            )
+    else:
+        if form.uploaded_logos.data:
+            organization.logos.replace(
+                form.uploaded_logos.data,
+                filename=form.uploaded_logos.data.filename,
+                content_type=form.uploaded_logos.data.content_type,
+            )
+
+    organization.save()
+
+    return redirect(
+        url_for("admin.organizations.index", organization_id=organization_id)
+    )

@@ -39,6 +39,8 @@ class Organization(me.Document):
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
+    logos = me.FileField()
+
     @property
     def remaining_quota(self):
         return self.quota - self.number_of_uses

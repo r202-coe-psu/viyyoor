@@ -1,0 +1,40 @@
+{% extends "/admin/organizations/view.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block breadcrumbs %}
+{{ super() }}
+Logo
+{% endblock %}
+
+{% block content %}
+<div class="ui segment">
+    <form method="POST", class="ui form">
+        {{ form.csrf_token }}
+        {{ renderer.render_fileinput(form.uploaded_logos) }}
+        
+    <button name="Add Logo" type="submit" class="ui button primary">Add Logo</button>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block additional_js %}
+    {{ super() }}
+
+    <script type="text/javascript">
+
+    $(".attach-file-uploaded_logos").click(function() {
+        $(this).parent().find("#uploaded_logos").click();
+      });
+
+      $('#uploaded_logos')
+      .on('change', function(e) {
+        var name = e.target.files[0].name;
+        $('.attach-file-uploaded_logos', $(e.target).parent()).val(name);
+      });
+  
+
+    </script>
+{% endblock %}
