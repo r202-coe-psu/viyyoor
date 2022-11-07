@@ -27,7 +27,7 @@ Profile
         <h2 class="ui header">Organization </h2>
       </div>
       <div class="column">
-        {% if current_user.get_organizations() %}
+        {% if current_user.get_current_organization() %}
         <a class="ui blue labeled icon button" onclick="showHideForm()">
           Change Organization
           <i class="edit icon"></i>
