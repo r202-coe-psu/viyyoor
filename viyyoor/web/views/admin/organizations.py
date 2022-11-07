@@ -10,7 +10,6 @@ import datetime
 
 from viyyoor.web import acl, forms
 from viyyoor import models
-from ....models.organizations import Endorser, Administrator
 
 
 module = Blueprint("organizations", __name__, url_prefix="/organizations")
@@ -51,7 +50,7 @@ def create_or_edit(organization_id):
     organization = None
 
     if organization_id:
-        organization = models.organizations.Organization.objects.get(id=organization_id)
+        organization = models.Organization.objects.get(id=organization_id)
         form = forms.organizations.OrganizationForm(obj=organization)
 
     form.admins.choices = [(str(u.id), u.get_fullname()) for u in models.User.objects()]
@@ -74,7 +73,7 @@ def create_or_edit(organization_id):
     organization.last_updated_date = datetime.datetime.now()
 
     organization.admins = [
-        Administrator(
+        models.Administrator(
             user=models.User.objects.get(id=u_id),
             created_by=current_user._get_current_object(),
         )
@@ -138,7 +137,7 @@ def view_admins(organization_id):
 
     for u_id in form.admins.data:
         organization.admins.append(
-            Administrator(
+            models.Administrator(
                 user=models.User.objects.get(id=u_id),
                 created_by=current_user._get_current_object(),
             )
@@ -173,7 +172,7 @@ def delete_admin(organization_id, user_id):
 @module.route("/<organization_id>/endorsers", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def view_endorsers(organization_id):
-    organization = models.organizations.Organization.objects.get(id=organization_id)
+    organization = models.Organization.objects.get(id=organization_id)
 
     form = forms.organizations.OrganizationEndorsersForm()
     form.endorsers.choices = [
@@ -190,7 +189,7 @@ def view_endorsers(organization_id):
 
     for u_id in form.endorsers.data:
         organization.endorsers.append(
-            Endorser(
+            models.organizations.Endorser(
                 user=models.User.objects.get(id=u_id),
                 created_by=current_user._get_current_object(),
             )
