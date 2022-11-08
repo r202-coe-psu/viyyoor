@@ -26,6 +26,9 @@ BaseOrganizationForm = model_form(
 
 class OrganizationForm(BaseOrganizationForm):
     admins = fields.SelectMultipleField("Admins")
+
+
+class OrganizationLogoForm(BaseOrganizationForm):
     uploaded_logos = file.FileField(
         "Logo File",
         validators=[
