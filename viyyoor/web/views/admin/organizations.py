@@ -224,11 +224,10 @@ def delete_endorser(organization_id, user_id):
 @module.route("/<organization_id>/logos", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def add_logo(organization_id):
-
-    form = forms.organizations.OrganizationForm()
+    form = forms.organizations.OrganizationLogoForm()
     if organization_id:
         organization = models.Organization.objects.get(id=organization_id)
-        form = forms.organizations.OrganizationForm(obj=organization)
+        form = forms.organizations.OrganizationLogoForm(obj=organization)
 
     if not form.validate_on_submit():
         return render_template(
@@ -243,9 +242,10 @@ def add_logo(organization_id):
         if form.uploaded_logos.data:
             organization.logos.put(
                 form.uploaded_logos.data,
-                filename=form.uploaded_logosdata.filename,
+                filename=form.uploaded_logos.data.filename,
                 content_type=form.uploaded_logos.data.content_type,
             )
+
     else:
         if form.uploaded_logos.data:
             organization.logos.replace(
@@ -254,8 +254,25 @@ def add_logo(organization_id):
                 content_type=form.uploaded_logos.data.content_type,
             )
 
+    print(form.uploaded_logos.data)
     organization.save()
 
-    return redirect(
-        url_for("admin.organizations.index", organization_id=organization_id)
-    )
+    return redirect(url_for("admin.organizations.index"))
+
+
+@module.route("/<organization_id>/logos/<filename>")
+@acl.roles_required("admin")
+def download_logo(organization_id, filename):
+    response = response()
+    response.status_code = 404
+
+    organization = models.Organization.objects.get(id=organization_id)
+
+    if organization:
+        response = send_file(
+            organization.uploaded_logos,
+            download_name=organization.uploaded_logos.filename,
+            mimetype=organization.uploaded_logos.content_type,
+        )
+
+    return response
