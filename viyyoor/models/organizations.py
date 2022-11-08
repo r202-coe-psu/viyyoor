@@ -36,6 +36,9 @@ class Organization(me.Document):
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
+    def get_users(self):
+        return OrganizationUserRole.objects(organization=self).order_by("-first_name")
+
 
 class Certificate_logo(me.Document):
     logo_name = me.StringField(required=True)
@@ -45,6 +48,3 @@ class Certificate_logo(me.Document):
     @property
     def remaining_quota(self):
         return self.quota - self.number_of_uses
-
-    def get_users(self):
-        return OrganizationUserRole.objects(organization=self)

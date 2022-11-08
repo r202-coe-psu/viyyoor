@@ -5,24 +5,24 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-Admins
+{{ role.title() }}
 {% endblock %}
 
 
 
 {% block content %}
 <h2 class="ui header">
-	View Admins
+	View {{ role.title() }}
 </h2>
 
 <div class="ui divider"></div>
 
-<a class="ui primary labeled icon button" onclick="showManageAdminForm()"><i class="users cog icon"></i>Manage Admins</a>
-<div class="ui segment admin form" style="display: none;">
+<a class="ui primary labeled icon button" onclick="showManageAdminForm()"><i class="users cog icon"></i>Manage {{ role.title() }}</a>
+<div class="ui segment role form" style="display: none;">
 	<form method="POST" class="ui form" enctype="multipart/form-data">
 		<h4 class="ui header">Admin Management Section</h4>
 		{{ form.csrf_token }}
-		{{ renderer.render_multiple_select(form.admins)}}
+		{{ renderer.render_multiple_select(form.users)}}
 		<button class="ui primary labeled icon small button" type="submit"><i class="save icon"></i>Save</button>
 	</form>
 </div>
@@ -32,27 +32,29 @@ Admins
 		<thead>
 			<tr>
 				<th></th>
-				<th>Admin Name</th>
+				<th>{{ role.title() }} Name</th>
 				<th>Added by</th>
 				<th>Action</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#
-				{% for a in organization.admins %}
+			{% set index = namespace(value=0) %}
+			{% for u in organization.get_users() %}
+			{% if u.role == role %}
 			<tr>
-				<td>{{ loop.index }}</td>
-				<td>{{ a.user.get_fullname() }}</td>
-				<td>{{ a.created_by.get_fullname() }}</td>
+				{% set index.value = index.value + 1 %}
+				<td>{{ index.value }}</td>
+				<td>{{ u.user.get_fullname() }}</td>
+				<td>{{ u.added_by.get_fullname() }}</td>
 				<td>
 					<a class="ui red icon circular button" 
-					   href="{{ url_for('admin.organizations.delete_admin', organization_id=organization.id, user_id=a.user.id) }}">
+					   href="{{ url_for('admin.organizations.delete_admin', organization_id=organization.id, user_id=u.user.id) }}">
 					   <i class="trash icon"></i>
 					</a>
 				</td>
 			</tr>
+			{% endif %}
 			{% endfor %}
-			#}
 		</tbody>
 	</table>
 </div>
@@ -61,7 +63,7 @@ Admins
 {% block additional_js %}
 <script>
 	function showManageAdminForm() {
-		$('.admin.form')
+		$('.role.form')
 			.transition('fade down')
 	}
 </script>

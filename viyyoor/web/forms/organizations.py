@@ -35,8 +35,8 @@ class OrganizationLogoForm(BaseOrganizationForm):
     )
 
 
-class OrganizationAdminsForm(FlaskForm):
-    admins = fields.SelectMultipleField("")
+class OrganizationUserRoleForm(FlaskForm):
+    users = fields.SelectMultipleField("")
 
 
 class OrganizationEndorsersForm(FlaskForm):
