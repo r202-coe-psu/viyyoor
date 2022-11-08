@@ -23,9 +23,9 @@
                 <th>Name</th>
                 <th>Description</th>
                 <th>Quota</th>
-                {% if current_user.has_roles(["superadmin"]) %}
+                {# {% if current_user.has_roles(["superadmin"]) %} #}
                 <th>Action</th>
-                {% endif %}
+                {# {% endif %} #}
               </tr>
             </thead>
             <tbody>
@@ -38,7 +38,7 @@
                     </td>
                     <td>{{ organization.description }}</td>
                     <td>{{ organization.remaining_quota }}/{{ organization.quota }}</td>
-                    {% if current_user.has_roles(["superadmin"]) %}
+                    {# {% if current_user.has_roles(["superadmin"]) %} #}
                     <td>
                         <a class="ui primary icon button" href="{{ url_for('admin.organizations.create_or_edit', organization_id=organization.id) }}">
                             <i class="edit icon"></i>
@@ -59,16 +59,16 @@
                           <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
                       </div>
                     </div>
-                    {% endif %}    
+                    {# {% endif %} #}
                   </tr>
                 {% endfor %}
             </tbody>
         </table>
         <div>
-            {% if current_user.has_roles(["superadmin"]) %}
+            {# {% if current_user.has_roles(["superadmin"]) %} #}
                 <a class="ui primary button" href="{{ url_for('admin.organizations.create_or_edit') }}">
                 <i class="icon plus"></i>Create</a>
-            {% endif %}
+            {# {% endif %} #}
         </div>
     </div>
 

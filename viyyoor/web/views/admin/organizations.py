@@ -17,19 +17,16 @@ module = Blueprint("organizations", __name__, url_prefix="/organizations")
 
 @module.route("/")
 def index():
-    if current_user.has_roles(["superadmin"]):
-        organizations = models.Organization.objects(
-            status="active",
-        )
-    else:
-        organizations = []
-        all_organizations = models.Organization.objects(
-            status="active",
-        )
-        for o in all_organizations:
-            for a in o.admins:
-                if a.user == current_user:
-                    organizations.append(o)
+    
+    # organizations = []
+    organizations = models.Organization.objects(
+        status="active",
+    )
+    
+    # for o in all_organizations:
+    #     for a in o.admins:
+    #         if a.user == current_user:
+    #             organizations.append(o)
 
     return render_template(
         "/admin/organizations/index.html",
@@ -44,7 +41,7 @@ def index():
     defaults={"organization_id": None},
 )
 @module.route("/<organization_id>/edit", methods=["GET", "POST"])
-@acl.roles_required("superadmin")
+@acl.roles_required("admin")
 def create_or_edit(organization_id):
     form = forms.organizations.OrganizationForm()
     organization = None
@@ -91,7 +88,7 @@ def create_or_edit(organization_id):
 
 
 @module.route("/<organization_id>/delete")
-@acl.roles_required("superadmin")
+@acl.roles_required("admin")
 def delete(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,

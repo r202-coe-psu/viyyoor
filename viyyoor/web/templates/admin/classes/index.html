@@ -14,8 +14,7 @@ Classes
 
 {% block content %}
 
-{% set organization = current_user.get_current_organization() %}
-{% if organization %}
+{% if organization or "admin" in current_user.roles %}
   <div class="ui labeled icon menu">
     <a href="{{ url_for('admin.classes.create_or_edit') }}" class="item"><i class="add icon"></i>Add</a>
   </div>

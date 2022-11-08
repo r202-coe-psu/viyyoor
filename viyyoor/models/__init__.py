@@ -3,7 +3,7 @@ from flask_mongoengine import MongoEngine
 from .users import User, UserSetting
 from .oauth2 import OAuth2Token
 from .classes import Class, Endorser, Participant, CertificateTemplate
-from .templates import Template, Control
+from .templates import Template, ShareStatus
 from .signatures import Signature
 from .certificates import Certificate, Endorsement
 from .digital_certificates import DigitalCertificate

@@ -56,8 +56,8 @@ def add_or_edit(user_id):
     ]
     user.user_setting.updated_date = datetime.datetime.now()
 
-    if not user.user_setting.current_organization:
-        user.user_setting.current_organization = user.organizations[0]
+    # if not user.user_setting.current_organization:
+    #     user.user_setting.current_organization = user.organizations[0]
 
     if not user.organizations:
         user.user_setting.current_organization = None
