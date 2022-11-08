@@ -37,7 +37,8 @@ def add_or_edit(user_id):
         org_form.organizations.choices = [(str(o.id), o.name) for o in organizations]
 
     if not form.validate_on_submit():
-        org_form.organizations.data = [str(o.id) for o in user.organizations]
+        if user_id:
+            org_form.organizations.data = [str(o.id) for o in user.organizations]
         return render_template(
             "/admin/users/add_or_edit.html",
             user=user,
@@ -48,6 +49,7 @@ def add_or_edit(user_id):
     if not user:
         user = models.User()
 
+    user_organization_before_modified = user.organizations
     form.populate_obj(user)
     org_form.populate_obj(user.user_setting)
 
@@ -63,5 +65,23 @@ def add_or_edit(user_id):
         user.user_setting.current_organization = None
 
     user.save()
+
+    for o_id in org_form.organizations.data:
+        org = models.Organization.objects.get(id=o_id)
+        if org not in user_organization_before_modified:
+            org_user = models.OrganizationUserRole(
+                organization=org,
+                user=user,
+                added_by=current_user._get_current_object(),
+                last_modifier=current_user._get_current_object(),
+            )
+            org_user.save()
+            print("Add", org.name, "in user", user.get_fullname())
+
+    for o in user_organization_before_modified:
+        if str(o.id) not in org_form.organizations.data:
+            org_user = models.OrganizationUserRole.objects(organization=o)
+            org_user.delete()
+            print("Remove", o.name, "in user", user.get_fullname())
 
     return redirect(url_for("admin.users.index"))
