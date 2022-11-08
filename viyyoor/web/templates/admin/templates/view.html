@@ -33,11 +33,11 @@
 			<b>Tag:</b> {{ template.tags | join(', ') }}
     </div>
 		<div>
-			<b>Filename:</b> {{ template.file.filename }}
+			<b>Filename:</b> {{ template.template_file.filename }}
     </div>
   </div>
   <div class="ui segment">
-    <img src="{{ url_for('admin.templates.download', template_id=template.id, filename=template.file.filename) }}"/>
+    <img src="{{ url_for('admin.templates.download_template', template_id=template.id, filename=template.template_file.filename) }}"/>
   </div>
 
 </div>
