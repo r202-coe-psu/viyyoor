@@ -39,5 +39,13 @@ class OrganizationUserRoleForm(FlaskForm):
     users = fields.SelectMultipleField("")
 
 
-class OrganizationEndorsersForm(FlaskForm):
-    endorsers = fields.SelectMultipleField("")
+class OrganizationRoleSelectionForm(FlaskForm):
+    role = fields.SelectField(
+        default="",
+        choices=[
+            ("", "Select"),
+            ("staff", "Staff"),
+            ("admin", "Admin"),
+            ("endorser", "Endorser"),
+        ],
+    )

@@ -1,9 +1,4 @@
-from flask import (
-    Blueprint,
-    render_template,
-    redirect,
-    url_for,
-)
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_required
 
 import datetime
@@ -98,51 +93,37 @@ def view(organization_id):
     )
 
 
-@module.route("/<organization_id>/<role>s/", methods=["GET", "POST"])
+@module.route("/<organization_id>/users", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def view_users_by_role(organization_id, role):
+def view_users(organization_id):
     organization = models.organizations.Organization.objects.get(id=organization_id)
+    role = request.args.get("role")
 
-    form = forms.organizations.OrganizationUserRoleForm()
-    form.users.choices = [
-        (str(org_user.id), org_user.user.get_fullname())
-        for org_user in models.OrganizationUserRole.objects(organization=organization)
-        if org_user.role != role
-    ]
+    organization_user_roles = organization.get_users()
+    if role not in ["all", None]:
+        organization_user_roles = organization_user_roles.filter(role=role)
+
+    form = forms.organizations.OrganizationRoleSelectionForm()
     if not form.validate_on_submit():
         return render_template(
-            "/admin/organizations/view-users-by-role.html",
+            "/admin/organizations/users.html",
             organization=organization,
-            form=form,
+            organization_user_roles=organization_user_roles,
             role=role,
+            form=form,
         )
 
-    for u_id in form.users.data:
-        org_user = models.OrganizationUserRole.objects.get(id=u_id)
-        org_user.role = role
-        org_user.save()
+    user_role = models.OrganizationUserRole.objects.get(
+        id=request.args.get("user_role_id")
+    )
+    user_role.role = form.role.data
+    user_role.save()
 
     return redirect(
         url_for(
-            "admin.organizations.view_users_by_role",
+            "admin.organizations.view_users",
             organization_id=organization.id,
-            role=role,
         )
-    )
-
-
-@module.route("/<organization_id>/admin/<user_id>/delete")
-@acl.roles_required("admin")
-def delete_admin(organization_id, user_id):
-    organization = models.Organization.objects.get(id=organization_id)
-    user = models.User.objects.get(id=user_id)
-    for a in organization.admins:
-        if a.user == user:
-            organization.admins.remove(a)
-    organization.save()
-
-    return redirect(
-        url_for("admin.organizations.view_admins", organization_id=organization.id)
     )
 
 
