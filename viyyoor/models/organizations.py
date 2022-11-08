@@ -36,7 +36,11 @@ class Organization(me.Document):
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
-    logos = me.FileField()
+
+class Certificate_logo(me.Document):
+    logo_name = me.StringField(required=True)
+    logo_file = me.FileField(required=True)
+    uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     @property
     def remaining_quota(self):

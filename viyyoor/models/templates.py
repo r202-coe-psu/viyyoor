@@ -12,6 +12,7 @@ class ShareStatus(me.EmbeddedDocument):
         required=True, auto_now=True, default=datetime.datetime.now
     )
 
+
 class Template(me.Document):
     meta = {"collection": "templates"}
 
@@ -33,3 +34,9 @@ class Template(me.Document):
 
     template_file = me.FileField(required=True)
     thumbnail_file = me.FileField()
+
+
+class Logo(me.EmbeddedDocument):
+    logo_name = me.ReferenceField("Certificate_logo", dbref=True, required=True)
+    logo_file = me.ReferenceField("Certificate_logo", dbref=True, required=True)
+    uploaded_date = me.ReferenceField("Certificate_logo", dbref=True, required=True)

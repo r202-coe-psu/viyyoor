@@ -91,7 +91,7 @@ def download(certificate_id, extension):
         response = send_file(
             image_bytes,
             # class_.render_certificate(participant.id, extension),
-            download_name=f"certificate-{ participant.name.replace(' ', '-') }.ong",
+            download_name=f"certificate-{ participant.name.replace(' ', '-') }.png",
             # as_attachment=True,
             mimetype=mimetype,
         )

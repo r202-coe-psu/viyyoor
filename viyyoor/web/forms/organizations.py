@@ -23,6 +23,10 @@ BaseOrganizationForm = model_form(
 
 
 class OrganizationForm(BaseOrganizationForm):
+    pass
+
+
+class OrganizationLogoForm(BaseOrganizationForm):
     uploaded_logos = file.FileField(
         "Logo File",
         validators=[
