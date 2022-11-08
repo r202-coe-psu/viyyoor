@@ -41,6 +41,9 @@ class Organization(me.Document):
 
 
 class Certificate_logo(me.Document):
+
+    meta = {"collection": "certificate_logos"}
+
     logo_name = me.StringField(required=True)
     logo_file = me.FileField(required=True)
     uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)
