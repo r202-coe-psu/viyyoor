@@ -38,7 +38,8 @@ Admins
 			</tr>
 		</thead>
 		<tbody>
-			{% for a in organization.admins %}
+			{#
+				{% for a in organization.admins %}
 			<tr>
 				<td>{{ loop.index }}</td>
 				<td>{{ a.user.get_fullname() }}</td>
@@ -51,6 +52,7 @@ Admins
 				</td>
 			</tr>
 			{% endfor %}
+			#}
 		</tbody>
 	</table>
 </div>

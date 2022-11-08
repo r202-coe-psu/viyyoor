@@ -17,12 +17,12 @@ module = Blueprint("organizations", __name__, url_prefix="/organizations")
 
 @module.route("/")
 def index():
-    
+
     # organizations = []
     organizations = models.Organization.objects(
         status="active",
     )
-    
+
     # for o in all_organizations:
     #     for a in o.admins:
     #         if a.user == current_user:
@@ -50,10 +50,7 @@ def create_or_edit(organization_id):
         organization = models.Organization.objects.get(id=organization_id)
         form = forms.organizations.OrganizationForm(obj=organization)
 
-    form.admins.choices = [(str(u.id), u.get_fullname()) for u in models.User.objects()]
     if not form.validate_on_submit():
-        if organization:
-            form.admins.data = [str(a.user.id) for a in organization.admins]
 
         return render_template(
             "/admin/organizations/create-edit.html",
@@ -69,20 +66,7 @@ def create_or_edit(organization_id):
     organization.last_updated_by = current_user._get_current_object()
     organization.last_updated_date = datetime.datetime.now()
 
-    organization.admins = [
-        models.Administrator(
-            user=models.User.objects.get(id=u_id),
-            created_by=current_user._get_current_object(),
-        )
-        for u_id in form.admins.data
-    ]
     organization.save()
-
-    for u_id in form.admins.data:
-        user = models.User.objects.get(id=u_id)
-        if organization not in user.organizations:
-            user.organizations.append(organization)
-            user.save()
 
     return redirect(url_for("admin.organizations.index"))
 
@@ -122,8 +106,8 @@ def view_admins(organization_id):
     form = forms.organizations.OrganizationAdminsForm()
     form.admins.choices = [
         (str(u.id), u.get_fullname())
-        for u in models.User.objects(organizations__in=[organization])
-        if u not in [a.user for a in organization.admins]
+        for u in models.OrganizationUserRole.objects(organization=organization)
+        if u.role != "admin"
     ]
     if not form.validate_on_submit():
         return render_template(
@@ -133,14 +117,15 @@ def view_admins(organization_id):
         )
 
     for u_id in form.admins.data:
-        organization.admins.append(
-            models.Administrator(
-                user=models.User.objects.get(id=u_id),
-                created_by=current_user._get_current_object(),
-            )
+        user = models.User.objects.get(id=u_id)
+        org_user = models.OrganizationUserRole.objects(
+            organization=organization,
+            user=user,
+            role="admin",
+            added_by=current_user._get_current_object(),
+            last_modifier=current_user._get_current_object(),
         )
-
-    organization.save()
+        org_user.save()
 
     return redirect(
         url_for(

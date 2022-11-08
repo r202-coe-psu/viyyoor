@@ -13,8 +13,6 @@ BaseOrganizationForm = model_form(
         "created_by",
         "last_updated_by",
         "status",
-        "endorsers",
-        "admins",
     ],
     field_args={
         "name": {"label": "Name"},
@@ -25,7 +23,6 @@ BaseOrganizationForm = model_form(
 
 
 class OrganizationForm(BaseOrganizationForm):
-    admins = fields.SelectMultipleField("Admins")
     uploaded_logos = file.FileField(
         "Logo File",
         validators=[
