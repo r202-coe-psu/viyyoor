@@ -103,7 +103,7 @@ def create_or_edit(template_id):
                 content_type=form.uploaded_thumbnail_file.data.content_type,
             )
 
-    template.control.last_updated_by = current_user._get_current_object()
+    template.share_status.last_updated_by = current_user._get_current_object()
     template.save()
 
     return redirect(url_for("admin.templates.index"))
@@ -136,8 +136,6 @@ def download_template(template_id, filename):
     response.status_code = 404
 
     template = models.Template.objects.get(id=template_id)
-    print("HEY BRO !!!")
-    print(template.template_file)
 
     if template:
         response = send_file(
@@ -156,8 +154,6 @@ def download_thumbnail(template_id, filename):
     response.status_code = 404
 
     template = models.Template.objects.get(id=template_id)
-    print(template.thumbnail_file)
-    print(template.template_file)
 
     if template:
         response = send_file(
@@ -169,36 +165,36 @@ def download_thumbnail(template_id, filename):
     return response
 
 
-@module.route("/<template_id>/set_control", methods=["GET", "POST"])
+@module.route("/<template_id>/set_sharing_status", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def set_control(template_id):
+def set_share_status(template_id):
     template = models.Template.objects.get(id=template_id)
-    form = forms.templates.ControlTemplateForm(obj=template)
+    form = forms.templates.ShareStatusTemplateForm(obj=template)
     form.organizations.choices = [
         (str(o.id), o.name) for o in models.Organization.objects().order_by("-id")
     ]
 
     if not form.validate_on_submit():
-        form.status.data = template.control.status
-        if template.control.status == "shared":
+        form.status.data = template.share_status.status
+        if template.share_status.status == "shared":
             form.organizations.data = [
-                str(o.id) for o in template.control.organizations
+                str(o.id) for o in template.share_status.organizations
             ]
         return render_template(
-            "/admin/templates/set-control.html",
+            "/admin/templates/set-share-status.html",
             form=form,
         )
 
     if form.status.data == "shared":
-        template.control.organizations = [
+        template.share_status.organizations = [
             models.Organization.objects.get(id=oid) for oid in form.organizations.data
         ]
-        if len(template.control.organizations) == 0:
+        if len(template.share_status.organizations) == 0:
             form.status.data = "unshared"
             form.organizations = None
-    template.control.status = form.status.data
-    template.control.updated_date = datetime.datetime.now
-    template.control.last_updated_by = current_user._get_current_object()
+    template.share_status.status = form.status.data
+    template.share_status.updated_date = datetime.datetime.now
+    template.share_status.last_updated_by = current_user._get_current_object()
     template.save()
 
     return redirect(url_for("admin.templates.index"))

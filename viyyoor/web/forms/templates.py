@@ -18,7 +18,7 @@ BaseTemplateForm = model_form(
         "owner",
         "status",
         "template_file",
-        "control",
+        "share_status",
     ],
     field_args={
         "name": {
@@ -47,8 +47,8 @@ class TemplateForm(BaseTemplateForm):
     )
 
 
-BaseControlTemplateForm = model_form(
-    models.Control,
+BaseShareStatusTemplateForm = model_form(
+    models.ShareStatus,
     FlaskForm,
     only=["status"],
     field_args={
@@ -57,7 +57,7 @@ BaseControlTemplateForm = model_form(
 )
 
 
-class ControlTemplateForm(BaseControlTemplateForm):
+class ShareStatusTemplateForm(BaseShareStatusTemplateForm):
     organizations = fields.SelectMultipleField("Organizations")
 
 

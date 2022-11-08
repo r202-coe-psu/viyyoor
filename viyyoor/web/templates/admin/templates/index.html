@@ -60,12 +60,12 @@ Templates
               {% if template.owner == current_user %}
               <a 
                 class=" 
-                {{'green' if template.control.status == 'public'}} 
-                {{'teal' if template.control.status == 'shared'}} 
+                {{'green' if template.share_status.status == 'public'}} 
+                {{'teal' if template.share_status.status == 'shared'}} 
                 ui right labeled icon button"
-                href="{{ url_for('admin.templates.set_control', template_id=template.id) }}" 
+                href="{{ url_for('admin.templates.set_share_status', template_id=template.id) }}" 
                 style="width: fit-content; ">
-                {{ template.control.get_status_display()  }}
+                {{ template.share_status.get_status_display()  }}
                 <i class="edit icon"></i>
               </a>
               {% endif %}
