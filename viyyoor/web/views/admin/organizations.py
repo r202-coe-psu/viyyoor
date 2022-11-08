@@ -36,7 +36,7 @@ def index():
     defaults={"organization_id": None},
 )
 @module.route("/<organization_id>/edit", methods=["GET", "POST"])
-@acl.roles_required("admin")
+@acl.roles_required("superadmin")
 def create_or_edit(organization_id):
     form = forms.organizations.OrganizationForm()
     organization = None
@@ -67,7 +67,7 @@ def create_or_edit(organization_id):
 
 
 @module.route("/<organization_id>/delete")
-@acl.roles_required("admin")
+@acl.roles_required("superadmin")
 def delete(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
@@ -130,10 +130,9 @@ def view_users(organization_id):
 @module.route("/<organization_id>/logos", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def add_logo(organization_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    logo = models.Certificate_logo()
     form = forms.organizations.OrganizationLogoForm()
-    if organization_id:
-        organization = models.Organization.objects.get(id=organization_id)
-        form = forms.organizations.OrganizationLogoForm(obj=organization)
 
     if not form.validate_on_submit():
         return render_template(
@@ -142,26 +141,16 @@ def add_logo(organization_id):
             form=form,
         )
 
-    form.populate(organization)
+    form.populate_obj(logo)
 
-    if not organization_id:
-        if form.uploaded_logos.data:
-            organization.logos.put(
-                form.uploaded_logos.data,
-                filename=form.uploaded_logos.data.filename,
-                content_type=form.uploaded_logos.data.content_type,
-            )
+    logo.logo_file.put(
+        form.uploaded_logo_file.data,
+        filename=form.uploaded_logo_file.data.filename,
+        content_type=form.uploaded_logo_file.data.content_type,
+    )
 
-    else:
-        if form.uploaded_logos.data:
-            organization.logos.replace(
-                form.uploaded_logos.data,
-                filename=form.uploaded_logos.data.filename,
-                content_type=form.uploaded_logos.data.content_type,
-            )
-
-    print(form.uploaded_logos.data)
-    organization.save()
+    print(form.logo_name.data)
+    logo.save()
 
     return redirect(url_for("admin.organizations.index"))
 

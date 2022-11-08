@@ -10,9 +10,10 @@ Logo
 
 {% block content %}
 <div class="ui segment">
-    <form method="POST", class="ui form">
+    <form method="POST", class="ui form" enctype="multipart/form-data">
         {{ form.csrf_token }}
-        {{ renderer.render_fileinput(form.uploaded_logos) }}
+        {{ renderer.render_field(form.logo_name) }}
+        {{ renderer.render_fileinput(form.uploaded_logo_file) }}
         
     <button name="Add Logo" type="submit" class="ui button primary">Add Logo</button>
 
@@ -25,14 +26,14 @@ Logo
 
     <script type="text/javascript">
 
-    $(".attach-file-uploaded_logos").click(function() {
-        $(this).parent().find("#uploaded_logos").click();
+    $(".attach-file-uploaded_logo_file").click(function() {
+        $(this).parent().find("#uploaded_logo_file").click();
       });
 
-      $('#uploaded_logos')
+      $('#uploaded_logo_file')
       .on('change', function(e) {
         var name = e.target.files[0].name;
-        $('.attach-file-uploaded_logos', $(e.target).parent()).val(name);
+        $('.attach-file-uploaded_logo_file', $(e.target).parent()).val(name);
       });
   
 
