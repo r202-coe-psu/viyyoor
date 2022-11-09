@@ -36,7 +36,7 @@ def index():
     defaults={"organization_id": None},
 )
 @module.route("/<organization_id>/edit", methods=["GET", "POST"])
-@acl.roles_required("superadmin")
+@acl.roles_required("admin")
 def create_or_edit(organization_id):
     form = forms.organizations.OrganizationForm()
     organization = None
@@ -67,7 +67,7 @@ def create_or_edit(organization_id):
 
 
 @module.route("/<organization_id>/delete")
-@acl.roles_required("superadmin")
+@acl.roles_required("admin")
 def delete(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
