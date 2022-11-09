@@ -28,7 +28,7 @@ class Certificate(me.Document):
 
     issuer = me.ReferenceField("User", dbref=True, required=True)
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
-    privacy = me.StringField(required=True, default="public")
+    privacy = me.StringField(required=True, default="publish")
     status = me.StringField(required=True, default="no-action")
     endorsements = me.MapField(field=me.EmbeddedDocumentField(Endorsement))
 

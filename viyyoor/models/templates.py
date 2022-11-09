@@ -5,7 +5,7 @@ import datetime
 SHARE_STATUS_CHOICES = [
     ("unshared", "Unshared"),
     ("shared", "Shared"),
-    ("public", "Public"),
+    ("publish", "Publish"),
 ]
 
 

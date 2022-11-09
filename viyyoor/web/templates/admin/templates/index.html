@@ -60,7 +60,7 @@ Templates
               {% if template.owner == current_user %}
               <a 
                 class=" 
-                {{'green' if template.share_status.status == 'public'}} 
+                {{'green' if template.share_status.status == 'publish'}} 
                 {{'teal' if template.share_status.status == 'shared'}} 
                 ui right labeled icon button"
                 href="{{ url_for('admin.templates.set_share_status', template_id=template.id) }}" 
