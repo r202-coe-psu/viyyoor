@@ -10,7 +10,7 @@ class RedisQueue:
         self.redis_url = redis_url
 
         if self.redis_url:
-            init_app(self.redis_url)
+            self.init_app(self.redis_url)
 
     def init_app(self, redis_url):
         self.redis_url = redis_url
