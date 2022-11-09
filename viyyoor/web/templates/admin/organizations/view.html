@@ -47,10 +47,10 @@
 <a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
 	<i class="users icon"></i>Users
 </a>
-<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users_by_role', organization_id=organization.id, role='admin') }}">
+<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='admin') }}">
 	<i class="users icon"></i>Admins
 </a>
-<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users_by_role', organization_id=organization.id, role='endorser') }}">
+<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='endorser') }}">
 	<i class="users icon"></i>Endorsers
 </a>
 
