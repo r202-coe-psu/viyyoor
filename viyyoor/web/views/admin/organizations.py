@@ -1,4 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, request, send_file
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    send_file,
+    Response,
+)
 from flask_login import current_user, login_required
 
 import datetime
@@ -85,9 +93,11 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
+    logos = models.Certificate_logo.objects()
     classes = models.Class.objects(organization=organization)
     return render_template(
         "/admin/organizations/view.html",
+        logos=logos,
         organization=organization,
         classes=classes,
     )
@@ -159,17 +169,19 @@ def add_logo(organization_id):
 
     logo.save()
 
-    return redirect(url_for("admin.organizations.index"))
+    return redirect(
+        url_for("admin.organizations.add_logo", organization_id=organization_id)
+    )
 
 
 @module.route("/<organization_id>/logos/<filename>")
 @acl.roles_required("admin")
 def show_logo(organization_id, filename):
-    response = response()
+    response = Response()
     response.status_code = 404
 
     organization = models.Organization.objects.get(id=organization_id)
-    logo = models.Certificate_logo()
+    logo = models.Certificate_logo.objects.get(id=filename)
 
     if logo:
         response = send_file(
