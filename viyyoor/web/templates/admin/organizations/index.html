@@ -37,7 +37,7 @@
                         </a>
                     </td>
                     <td>{{ organization.description }}</td>
-                    <td>{{ organization.remaining_quota }}/{{ organization.quota }}</td>
+                    <td>{{ organization.number_of_uses }}/{{ organization.quota }}</td>
                     {# {% if current_user.has_roles(["superadmin"]) %} #}
                     <td>
                         <a class="ui primary icon button" href="{{ url_for('admin.organizations.create_or_edit', organization_id=organization.id) }}">
