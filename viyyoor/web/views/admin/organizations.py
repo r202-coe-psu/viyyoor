@@ -143,13 +143,20 @@ def add_logo(organization_id):
 
     form.populate_obj(logo)
 
-    logo.logo_file.put(
-        form.uploaded_logo_file.data,
-        filename=form.uploaded_logo_file.data.filename,
-        content_type=form.uploaded_logo_file.data.content_type,
-    )
+    if logo.logo_file:
+        logo.logo_file.put(
+            form.uploaded_logo_file.data,
+            filename=form.uploaded_logo_file.data.filename,
+            content_type=form.uploaded_logo_file.data.content_type,
+        )
 
-    print(form.logo_name.data)
+    else:
+        logo.logo_file.replace(
+            form.uploaded_logo_file.data,
+            filename=form.uploaded_logo_file.data.filename,
+            content_type=form.uploaded_logo_file.data.content_type,
+        )
+
     logo.save()
 
     return redirect(url_for("admin.organizations.index"))
@@ -157,17 +164,18 @@ def add_logo(organization_id):
 
 @module.route("/<organization_id>/logos/<filename>")
 @acl.roles_required("admin")
-def download_logo(organization_id, filename):
+def show_logo(organization_id, filename):
     response = response()
     response.status_code = 404
 
     organization = models.Organization.objects.get(id=organization_id)
+    logo = models.Certificate_logo()
 
-    if organization:
+    if logo:
         response = send_file(
-            organization.uploaded_logos,
-            download_name=organization.uploaded_logos.filename,
-            mimetype=organization.uploaded_logos.content_type,
+            logo.logo_file,
+            download_name=logo.logo_file.filename,
+            mimetype=logo.logo_file.content_type,
         )
 
     return response
