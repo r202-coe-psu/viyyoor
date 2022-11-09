@@ -63,7 +63,7 @@
 		<pre>
 		<div class="ui aligned grid">
 		{% for logo in logos %}
-			<div class="ui medium bordered images">
+			<div class="ui small bordered images">
 				<img src="{{ url_for('admin.organizations.show_logo', organization_id=organization.id, filename=logo.id) }}" />
 			</div>
 		{% endfor %}
