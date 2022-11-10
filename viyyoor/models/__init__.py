@@ -7,7 +7,13 @@ from .templates import Template, ShareStatus
 from .signatures import Signature
 from .certificates import Certificate, Endorsement
 from .digital_certificates import DigitalCertificate
-from .organizations import Organization, OrganizationUserRole, Certificate_logo
+from .organizations import (
+    Organization,
+    OrganizationUserRole,
+    Certificate_logo,
+    OrganizationQuata,
+)
+from .history_logs import HistoryLog
 
 db = MongoEngine()
 
