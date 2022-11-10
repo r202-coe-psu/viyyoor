@@ -40,7 +40,7 @@ class Organization(me.Document):
         return OrganizationUserRole.objects(organization=self).order_by("-first_name")
 
 
-class Certificate_logo(me.Document):
+class CertificateLogo(me.Document):
 
     meta = {"collection": "certificate_logos"}
 
