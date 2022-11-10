@@ -62,17 +62,26 @@
 	<div style="width:auto;overflow:auto">
 		<pre>
 		<div class="ui aligned grid">
+		<div class="ui cards">
 		{% for logo in logos %}
-			<div class="ui small bordered images">
+		<div class="card" style="width: 15=em;">
+
+			<div class="small image">
 				<img src="{{ url_for('admin.organizations.show_logo', organization_id=organization.id, filename=logo.id) }}" />
 			</div>
+
+			<div class="ui content">
+				<div class="header">{{ logo.logo_name }}</div>
+				<div class="owner"><b>Uploaded by : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
+			</div>
+
+		</div>
 		{% endfor %}
+		</div>
 		</div>
 		</pre>
 	</div>
 </div>
-
-
 
 <h3 class="ui header">Classes</h3>
 <div class="ui divider"></div>
