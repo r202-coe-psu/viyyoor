@@ -48,6 +48,8 @@ class Certificate_logo(me.Document):
     logo_file = me.FileField(required=True)
     uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
+    uploaded_by = me.ReferenceField("User", dbref=True)
+
     @property
     def remaining_quota(self):
         return self.quota - self.number_of_uses

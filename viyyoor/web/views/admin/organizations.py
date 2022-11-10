@@ -167,6 +167,8 @@ def add_logo(organization_id):
             content_type=form.uploaded_logo_file.data.content_type,
         )
 
+    logo.uploaded_by = current_user._get_current_object()
+
     logo.save()
 
     return redirect(

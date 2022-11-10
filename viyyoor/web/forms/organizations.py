@@ -24,7 +24,7 @@ BaseOrganizationForm = model_form(
 BaseOrganizationLogoForm = model_form(
     models.Certificate_logo,
     FlaskForm,
-    exclude=["uploaded_date"],
+    exclude=["uploaded_date", "uploaded_by,"],
     field_args={
         "logo_name": {"label": "Logo Name"},
     },
