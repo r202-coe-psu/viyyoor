@@ -10,7 +10,7 @@ from .digital_certificates import DigitalCertificate
 from .organizations import (
     Organization,
     OrganizationUserRole,
-    Certificate_logo,
+    CertificateLogo,
     OrganizationQuata,
 )
 from .history_logs import HistoryLog

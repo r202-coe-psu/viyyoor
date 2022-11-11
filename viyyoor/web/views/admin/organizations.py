@@ -93,7 +93,7 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
-    logos = models.Certificate_logo.objects()
+    logos = models.CertificateLogo.objects()
     classes = models.Class.objects(organization=organization)
     return render_template(
         "/admin/organizations/view.html",
@@ -141,7 +141,7 @@ def view_users(organization_id):
 @acl.roles_required("admin")
 def add_logo(organization_id):
     organization = models.Organization.objects.get(id=organization_id)
-    logo = models.Certificate_logo()
+    logo = models.CertificateLogo()
     form = forms.organizations.OrganizationLogoForm()
 
     if not form.validate_on_submit():
@@ -172,7 +172,7 @@ def add_logo(organization_id):
     logo.save()
 
     return redirect(
-        url_for("admin.organizations.add_logo", organization_id=organization_id)
+        url_for("admin.organizations.view", organization_id=organization_id)
     )
 
 
@@ -183,7 +183,7 @@ def show_logo(organization_id, filename):
     response.status_code = 404
 
     organization = models.Organization.objects.get(id=organization_id)
-    logo = models.Certificate_logo.objects.get(id=filename)
+    logo = models.CertificateLogo.objects.get(id=filename)
 
     if logo:
         response = send_file(
@@ -193,3 +193,15 @@ def show_logo(organization_id, filename):
         )
 
     return response
+
+
+@module.route("/<organization_id>/<logo_id>/delete")
+@acl.roles_required("admin")
+def delete_logo(organization_id, logo_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    logo = models.CertificateLogo.objects.get(id=logo_id)
+    logo.delete()
+
+    return redirect(
+        url_for("admin.organizations.view", organization_id=organization_id)
+    )

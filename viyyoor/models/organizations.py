@@ -54,7 +54,7 @@ class OrganizationQuata(me.Document):
     meta = {"collection": "organization_quatas"}
 
 
-class Certificate_logo(me.Document):
+class CertificateLogo(me.Document):
 
     meta = {"collection": "certificate_logos"}
 
