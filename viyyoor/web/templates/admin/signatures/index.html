@@ -51,7 +51,21 @@ Signature
           <td class="single line">
             <a class="ui circular button primary icon" href="{{ url_for('admin.signatures.create_or_edit', signature_id=signature.id) }}"><i class="edit icon"></i></a>
             <a class="ui circular button primary icon" href="{{ url_for('admin.signatures.view', signature_id=signature.id) }}"><i class="eye icon"></i></a>
-            <a class="ui circular button negative icon" href="{{ url_for('admin.signatures.delete', signature_id=signature.id) }}"><i class="trash icon"></i></a>
+            <a onclick="showDeleteModal('{{signature.id}}') " class="ui circular button negative icon" ><i class="trash icon"></i></a>
+
+            <div class="ui small modal {{signature.id}}">
+              <div class="header">Delete Signature</div>
+              <div class="content">
+                <h4 class="ui headers" >
+                  Are you sure you want to delete <span class="ui red text">{{ signature.owner.first_name }} {{ signature.owner.last_name }}</span> signature?
+                </h4>
+                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.signatures.delete', signature_id=signature.id) }}">
+                  Delete</i>
+                </a>
+                <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+              </div>
+            </div>
+
           </td>
         </tr>
     {% endfor %}
@@ -61,4 +75,13 @@ Signature
   
 
 
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function showDeleteModal(signature_id) {
+        signature_id ?  $('.ui.small.modal.'+signature_id).modal('show') : $('.ui.small.modal').modal('hide') 
+    ;
+    }
+</script>
 {% endblock %}
