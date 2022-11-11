@@ -1,9 +1,8 @@
 import mongoengine as me
 import datetime
-import requests
 
 from flask_login import UserMixin
-from flask import url_for
+from flask import url_for, request
 
 
 class UserSetting(me.EmbeddedDocument):
@@ -77,12 +76,16 @@ class User(me.Document, UserMixin):
     def get_current_organization(self):
         return self.user_setting.current_organization
 
-    def save_history_log(self, action: str):
+    def save_history_log(self, action, owner, details):
         from .history_logs import HistoryLog
 
         history_log = HistoryLog()
         history_log.action = action
         history_log.user = self
-        history_log.ip_address = requests.headers.get(
-            "X-Forwarded-For", requests.remote_addr
+        history_log.document = ""
+        history_log.owner = owner
+        history_log.details = details
+        history_log.ip_address = request.headers.get(
+            "X-Forwarded-For", request.remote_addr
         )
+        history_log.save()
