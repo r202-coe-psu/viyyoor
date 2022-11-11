@@ -27,6 +27,19 @@ class Organization(me.Document):
     description = me.StringField()
     status = me.StringField(required=True, default="active")
 
+    created_by = me.ReferenceField("User", dbref=True)
+    last_updated_by = me.ReferenceField("User", dbref=True)
+
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    number_of_uses = me.IntField(require=True, default=0)
+    quota = me.IntField(require=True, default=0)
+
+    def get_users(self):
+        return OrganizationUserRole.objects(organization=self).order_by("-first_name")
+
+
+class OrganizationQuata(me.Document):
     number_of_uses = me.IntField(require=True, default=0)
     quota = me.IntField(require=True, default=0)
 
@@ -36,8 +49,9 @@ class Organization(me.Document):
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
-    def get_users(self):
-        return OrganizationUserRole.objects(organization=self).order_by("-first_name")
+    ip_address = me.StringField(required=True, default="0.0.0.0")
+
+    meta = {"collection": "organization_quatas"}
 
 
 class Certificate_logo(me.Document):

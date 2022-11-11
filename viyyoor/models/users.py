@@ -1,5 +1,6 @@
 import mongoengine as me
 import datetime
+import requests
 
 from flask_login import UserMixin
 from flask import url_for
@@ -75,3 +76,13 @@ class User(me.Document, UserMixin):
 
     def get_current_organization(self):
         return self.user_setting.current_organization
+
+    def save_history_log(self, action: str):
+        from .history_logs import HistoryLog
+
+        history_log = HistoryLog()
+        history_log.action = action
+        history_log.user = self
+        history_log.ip_address = requests.headers.get(
+            "X-Forwarded-For", requests.remote_addr
+        )
