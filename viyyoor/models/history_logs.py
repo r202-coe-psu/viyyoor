@@ -6,6 +6,7 @@ class HistoryLog(me.Document):
     action = me.StringField(required=True, max_length=16)
     user = me.ReferenceField("User", dbref=True, required=True)
     document = me.StringField(required=True)
+    type = me.StringField()
     owner = me.ReferenceField("User", dbref=True)
     details = me.StringField(max_length=64)
     updated_date = me.DateTimeField(
