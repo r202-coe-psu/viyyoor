@@ -11,6 +11,7 @@ from .organizations import (
     Organization,
     OrganizationUserRole,
     CertificateLogo,
+    OrganizationQuata,
 )
 from .history_logs import HistoryLog
 
