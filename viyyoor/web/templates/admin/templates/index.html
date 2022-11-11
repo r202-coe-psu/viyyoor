@@ -81,7 +81,19 @@ Templates
                       <a href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i>View</a>
                     </div>
                     <div class="item">
-                      <a href="{{ url_for('admin.templates.delete', template_id=template.id) }}"><i class="trash icon"></i>Delete</a>
+                      <a onclick="showDeleteModal('{{template.id}}')" ><i class="trash icon"></i>Delete</a>
+                    </div>
+                    <div class="ui small modal {{template.id}}">
+                      <div class="header">Delete Template</div>
+                      <div class="content">
+                        <h4 class="ui headers" >
+                          Are you sure you want to delete <span class="ui red text">{{ template.name }}</span> template?
+                        </h4>
+                        <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.templates.delete', template_id=template.id) }}">
+                          Delete</i>
+                        </a>
+                        <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -119,6 +131,11 @@ Templates
       $('.ui.modal.'+template_id)
         .modal('show')
     ;
+  }
+
+  function showDeleteModal(template_id) {
+    template_id ?  $('.ui.small.modal.'+template_id).modal('show') : $('.ui.small.modal').modal('hide') 
+  ;
   }
   $('.icon.link.pop')
       .popup({
