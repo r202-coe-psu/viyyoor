@@ -41,7 +41,21 @@ Classes
               <a class="ui circular button primary icon" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i></a>
               <a class="ui circular button primary icon" href="{{ url_for('admin.classes.view', class_id=class_.id) }}"><i class="eye icon"></i></a>
               <a class="ui circular button primary icon" href="{{ url_for('admin.classes.copy', class_id=class_.id) }}"><i class="copy icon"></i></a>
-              <a class="ui circular button negative icon" href="{{ url_for('admin.classes.delete', class_id=class_.id) }}"><i class="trash icon"></i></a>
+              <a onclick="showDeleteModal('{{ class_.id }}')" class="ui circular button negative icon"><i class="trash icon"></i></a>
+
+            <div class="ui small modal {{class_.id}}">
+              <div class="header">Delete Class</div>
+              <div class="content">
+                <h4 class="ui headers" >
+                  Are you sure you want to delete <span class="ui red text">{{ class_.name }}</span> class?
+                </h4>
+                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.classes.delete', class_id=class_.id) }}">
+                  Delete</i>
+                </a>
+                <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+              </div>
+					  </div>
+
             </td>
           </tr>
       {% endfor %}
@@ -57,4 +71,13 @@ Classes
 {% endif %}
 
 
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function showDeleteModal(Class__id) {
+        Class__id ?  $('.ui.small.modal.'+Class__id).modal('show') : $('.ui.small.modal').modal('hide') 
+    ;
+    }
+</script>
 {% endblock %}
