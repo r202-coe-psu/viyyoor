@@ -35,13 +35,35 @@ Endorsers
           <td>{{ user.first_name }} {{ user.last_name }}</td>
           <td>{{ user.get_current_organization().name }}</td>
           <td class="single line">
-            <a class="ui circular icon negative button" href="{{ url_for('admin.endorsers.delete', user_id=user.id) }}"><i class="trash icon"></i></a>
+            <a onclick="showDeleteModal('{{user.id}}')" class="ui circular icon negative button" ><i class="trash icon"></i></a>
           </td>
+
+          <div class="ui small modal {{user.id}}">
+            <div class="header">Delete Endorser</div>
+            <div class="content">
+              <h4 class="ui headers" >
+                Are you sure you want to delete <span class="ui red text">{{ user.first_name }} {{ user.last_name }}</span> 
+              </h4>
+              <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.endorsers.delete', user_id=user.id) }}">
+                Delete</i>
+              </a>
+              <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+            </div>
+          </div>
+
         </tr>
       {% endfor %}
       </tbody>
     </table>
   </div>
 
+{% endblock %}
 
+{% block additional_js %}
+<script>
+    function showDeleteModal(user_id) {
+        user_id ?  $('.ui.small.modal.'+user_id).modal('show') : $('.ui.small.modal').modal('hide') 
+    ;
+    }
+</script>
 {% endblock %}
