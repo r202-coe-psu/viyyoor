@@ -613,7 +613,7 @@ def download(class_id, filename):
     f = open(p, "rb")
     response = send_file(
         f,
-        attachment_filename=filename,
+        download_name=filename,
         # as_attachment=True,
         mimetype="application/pdf",
     )
