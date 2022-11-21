@@ -39,7 +39,7 @@
 		</tr>
 		<tr>
 			<td>Class Amount</td>
-			<td></td>
+			<td>{{ classes.count() }}</td>
 		</tr>
 	</tbody>
 </table>
@@ -48,6 +48,13 @@
 <a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
 	<i class="users icon"></i>Users
 </a>
+<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='admin') }}">
+	<i class="users icon"></i>Admins
+</a>
+<a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='endorser') }}">
+	<i class="users icon"></i>Endorsers
+</a>
+
 <a class="ui green labeled icon button" href="{{ url_for('admin.classes.create_or_edit', organization_id=organization.id) }}">
 	<i class="add icon"></i>Add Class
 </a>
@@ -115,3 +122,5 @@
     }
 </script>
 {% endblock %}
+
+onclick="showEditModal('{{organization.id}}')"
