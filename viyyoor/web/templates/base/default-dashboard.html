@@ -1,4 +1,5 @@
 {% extends "/base/base-layout.html" %}
+{% import '/base/organization-menu-renderer.html' as org_renderer %}
 
 {% block title %}
   {{ self.dashboard_title() }}
@@ -158,11 +159,7 @@
           <div class="introduction">
             <div class="ui basic segment" style="padding-bottom: 2.5em">
               <h1 class="ui left floated header">{{ self.dashboard_title() }}</h1>
-              <h1 class="ui right floated header">
-                {% if current_user.get_current_organization() %} 
-                {{ current_user.user_setting.current_organization.name }}
-                {% endif %}
-              </h1>
+              {{ org_renderer.render_organization_menu(current_user) }}
             </div>
           </div>
         </div>

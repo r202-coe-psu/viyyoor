@@ -117,7 +117,7 @@ def view_users(organization_id):
         org_user_forms[u.id] = forms.organizations.OrganizationRoleSelectionForm(obj=u)
 
     if request.args.get("user_role_id"):
-        user_role = models.OrganizationUserRole.objects.get(
+        user_role = models.OrganizationUserRole.objects(
             id=request.args.get("user_role_id")
         )
         form = org_user_forms[user_role.id]
