@@ -108,32 +108,36 @@ def view(organization_id):
 def view_users(organization_id):
     organization = models.organizations.Organization.objects.get(id=organization_id)
     role = request.args.get("role")
-
     organization_user_roles = organization.get_users()
     if role not in ["all", None]:
         organization_user_roles = organization_user_roles.filter(role=role)
 
-    form = forms.organizations.OrganizationRoleSelectionForm()
-    if not form.validate_on_submit():
-        return render_template(
-            "/admin/organizations/users.html",
-            organization=organization,
-            organization_user_roles=organization_user_roles,
-            role=role,
-            form=form,
-        )
+    org_user_forms = {}
+    for u in organization_user_roles:
+        org_user_forms[u.id] = forms.organizations.OrganizationRoleSelectionForm(obj=u)
 
-    user_role = models.OrganizationUserRole.objects.get(
-        id=request.args.get("user_role_id")
-    )
-    user_role.role = form.role.data
-    user_role.save()
-
-    return redirect(
-        url_for(
-            "admin.organizations.view_users",
-            organization_id=organization.id,
+    if request.args.get("user_role_id"):
+        user_role = models.OrganizationUserRole.objects.get(
+            id=request.args.get("user_role_id")
         )
+        form = org_user_forms[user_role.id]
+        if form.validate_on_submit():
+            user_role.role = form.role.data
+            user_role.save()
+            return redirect(
+                url_for(
+                    "admin.organizations.view_users",
+                    organization_id=organization.id,
+                    role=role,
+                )
+            )
+
+    return render_template(
+        "/admin/organizations/users.html",
+        organization=organization,
+        organization_user_roles=organization_user_roles,
+        role=role,
+        org_user_forms=org_user_forms,
     )
 
 

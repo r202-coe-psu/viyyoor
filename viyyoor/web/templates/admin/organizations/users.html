@@ -50,27 +50,37 @@ Users
 				<td>{{ index.value }}</td>
 				<td>{{ org_user_role.user.get_fullname() }}</td>
 				<td>{{ org_user_role.get_role_display() }}</td>
-				<td>{{ 	org_user_role.added_by.get_fullname() }}</td>
+				<td>{{ org_user_role.added_by.get_fullname() }}</td>
 				<td>
 					<a class="ui link pop red icon circular button" data-content="delete"
 					href="">
 					<i class="trash icon"></i>
 					</a>
-					<a class="ui primary icon circular button" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
+					<a class="ui primary icon circular link pop button" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
 						<i class="user icon"></i>
 					</a>
-					<div id="{{org_user_role.user.id}}" style="display: none;" class="ui accordion {{ org_user_role.user.id }}" >
-						<form method="post" class="ui form" action="{{ url_for('admin.organizations.view_users', organization_id=organization.id, user_role_id=org_user_role.id) }}">
-							{{ form.csrf_token() }}
-							{{ form.role(class_="ui compact selection small dropdown super", **{"onchange":"this.form.submit()"}) }}
-							{#
-								{{ form.role(class_="ui compact selection small dropdown super") }}
-							#}
-							{# 
-								<button type="submit" class="ui small green icon button"><i class="save icon"></i></button>
-							#}
-						</form>
-					</div>
+					<div id="{{org_user_role.user.id}}" class="ui mini modal {{ org_user_role.user.id }}" >
+						<div class="header">
+							<span class="ui blue text">
+								{{ org_user_role.user.get_fullname() }}
+							</span>
+							role change
+						</div>
+						<div class="content">
+							<form method="post" class="ui form" action="{{ url_for('admin.organizations.view_users', organization_id=organization.id, user_role_id=org_user_role.id, role=role) }}">
+								<div class="ui grid">
+									<div class="seven wide column">
+										{{ org_user_forms[org_user_role.id].csrf_token() }}
+										{{ renderer.render_select(org_user_forms[org_user_role.id].role) }}
+									</div>
+									<div class="nine wide column">
+										<button class="ui primary button" type="submit">Save</button>
+										<a class="ui button" onclick="$('.ui.mini.modal.'+'{{ org_user_role.user.id }}').modal('hide')">Cancel</a>
+									</div>
+							</div>
+							</form>
+						</div>
+						</div>
 				</td>
 			</tr>
 			{% endfor %}
@@ -81,12 +91,8 @@ Users
 {% block additional_js %}
 <script>
 	function showRoleSelectionForm(id) {
-		console.log(document.getElementById(id).style['display'])
-		if (document.getElementById(id).style['display'] == "none") {
-			document.getElementById(id).style['display'] = "inline-block"
-		} else {
-			document.getElementById(id).style['display'] = "none"
-		}
+		$('.ui.mini.modal.'+id).modal('show')
 	}
+	$('.link.pop').popup()
 </script>
 {% endblock %}

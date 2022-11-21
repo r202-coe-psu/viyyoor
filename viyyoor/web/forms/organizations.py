@@ -49,13 +49,13 @@ class OrganizationUserRoleForm(FlaskForm):
     users = fields.SelectMultipleField("")
 
 
-class OrganizationRoleSelectionForm(FlaskForm):
-    role = fields.SelectField(
-        default="",
-        choices=[
-            ("", "Select"),
-            ("staff", "Staff"),
-            ("admin", "Admin"),
-            ("endorser", "Endorser"),
-        ],
-    )
+BaseOrganizationUserRoleChangeForm = model_form(
+    models.OrganizationUserRole,
+    FlaskForm,
+    only=["role"],
+    field_args={"role": {"label": ""}},
+)
+
+
+class OrganizationRoleSelectionForm(BaseOrganizationUserRoleChangeForm):
+    pass
