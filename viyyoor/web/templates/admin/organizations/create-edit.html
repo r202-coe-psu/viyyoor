@@ -49,29 +49,16 @@
               {{ 'Create' if 'create' in request.path else 'Edit' }}
             </button>
 
-            <div class="ui small modal {{signature.id}}">
-              <div class="header">Delete Signature</div>
-              <div class="content">
-                <h4 class="ui headers" >
-                  Are you sure you want to delete <span class="ui red text">{{ signature.owner.first_name }} {{ signature.owner.last_name }}</span> 's signature?
-                </h4>
-                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.signatures.delete', signature_id=signature.id) }}">
-                  Delete</i>
-                </a>
-                <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
-              </div>
-            </div>
-
         </div>
     </form>
 </div>
 {% endblock %}
 
-{% block additional_js %}
+<!-- {% block additional_js %}
 <script>
     function showDeleteModal(signature_id) {
       signature_id ?  $('.ui.small.modal.'+signature_id).modal('show') : $('.ui.small.modal').modal('hide') 
   ;
   }
 </script>
-{% endblock %}
+{% endblock %} -->
