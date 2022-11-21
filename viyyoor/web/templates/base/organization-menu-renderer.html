@@ -4,11 +4,11 @@
 {% set organization = current_user.get_current_organization() %}
 <h1 class="ui right floated big header">
     <div class="ui dropdown">
-        {% if not organization.logo %}
-            <i class="blue big globe icon"></i>
-            {% else %}
-            <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
-        {% endif %}
+            {% if not organization.logo %}
+                <i class="blue big globe icon" style="margin-bottom: 0.5em;"></i>
+                {% else %}
+                <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+            {% endif %}
         <div class="menu">
             <div class="ui center aligned basic segment">
                 {% if not organization.logo %}
