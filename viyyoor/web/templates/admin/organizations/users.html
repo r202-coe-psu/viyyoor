@@ -53,7 +53,7 @@ Users
 <table class="ui compact celled single line table">
 	<thead>
 			<tr>
-				<th></th>
+				<th class="one wide"></th>
 				<th>Name</th>
 				<th>Role</th>
 				<th>Added by</th>	
@@ -66,8 +66,19 @@ Users
 			<tr class="top aligned">
 				{% set index.value = index.value + 1 %}
 				<td>{{ index.value }}</td>
-				<td>{{ org_user_role.user.get_fullname() }}</td>
-				<td>{{ org_user_role.get_role_display() }}</td>
+				<td class="left aligned collapsing">{{ org_user_role.user.get_fullname() }}</td>
+				<td>
+					<div class="ui grid">
+						<div class="two wide column">
+							{{ org_user_role.get_role_display() }}
+						</div>
+						<div class="one wide column">
+							<a style="cursor: pointer;" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
+								<i class="sync blue icon"></i>
+							</a>
+						</div>
+					</div>
+				</td>
 				<td>{{ org_user_role.added_by.get_fullname() }}</td>
 				<td class="right aligned collapsing">
 					<a class="ui link pop red icon circular button" data-content="delete"
@@ -111,6 +122,10 @@ Users
 	function showRoleSelectionForm(id) {
 		$('.ui.mini.modal.'+id).modal('show')
 	}
-	$('.link.pop').popup()
+	$('.link.pop').popup({
+		delay: {
+			show: 200,
+			hide: 70,
+	  }})
 </script>
 {% endblock %}
