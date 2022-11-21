@@ -117,7 +117,7 @@ def view_users(organization_id):
         org_user_forms[u.id] = forms.organizations.OrganizationRoleSelectionForm(obj=u)
 
     if request.args.get("user_role_id"):
-        user_role = models.OrganizationUserRole.objects(
+        user_role = models.OrganizationUserRole.objects.get(
             id=request.args.get("user_role_id")
         )
         form = org_user_forms[user_role.id]
@@ -132,12 +132,56 @@ def view_users(organization_id):
                 )
             )
 
+    add_member_form = forms.organizations.OrgnaizationAddMemberForm()
+    add_member_form.members.choices = [
+        (str(u.id), u.get_fullname())
+        for u in models.User.objects(organizations__nin=[organization])
+    ]
+
     return render_template(
         "/admin/organizations/users.html",
         organization=organization,
         organization_user_roles=organization_user_roles,
         role=role,
         org_user_forms=org_user_forms,
+        add_member_form=add_member_form,
+    )
+
+
+@module.route("/<organization_id>/users/submit_add_members", methods=["POST"])
+@acl.roles_required("admin")
+def submit_add_members(organization_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    form = forms.organizations.OrgnaizationAddMemberForm()
+    form.members.choices = [
+        (str(u.id), u.get_fullname())
+        for u in models.User.objects(organizations__nin=[organization])
+    ]
+
+    if not form.validate_on_submit():
+        return redirect(
+            url_for("admin.organizations.view_users", organization_id=organization.id)
+        )
+
+    for u in form.members.data:
+        user = models.User.objects.get(id=u)
+        user.organizations.append(organization)
+        if not user.get_current_organization():
+            user.user_setting.current_organization = organization
+        user.save()
+
+        org_user = models.OrganizationUserRole(
+                organization=organization,
+                user=user,
+                added_by=current_user._get_current_object(),
+                last_modifier=current_user._get_current_object(),
+            )
+        org_user.save()
+
+
+
+    return redirect(
+        url_for("admin.organizations.view_users", organization_id=organization.id)
     )
 
 

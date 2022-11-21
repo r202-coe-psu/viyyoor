@@ -21,6 +21,11 @@ BaseOrganizationForm = model_form(
     },
 )
 
+
+class OrganizationForm(BaseOrganizationForm):
+    pass
+
+
 BaseOrganizationLogoForm = model_form(
     models.CertificateLogo,
     FlaskForm,
@@ -29,10 +34,6 @@ BaseOrganizationLogoForm = model_form(
         "logo_name": {"label": "Logo Name"},
     },
 )
-
-
-class OrganizationForm(BaseOrganizationForm):
-    pass
 
 
 class OrganizationLogoForm(BaseOrganizationLogoForm):
@@ -59,3 +60,6 @@ BaseOrganizationUserRoleChangeForm = model_form(
 
 class OrganizationRoleSelectionForm(BaseOrganizationUserRoleChangeForm):
     pass
+
+class OrgnaizationAddMemberForm(FlaskForm):
+    members = fields.SelectMultipleField("Select Members")

@@ -9,37 +9,53 @@ Users
 {% endblock %}
 
 
-
 {% block content %}
 <h2 class="ui header">
-	View Users
+	Manage Users 
 </h2>
 
 <div class="ui divider"></div>
-
-<div class="ui secondary  menu">
+<a class="ui tertiary blue large right floated button" onclick="$('.ui.add.member.small.modal').modal('show');"><i class="user plus icon"></i>Add members</a>
+<div class="ui secondary  menu" style="width:fit-content">
 	<a class="{{ 'active' if role == 'all' or not role }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
-	  All
+		All
 	</a>
 	<a class="{{ 'active' if role == 'staff' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='staff') }}">
-	  Staff
+		Staff
 	</a>
 	<a class="{{ 'active' if role == 'admin' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='admin') }}">
-	  Admin
+		Admin
 	</a>
 	<a class="{{ 'active' if role == 'endorser' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='endorser') }}">
-	  Endorser
+		Endorser
 	</a>
+</div>
+
+<div class="ui add member small modal">
+	<div class="content">
+		<form method="POST" class="ui form" action="{{ url_for('admin.organizations.submit_add_members', organization_id=organization.id) }}">
+			<div class="ui grid">
+				<div class="thirteen wide column">
+					{{ add_member_form.csrf_token() }}
+					{{ renderer.render_multiple_select(add_member_form.members) }}
+				</div>
+				<div class="three wide column">
+					<br>
+					<button type="submit" class="ui labeled icon fluid primary button"><i class="save icon"></i>Save</a>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 
 <table class="ui compact celled single line table">
 	<thead>
 			<tr>
-				<th class="one wide"></th>
-				<th class="three wide">Name</th>
-				<th class="two wide">Role</th>
-				<th class="three wide">Added by</th>	
-				<th>Action</th>
+				<th></th>
+				<th>Name</th>
+				<th>Role</th>
+				<th>Added by</th>	
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -51,7 +67,7 @@ Users
 				<td>{{ org_user_role.user.get_fullname() }}</td>
 				<td>{{ org_user_role.get_role_display() }}</td>
 				<td>{{ org_user_role.added_by.get_fullname() }}</td>
-				<td>
+				<td class="right aligned collapsing">
 					<a class="ui link pop red icon circular button" data-content="delete"
 					href="">
 					<i class="trash icon"></i>
