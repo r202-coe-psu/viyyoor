@@ -23,128 +23,161 @@
 
 
 {% block content %}
-<table class="ui definition table">
-	<tbody>
-		<tr>
-			<td class="three wide column">Organization</td>
-			<td>{{ organization.name }}</td>
-		</tr>
-		<tr>
-			<td>Description</td>
-			<td>{{ organization.description }}</td>
-		</tr>
-		<tr>
-			<td>Quota Remaining</td>
-			<td>{{ organization.remaining_quota }}/{{ organization.quota }}</td>
-		</tr>
-		<tr>
-			<td>Class Amount</td>
-			<td>{{ classes.count() }}</td>
-		</tr>
-	</tbody>
-</table>
-
+<div class="ui horizontal compact segments">
+	<div class="ui very padded segment">
+		<h2 class="ui header">
+		{% if not organization.logo %}
+		<i class="blue huge globe icon"></i>
+			{% else %}
+			<img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+			{% endif %}
+			<div class="content">
+				{{ organization.name }}
+				<div class="sub header">{{ organization.description }}</div>
+			</div>
+		</h2>
+	</div>
+	<div class="ui very padded segment">
+		<h2 class="ui header">
+			<i class="big certificate icon"></i>
+			<div class="content">
+				<div class="sub header">
+					Quota Remaining
+				</div>
+				{{ organization.quota }}/{{ organization.quota }}
+			</div>
+		</h2>
+	</div>
+	<div class="ui very padded segment">
+		<h2 class="ui header">
+			<i class="big archive icon"></i>
+			<div class="content">
+				<div class="sub header">
+					Class Amount
+				</div>
+				{{ classes.count() }}
+			</div>
+		</h2>
+	</div>
+</div>
+	
 <div class="ui divider"></div>
 <a class="ui green labeled icon button" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
 	<i class="users icon"></i>Users
 </a>
 
-<div class="ui basic segment center aligned">
-	<h3 class="ui horizontal divider">Classes</h3>
-	<a class="ui primary tertiary center aligned icon button" href="{{ url_for('admin.classes.create_or_edit', organization_id=organization.id) }}">
-		<i class="add icon"></i> Add Class
-	</a>
-</div>
-
-<div class="ui cards">
-	{% for class_ in classes %}
-	<div class="card">
-	  <div class="content">
-		<a class="header" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a>
-		<div class="meta">{{ class_.printed_name }}</div>
-		<div class="description">
-		  {{ class_.description }}
-		</div>
-	  </div>
-	  <div class="extra content">
-		  <span class="left floated star">
-			  <a class="link pop" data-content="view" data-position="bottom left" href="{{ url_for('admin.classes.view', class_id=class_.id) }}"><i class="blue eye circular colored icon"></i></a>
-			  <a class="link pop" data-content="edit" data-position="bottom left" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="blue edit circular colored icon"></i></a>
-			  <a class="link pop" data-content="copy" data-position="bottom left" href="{{ url_for('admin.classes.copy', class_id=class_.id) }}"><i class="blue copy circular colored icon"></i></a>
-		  </span>
-		<span class="right floated">
-			<a class="ui mini basic circular icon button link pop" data-content="disactive" data-position="bottom left" onclick="showDeleteModal('{{ class_.id }}')"><i class="trash icon"></i></a>
-		</span>
-	  </div>
-	</div>
-	<div class="ui small modal {{class_.id}}">
-		<div class="header">Delete Class</div>
-		<div class="content">
-		<h4 class="ui headers" >
-			Are you sure you want to delete <span class="ui red text">{{ class_.name }}</span> class?
-		</h4>
-		<a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.classes.delete', class_id=class_.id) }}">
-			Delete</i>
-		</a>
-		<button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
-		</div>
-	</div>
-	{% endfor %}
-  </div>
-
-
-<!-- <style>
-	div.scroll {
-		display: flex;
-		gap: var(--size3--);
-		grid-auto-flow: row;
-		grid-auto-columns:10%;
-
-		overflow-x: auto;
-		overscroll-behavior-inline: contain;
-	}
-</style> -->
-
-<div class="ui basic segment center aligned">
-	<h3 class="ui horizontal divider">Logos</h3>
-	<a class="ui primary tertiary center aligned icon button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
-		<i class="add icon"></i> Add Logo
-	</a>
-</div>
-
-<div class="scroll">
-<div class="ui cards">
-{% for logo in logos %}
-<div class="card" style="width: 15=em;">
-
-	<div class="small image">
-		<img src="{{ url_for('admin.organizations.show_logo', organization_id=organization.id, filename=logo.id) }}" />
-	</div>
-
-	<div class="ui content">
-		<div class="header">{{ logo.logo_name }}</div>
-		<div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
-			<div class="right floated">
-				<a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
-			</div>
-			<div class="ui small modal {{logo.id}}">
-				<div class="header">Delete Logo</div>
+<div class="ui basic segments">
+	<div class="ui segment">
+		<div class="ui basic segment">
+			<h2 class="ui header">
+				<i class="large archive icon"></i>
 				<div class="content">
-					<h4 class="ui headers" >
-						Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
-					</h4>
-					<a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
-						Delete</i>
+					Classes
+					<a class="ui primary tertiary button" href="{{ url_for('admin.classes.create_or_edit', organization_id=organization.id) }}">
+						<i class="add icon"></i> Add Class
 					</a>
-					<button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+				</div>
+			</h2>
+		</div>	
+
+		<div class="ui cards">
+			{% for class_ in classes %}
+			<div class="card">
+			<div class="content">
+				<a class="header" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a>
+				<div class="meta">{{ class_.printed_name }}</div>
+				<div class="description">
+				{{ class_.description }}
 				</div>
 			</div>
+			<div class="extra content">
+				<span class="left floated star">
+					<a class="link pop" data-content="view" data-position="bottom left" href="{{ url_for('admin.classes.view', class_id=class_.id) }}"><i class="blue eye circular colored icon"></i></a>
+					<a class="link pop" data-content="edit" data-position="bottom left" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="blue edit circular colored icon"></i></a>
+					<a class="link pop" data-content="copy" data-position="bottom left" href="{{ url_for('admin.classes.copy', class_id=class_.id) }}"><i class="blue copy circular colored icon"></i></a>
+				</span>
+				<span class="right floated">
+					<a class="ui mini basic circular icon button link pop" data-content="disactive" data-position="bottom left" onclick="showDeleteModal('{{ class_.id }}')"><i class="trash icon"></i></a>
+				</span>
+			</div>
+			</div>
+			<div class="ui small modal {{class_.id}}">
+				<div class="header">Delete Class</div>
+				<div class="content">
+				<h4 class="ui headers" >
+					Are you sure you want to delete <span class="ui red text">{{ class_.name }}</span> class?
+				</h4>
+				<a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.classes.delete', class_id=class_.id) }}">
+					Delete</i>
+				</a>
+				<button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+				</div>
+			</div>
+			{% endfor %}
 		</div>
+	</div>
 
+	<div class="ui divider"></div>
+
+	<!-- <style>
+		div.scroll {
+			display: flex;
+			gap: var(--size3--);
+			grid-auto-flow: row;
+			grid-auto-columns:10%;
+
+			overflow-x: auto;
+			overscroll-behavior-inline: contain;
+		}
+	</style> -->
+
+	<div class="ui basic padded segment aligned">
+		<h2 class="ui header">
+			<i class="large archive icon"></i>
+			<div class="content">
+				Logos
+				<a class="ui primary tertiary icon button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
+					<i class="add icon"></i> Add Logo
+				</a>
+			</div>
+		</h2>
+		
+		<div class="scroll">
+			<div class="ui cards">
+			{% for logo in logos %}
+			<div class="card" style="width: 15=em;">
+
+				<div class="small image">
+					<img src="{{ url_for('admin.organizations.show_logo', organization_id=organization.id, filename=logo.id) }}" />
+				</div>
+
+				<div class="ui content">
+					<div class="header">{{ logo.logo_name }}</div>
+					<div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
+						<div class="right floated">
+							<a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
+						</div>
+						<div class="ui small modal {{logo.id}}">
+							<div class="header">Delete Logo</div>
+							<div class="content">
+								<h4 class="ui headers" >
+									Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
+								</h4>
+								<a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
+									Delete</i>
+								</a>
+								<button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+							</div>
+						</div>
+					</div>
+
+			</div>
+			{% endfor %}
+			</div>
+		</div>	
+	</div>
 </div>
-{% endfor %}
-</div>
-</div>
+
 	
 {% endblock %}
 
