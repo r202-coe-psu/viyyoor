@@ -94,7 +94,7 @@ def view(organization_id):
         status="active",
     )
     logos = models.CertificateLogo.objects()
-    classes = models.Class.objects(organization=organization)
+    classes = models.Class.objects(organization=organization, status="active")
     return render_template(
         "/admin/organizations/view.html",
         logos=logos,
@@ -171,14 +171,12 @@ def submit_add_members(organization_id):
         user.save()
 
         org_user = models.OrganizationUserRole(
-                organization=organization,
-                user=user,
-                added_by=current_user._get_current_object(),
-                last_modifier=current_user._get_current_object(),
-            )
+            organization=organization,
+            user=user,
+            added_by=current_user._get_current_object(),
+            last_modifier=current_user._get_current_object(),
+        )
         org_user.save()
-
-
 
     return redirect(
         url_for("admin.organizations.view_users", organization_id=organization.id)
