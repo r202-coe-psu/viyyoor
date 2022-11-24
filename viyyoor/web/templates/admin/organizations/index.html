@@ -5,11 +5,12 @@
 {% block dashboard_title %}Organizations{% endblock %}
 
 {% block breadcrumbs %}
+{{ super() }}
 {% if request.endpoint == 'admin.organizations.index' %}
 <div class="active section">Organizations</div>
 {% else %}
 <a href="{{ url_for('admin.organizations.index') }}" class="section">Organizations</a>
-<div class="divider"> / </div>
+<i class="right angle icon divider"></i>
 {% endif %}
 {% endblock %}
 

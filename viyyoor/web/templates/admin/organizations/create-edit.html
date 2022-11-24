@@ -43,11 +43,32 @@
               {{ renderer.render_field(form.quota) }}
             </div>
         </div>
+
         <div style="margin-top: 2%;">
+          
+            {% if 'create' in request.path  %}
             <button name="create" type="submit" class="ui primary button">
               <i class="icon save"></i>
-              {{ 'Create' if 'create' in request.path else 'Edit' }}
             </button>
+            {% elif 'edit' in request.path  %}
+            <a onclick="$('.modal.edit').modal('show')" class="ui primary button">
+              <i class="icon save"></i>
+            </a>
+            {% endif %}
+
+            <div class="ui small modal edit">
+              <div class="header">Edit Organization</div>
+              <div class="content">
+                <h4 class="ui headers" >
+                  Are you sure you want to edit <span class="ui primary text">{{ organization.name }}</span> organization?
+                </h4>
+                <button class="ui right floated primary button" onclick="$('.ui.form').submit()" style="margin-bottom: 1em;">
+                  Edit
+                </button>
+                <button class="ui right floated button" onclick="$('.modal.edit').modal('hide')">Cancel</button>
+              </div>
+            </div>
+
         </div>
     </form>
 </div>

@@ -19,21 +19,32 @@
 </div>
 
 <a class="item" href="{{ url_for('dashboard.index') }}"><i class="icon dashboard"></i>Dashboard</a>
+<a class="item" href="{{ url_for('dashboard.show_my_certificates') }}"><i class="icon certificate"></i>My Certificate</a>
 
 {% if current_user.has_roles(['admin']) %}
-  <a class="item" href="{{ url_for('dashboard.show_my_certificates') }}"><i class="icon dashboard"></i>My Certificate</a>
-  <a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
-  <a class="item" href="{{ url_for('admin.classes.index') }}"><i class="icon archive "></i>Clasess</a>
-  <a class="item" href="{{ url_for('admin.certificates.index') }}"><i class="icon certificate file"></i>Certificate</a>
-  <a class="item" href="{{ url_for('admin.organizations.index') }}"><i class="icon synagogue"></i>Organizations</a>
+<div class="sidebar-heading">
+  Administration
+</div>
+<a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
+<a class="item" href="{{ url_for('admin.organizations.index') }}"><i class="icon synagogue"></i>Organizations</a>
+<a class="item" href="{{ url_for('admin.classes.index') }}"><i class="icon archive "></i>Classes</a>
+<a class="item" href="{{ url_for('admin.templates.index') }}"><i class="icon id card outline"></i>Template</a>
+<a class="item" href="{{ url_for('admin.users.index') }}"><i class="icon user"></i>Users</a>
+<a class="item" href="{{ url_for('admin.certificates.index') }}"><i class="icon certificate file"></i>Certificates</a>
   <a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon user check"></i>Endorsers</a>
-  <a class="item" href="{{ url_for('admin.users.index') }}"><i class="icon user"></i>Users</a>
-  <a class="item" href="{{ url_for('admin.templates.index') }}"><i class="icon id card outline"></i>Template</a>
   <a class="item" href="{{ url_for('admin.signatures.index') }}"><i class="icon signature file"></i>Signature</a>
   <a class="item" href="{{ url_for('admin.digital_certificates.index') }}"><i class="icon stamp file"></i>Digital Certificate</a>
 {% endif %}
 
+<div class="sidebar-heading">
+  Settings
+</div>
 <a class="item" href="{{ url_for('accounts.index') }}"><i class="address book icon"></i>Account</a>
 <a class="item" href="{{ url_for('accounts.logout') }}"><i class="sign out icon"></i>Logout</a>
 
-
+<style>
+  .sidebar-heading {
+    color: grey;
+    margin: 0.5em 0 0 0.5em;
+  }
+</style>

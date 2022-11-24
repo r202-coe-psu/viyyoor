@@ -57,6 +57,7 @@ def create_or_edit(organization_id):
 
         return render_template(
             "/admin/organizations/create-edit.html",
+            organization=organization,
             form=form,
         )
 
@@ -94,7 +95,7 @@ def view(organization_id):
         status="active",
     )
     logos = models.CertificateLogo.objects()
-    classes = models.Class.objects(organization=organization)
+    classes = models.Class.objects(organization=organization, status="active")
     return render_template(
         "/admin/organizations/view.html",
         logos=logos,
@@ -103,41 +104,114 @@ def view(organization_id):
     )
 
 
+@module.route("/<organization_id>/classes", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_classes(organization_id):
+    organization = models.Organization.objects.get(
+        id=organization_id,
+        status="active",
+    )
+    classes = models.Class.objects(organization=organization, status="active")
+    return render_template(
+        "/admin/organizations/list-classes-by-organization.html",
+        organization=organization,
+        classes=classes,
+    )
+
+
+@module.route("/<organization_id>/logos", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_logos(organization_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    logos = models.CertificateLogo.objects(organization=organization)
+    return render_template(
+        "/admin/organizations/logos.html",
+        organization=organization,
+        logos=logos,
+    )
+
+
 @module.route("/<organization_id>/users", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def view_users(organization_id):
     organization = models.organizations.Organization.objects.get(id=organization_id)
     role = request.args.get("role")
-
     organization_user_roles = organization.get_users()
     if role not in ["all", None]:
         organization_user_roles = organization_user_roles.filter(role=role)
 
-    form = forms.organizations.OrganizationRoleSelectionForm()
+    org_user_forms = {}
+    for u in organization_user_roles:
+        org_user_forms[u.id] = forms.organizations.OrganizationRoleSelectionForm(obj=u)
+
+    if request.args.get("user_role_id"):
+        user_role = models.OrganizationUserRole.objects.get(
+            id=request.args.get("user_role_id")
+        )
+        form = org_user_forms[user_role.id]
+        if form.validate_on_submit():
+            user_role.role = form.role.data
+            user_role.save()
+            return redirect(
+                url_for(
+                    "admin.organizations.view_users",
+                    organization_id=organization.id,
+                    role=role,
+                )
+            )
+
+    add_member_form = forms.organizations.OrgnaizationAddMemberForm()
+    add_member_form.members.choices = [
+        (str(u.id), u.get_fullname())
+        for u in models.User.objects(organizations__nin=[organization])
+    ]
+
+    return render_template(
+        "/admin/organizations/users.html",
+        organization=organization,
+        organization_user_roles=organization_user_roles,
+        role=role,
+        org_user_forms=org_user_forms,
+        add_member_form=add_member_form,
+    )
+
+
+@module.route("/<organization_id>/users/submit_add_members", methods=["POST"])
+@acl.roles_required("admin")
+def submit_add_members(organization_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    form = forms.organizations.OrgnaizationAddMemberForm()
+    form.members.choices = [
+        (str(u.id), u.get_fullname())
+        for u in models.User.objects(organizations__nin=[organization])
+    ]
+
     if not form.validate_on_submit():
-        return render_template(
-            "/admin/organizations/users.html",
-            organization=organization,
-            organization_user_roles=organization_user_roles,
-            role=role,
-            form=form,
+        return redirect(
+            url_for("admin.organizations.view_users", organization_id=organization.id)
         )
 
-    user_role = models.OrganizationUserRole.objects.get(
-        id=request.args.get("user_role_id")
-    )
-    user_role.role = form.role.data
-    user_role.save()
+    for u in form.members.data:
+        user = models.User.objects.get(id=u)
+        user.organizations.append(organization)
+        if not user.get_current_organization():
+            user.user_setting.current_organization = organization
+        user.save()
+
+        org_user = models.OrganizationUserRole(
+            organization=organization,
+            user=user,
+            added_by=current_user._get_current_object(),
+            last_modifier=current_user._get_current_object(),
+        )
+        org_user.save()
 
     return redirect(
-        url_for(
-            "admin.organizations.view_users",
-            organization_id=organization.id,
-        )
+        url_for("admin.organizations.view_users", organization_id=organization.id)
     )
 
 
-@module.route("/<organization_id>/logos", methods=["GET", "POST"])
+@module.route("/<organization_id>/logos/add", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def add_logo(organization_id):
     organization = models.Organization.objects.get(id=organization_id)
@@ -145,6 +219,7 @@ def add_logo(organization_id):
     form = forms.organizations.OrganizationLogoForm()
 
     if not form.validate_on_submit():
+        print(form.errors)
         return render_template(
             "/admin/organizations/add-logo.html",
             organization=organization,
@@ -167,33 +242,14 @@ def add_logo(organization_id):
             content_type=form.uploaded_logo_file.data.content_type,
         )
 
+    logo.organization = organization
     logo.uploaded_by = current_user._get_current_object()
-
+    logo.uploaded_date = datetime.datetime.now()
     logo.save()
 
     return redirect(
-        url_for("admin.organizations.view", organization_id=organization_id)
+        url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
-
-
-@module.route("/<organization_id>/logos/<filename>")
-@acl.roles_required("admin")
-def show_logo(organization_id, filename):
-    response = Response()
-    response.status_code = 404
-
-    organization = models.Organization.objects.get(id=organization_id)
-    logo = models.CertificateLogo.objects.get(id=filename)
-
-    if logo:
-        response = send_file(
-            logo.logo_file,
-            download_name=logo.logo_file.filename,
-            mimetype=logo.logo_file.content_type,
-        )
-
-    return response
-
 
 @module.route("/<organization_id>/<logo_id>/delete")
 @acl.roles_required("admin")
