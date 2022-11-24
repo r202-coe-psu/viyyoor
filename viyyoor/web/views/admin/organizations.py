@@ -57,6 +57,7 @@ def create_or_edit(organization_id):
 
         return render_template(
             "/admin/organizations/create-edit.html",
+            organization=organization,
             form=form,
         )
 
