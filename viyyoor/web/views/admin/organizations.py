@@ -103,6 +103,21 @@ def view(organization_id):
     )
 
 
+@module.route("/<organization_id>/classes", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_classes(organization_id):
+    organization = models.Organization.objects.get(
+        id=organization_id,
+        status="active",
+    )
+    classes = models.Class.objects(organization=organization, status="active")
+    return render_template(
+        "/admin/organizations/list-classes-by-organization.html",
+        organization=organization,
+        classes=classes,
+    )
+
+
 @module.route("/<organization_id>/users", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def view_users(organization_id):

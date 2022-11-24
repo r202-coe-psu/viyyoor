@@ -23,15 +23,14 @@
 
 
 {% block content %}
-
 <div class="ui top attached tabular menu">
-	<a class="item active" href="">
+	<a class="item active" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
 		<i class="home icon"></i>Overview
 	</a>
 	<a class="item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
 		<i class="users icon"></i>Users
 	</a>
-	<a class="item" href="">
+	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
 		<i class="archive icon"></i>Classes
 	</a>
 	<a class="item" href="">
