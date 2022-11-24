@@ -250,26 +250,6 @@ def add_logo(organization_id):
         url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
 
-
-@module.route("/<organization_id>/logos/<logo_id>/download/<filename>")
-@acl.roles_required("admin")
-def show_logo(organization_id, logo_id, filename):
-    response = Response()
-    response.status_code = 404
-
-    organization = models.Organization.objects.get(id=organization_id)
-    logo = models.CertificateLogo.objects.get(id=logo_id)
-
-    if logo:
-        response = send_file(
-            logo.logo_file,
-            download_name=logo.logo_file.filename,
-            mimetype=logo.logo_file.content_type,
-        )
-
-    return response
-
-
 @module.route("/<organization_id>/<logo_id>/delete")
 @acl.roles_required("admin")
 def delete_logo(organization_id, logo_id):

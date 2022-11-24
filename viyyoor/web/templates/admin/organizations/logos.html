@@ -70,7 +70,7 @@
             {% for logo in logos %}
                 <div class="card" style="width: 15em;">
                     <div class="small image">
-                        <img src="{{ url_for('admin.organizations.show_logo', organization_id=organization.id, logo_id=logo.id, filename=logo.logo_file.filename) }}" />
+                        <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
                     </div>
 
                     <div class="ui content">
