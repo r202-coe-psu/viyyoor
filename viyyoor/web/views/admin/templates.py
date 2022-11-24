@@ -58,6 +58,8 @@ def index():
 @acl.roles_required("admin")
 def create_or_edit(template_id):
     form = forms.templates.TemplateForm()
+    template = models.Template.objects()
+
     if template_id:
         template = models.Template.objects.get(id=template_id)
         form = forms.templates.TemplateForm(obj=template)
@@ -65,8 +67,8 @@ def create_or_edit(template_id):
     if not form.validate_on_submit():
         return render_template(
             "/admin/templates/create-edit.html",
-            template=template,
             form=form,
+            template=template,
         )
 
     if not template_id:
