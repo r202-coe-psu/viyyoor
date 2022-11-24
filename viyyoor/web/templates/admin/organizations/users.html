@@ -5,41 +5,78 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-Users
+{% if request.endpoint == 'admin.organizations.view_users' %}
+<div class="active section">Users</div>
+{% else %}
+<a href="{{ url_for('admin.organizations.view_users', organization_id=organization.id) }}" class="section">Users</a>
+<div class="divider"> / </div>
+{% endif %}
 {% endblock %}
 
 
-
 {% block content %}
+<div class="ui top attached tabular menu">
+	<a class="item" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
+		<i class="home icon"></i>Overview
+	</a>
+	<a class="item active" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
+		<i class="users icon"></i>Users
+	</a>
+	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
+		<i class="archive icon"></i>Classes
+	</a>
+	<a class="item" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
+		<i class="certificate icon"></i>Logos
+	</a>
+</div>
+
 <h2 class="ui header">
-	View Users
+	Manage Users
 </h2>
-
 <div class="ui divider"></div>
-
-<div class="ui secondary  menu">
+<a class="ui tertiary blue large right floated button" onclick="$('.ui.add.member.small.modal').modal('show');"><i class="user plus icon"></i>Add members</a>
+<div class="ui secondary  menu" style="width:fit-content">
 	<a class="{{ 'active' if role == 'all' or not role }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
-	  All
+		All
 	</a>
 	<a class="{{ 'active' if role == 'staff' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='staff') }}">
-	  Staff
+		Staff
 	</a>
 	<a class="{{ 'active' if role == 'admin' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='admin') }}">
-	  Admin
+		Admin
 	</a>
 	<a class="{{ 'active' if role == 'endorser' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='endorser') }}">
-	  Endorser
+		Endorser
 	</a>
+</div>
+
+<div class="ui add member small modal">
+	<div class="content">
+		<form method="POST" class="ui form" action="{{ url_for('admin.organizations.submit_add_members', organization_id=organization.id) }}">
+			<div class="ui grid">
+				<div class="thirteen wide column">
+					{{ add_member_form.csrf_token() }}
+					{{ renderer.render_multiple_select(add_member_form.members) }}
+				</div>
+				<div class="three wide column">
+					<br>
+					<button type="submit" class="ui fluid primary button">
+						Add
+					</a>
+				</div>
+			</div>
+		</form>
+	</div>
 </div>
 
 <table class="ui compact celled single line table">
 	<thead>
 			<tr>
 				<th class="one wide"></th>
-				<th class="three wide">Name</th>
-				<th class="two wide">Role</th>
-				<th class="three wide">Added by</th>	
-				<th>Action</th>
+				<th>Name</th>
+				<th>Role</th>
+				<th>Added by</th>	
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -48,28 +85,49 @@ Users
 			<tr class="top aligned">
 				{% set index.value = index.value + 1 %}
 				<td>{{ index.value }}</td>
-				<td>{{ org_user_role.user.get_fullname() }}</td>
-				<td>{{ org_user_role.get_role_display() }}</td>
-				<td>{{ 	org_user_role.added_by.get_fullname() }}</td>
+				<td class="left aligned collapsing">{{ org_user_role.user.get_fullname() }}</td>
 				<td>
+					<div class="ui grid">
+						<div class="two wide column">
+							{{ org_user_role.get_role_display() }}
+						</div>
+						<div class="one wide column">
+							<a style="cursor: pointer;" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
+								<i class="sync blue icon"></i>
+							</a>
+						</div>
+					</div>
+				</td>
+				<td>{{ org_user_role.added_by.get_fullname() }}</td>
+				<td class="right aligned collapsing">
 					<a class="ui link pop red icon circular button" data-content="delete"
 					href="">
 					<i class="trash icon"></i>
 					</a>
-					<a class="ui primary icon circular button" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
+					<a class="ui primary icon circular link pop button" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
 						<i class="user icon"></i>
 					</a>
-					<div id="{{org_user_role.user.id}}" style="display: none;" class="ui accordion {{ org_user_role.user.id }}" >
-						<form method="post" class="ui form" action="{{ url_for('admin.organizations.view_users', organization_id=organization.id, user_role_id=org_user_role.id) }}">
-							{{ form.csrf_token() }}
-							{{ form.role(class_="ui compact selection small dropdown super", **{"onchange":"this.form.submit()"}) }}
-							{#
-								{{ form.role(class_="ui compact selection small dropdown super") }}
-							#}
-							{# 
-								<button type="submit" class="ui small green icon button"><i class="save icon"></i></button>
-							#}
-						</form>
+					<div id="{{org_user_role.user.id}}" class="ui mini modal {{ org_user_role.user.id }}" >
+						<div class="header">
+							<span class="ui blue text">
+								{{ org_user_role.user.get_fullname() }}
+							</span>
+							role change
+						</div>
+						<div class="content">
+							<form method="post" class="ui form" action="{{ url_for('admin.organizations.view_users', organization_id=organization.id, user_role_id=org_user_role.id, role=role) }}">
+								<div class="ui grid">
+									<div class="seven wide column">
+										{{ org_user_forms[org_user_role.id].csrf_token() }}
+										{{ renderer.render_select(org_user_forms[org_user_role.id].role) }}
+									</div>
+									<div class="nine wide column">
+										<button class="ui primary button" type="submit">Save</button>
+										<a class="ui button" onclick="$('.ui.mini.modal.'+'{{ org_user_role.user.id }}').modal('hide')">Cancel</a>
+									</div>
+							</div>
+							</form>
+						</div>
 					</div>
 				</td>
 			</tr>
@@ -81,12 +139,12 @@ Users
 {% block additional_js %}
 <script>
 	function showRoleSelectionForm(id) {
-		console.log(document.getElementById(id).style['display'])
-		if (document.getElementById(id).style['display'] == "none") {
-			document.getElementById(id).style['display'] = "inline-block"
-		} else {
-			document.getElementById(id).style['display'] = "none"
-		}
+		$('.ui.mini.modal.'+id).modal('show')
 	}
+	$('.link.pop').popup({
+		delay: {
+			show: 200,
+			hide: 70,
+	  }})
 </script>
 {% endblock %}

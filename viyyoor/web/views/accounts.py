@@ -285,3 +285,15 @@ def add_or_edit_signature(user_id, signature_id):
     signature.save()
 
     return redirect(url_for("accounts.profile", user_id=user_id))
+
+
+@module.route("/change_organization/<organization_id>")
+def change_organization(organization_id):
+    user = current_user._get_current_object()
+    organization = models.Organization.objects.get(id=organization_id)
+    if organization in user.organizations:
+        user.user_setting.current_organization = organization
+        user.user_setting.updated_date = datetime.datetime.now()
+        user.save()
+
+    return redirect(url_for("dashboard.index"))
