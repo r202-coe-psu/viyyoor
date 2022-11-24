@@ -1,13 +1,100 @@
 {% extends '/base/default-dashboard.html' %}
 
 {% block breadcrumbs %}
-  <a href="{{ url_for('admin.index') }}" class="section">Admin</a>
-  <span class="divider">/</span>
+  {% if request.endpoint == 'admin.index' %}
+    <div class="active section">Admin</div>
+  {% else %}
+    <a class="section" href="{{ url_for('admin.index') }}">Admin</a>
+    <div class="divider"> / </div>
+  {% endif %}
 {% endblock %}
 
 {% block dashboard_title %}
-Admin
+Admin Dashboard
 {% endblock %}
 
 {% block content %}
+<div class="ui cards">
+  
+  <div class="ui card">
+    <div class="center aligned content">
+      <div class="ui blue massive sub header">
+        Organizations 
+      </div>  
+    </div>
+    <div class="center aligned content">
+      <div class="ui statistic">
+        <div class="value">
+          <i class="globe icon"></i>
+          {{ organizations.count() }}
+        </div>
+      </div>
+      <br>
+      <a class="ui blue tertiary button" href="{{ url_for('admin.organizations.index') }}">
+        <i class="eye icon"></i>View
+      </a>
+    </div>
+  </div>
+  
+  <div class="ui card">
+    <div class="center aligned content">
+      <div class="ui massive sub header">
+        Classes
+      </div>        
+    </div>
+    <div class="center aligned content">
+      <div class="ui statistic">
+        <div class="value">
+          <i class="archive icon"></i>
+          {{ classes.count() }}
+        </div>
+      </div>
+      <br>
+      <a class="ui blue tertiary button" href="{{ url_for('admin.classes.index') }}">
+        <i class="eye icon"></i>View
+      </a>
+    </div>
+  </div>
+  
+  <div class="ui card">
+    <div class="center aligned content">
+      <div class="ui massive sub header">
+        Templates
+      </div>
+    </div>
+    <div class="center aligned content">
+      <div class="ui statistic">
+        <div class="value">
+          <i class="icon id card outline"></i>
+          {{ templates.count() }}
+        </div>
+      </div>
+      <br>
+      <a class="ui blue tertiary button" href="{{ url_for('admin.templates.index') }}">
+        <i class="eye icon"></i>View
+      </a>
+    </div>
+  </div>
+  
+  <div class="ui card">
+    <div class="center aligned content">
+      <div class="ui massive sub header">
+        Users
+      </div>
+    </div>
+    <div class="center aligned content">
+      <div class="ui statistic">
+        <div class="value">
+          <i class="users icon"></i>
+          {{ users.count() }}
+        </div>
+      </div>
+      <br>
+      <a class="ui blue tertiary button" href="{{ url_for('admin.users.index') }}">
+        <i class="eye icon"></i>View
+      </a>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

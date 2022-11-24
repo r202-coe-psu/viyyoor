@@ -5,6 +5,7 @@
 {% block dashboard_title %}Organizations{% endblock %}
 
 {% block breadcrumbs %}
+{{ super() }}
 {% if request.endpoint == 'admin.organizations.index' %}
 <div class="active section">Organizations</div>
 {% else %}
