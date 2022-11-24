@@ -76,12 +76,24 @@ def add_or_edit(user_id):
                 last_modifier=current_user._get_current_object(),
             )
             org_user.save()
+
+            if not user.get_current_organization():
+                user.user_setting.current_organization = org
+
+            print([o.name for o in user.organizations])
+            user.save()
             print("Add", org.name, "in user", user.get_fullname())
 
     for org in user_organization_before_modified:
         if str(org.id) not in org_form.organizations.data:
-            org_user = models.OrganizationUserRole.objects(organization=org)
-            org_user.delete()
+            org_user = models.OrganizationUserRole.objects(organization=org).first()
+            if org_user:
+                org_user.delete()
+
+            if user.user_setting.current_organization == org:
+                user.user_setting.current_organization = user.organizations[0]
+
+            user.save()
             print("Remove", org.name, "in user", user.get_fullname())
 
-    return redirect(url_for("admin.users.index"))
+    return redirect(url_for("admin.users.add_or_edit", user_id=user.id))
