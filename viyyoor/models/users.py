@@ -49,7 +49,13 @@ class User(me.Document, UserMixin):
         for role in roles:
             if role in self.roles:
                 return True
-        return False
+        return
+
+    def has_organization_role(self, roles):
+        for role in roles:
+            if role in self.get_current_organization_role():
+                return True
+        return
 
     def get_fullname(self):
         return f"{self.first_name} {self.last_name}"
