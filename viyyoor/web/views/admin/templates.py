@@ -65,6 +65,7 @@ def create_or_edit(template_id):
     if not form.validate_on_submit():
         return render_template(
             "/admin/templates/create-edit.html",
+            template=template,
             form=form,
         )
 
