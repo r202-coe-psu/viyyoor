@@ -38,9 +38,9 @@
 	</a>
 </div>
 
+<h2 class="ui header">Logos</h2>
 <div class="ui divider"></div>
 <div class="ui basic segments">
-    <div class="ui divider"></div>
     
     <!-- <style>
         div.scroll {
@@ -55,15 +55,9 @@
     </style> -->
 
     <div class="ui basic padded segment">
-        <h2 class="ui header">
-            <i class="large archive icon"></i>
-            <div class="content">
-                Logos
-                <a class="ui primary tertiary icon button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
-                    <i class="add icon"></i> Add Logo
-                </a>
-            </div>
-        </h2>
+        <a class="ui primary tertiary icon button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
+            <i class="add icon"></i> Add Logo
+        </a>
         
         <div class="scroll">
             <div class="ui cards">

@@ -38,18 +38,13 @@
 	</a>
 </div>
 
+<h2 class="ui header">Classes</h2>
 <div class="ui divider"></div>
 <div class="ui basic segments">
     <div class="ui basic padded segment">
-        <h2 class="ui header">
-            <i class="large archive icon"></i>
-            <div class="content">
-                Classes
-                <a class="ui primary tertiary button" href="{{ url_for('admin.classes.create_or_edit', organization_id=organization.id) }}">
-                    <i class="add icon"></i> Add Class
-                </a>
-            </div>
-        </h2>
+        <a class="ui primary tertiary button" href="{{ url_for('admin.classes.create_or_edit', organization_id=organization.id) }}">
+            <i class="add icon"></i> Add Class
+        </a>
 
         <div class="ui cards">
             {% for class_ in classes %}
