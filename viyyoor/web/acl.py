@@ -41,7 +41,7 @@ def organization_roles_required(*roles):
                 raise Forbidden()
 
             current_organization = current_user.user_setting.current_organization
-            organization_role = models.OrganizationUserRole.objects(
+            organization_role = models.OrganizationUserRole.objects.get(
                 user=current_user, organization=current_organization, status="active"
             ).role
             for role in roles:
