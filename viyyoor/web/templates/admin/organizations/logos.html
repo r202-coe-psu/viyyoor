@@ -38,59 +38,45 @@
 	</a>
 </div>
 
-<h2 class="ui header">Logos</h2>
+<h2 class="ui header">
+    Logos
+    <a class="ui primary tertiary icon right floated large button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
+        <i class="add icon"></i> Add Logo
+    </a>
+</h2>
 <div class="ui divider"></div>
-<div class="ui basic segments">
-    
-    <!-- <style>
-        div.scroll {
-            display: flex;
-            gap: var(--size3--);
-            grid-auto-flow: row;
-            grid-auto-columns:10%;
+<div class="ui basic segment">
+<div class="scroll">
+        <div class="ui cards">
+        {% for logo in logos %}
+            <div class="card" style="width: 15em;">
+                <div class="small image">
+                    <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
+                </div>
 
-            overflow-x: auto;
-            overscroll-behavior-inline: contain;
-        }
-    </style> -->
-
-    <div class="ui basic padded segment">
-        <a class="ui primary tertiary icon button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
-            <i class="add icon"></i> Add Logo
-        </a>
-        
-        <div class="scroll">
-            <div class="ui cards">
-            {% for logo in logos %}
-                <div class="card" style="width: 15em;">
-                    <div class="small image">
-                        <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
+                <div class="ui content">
+                    <div class="header">{{ logo.logo_name }}</div>
+                    <div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
+                    <div class="right floated">
+                        <a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
                     </div>
-
-                    <div class="ui content">
-                        <div class="header">{{ logo.logo_name }}</div>
-                        <div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
-                        <div class="right floated">
-                            <a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
-                        </div>
-                        <div class="ui small modal {{logo.id}}">
-                            <div class="header">Delete Logo</div>
-                            <div class="content">
-                                <h4 class="ui headers" >
-                                    Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
-                                </h4>
-                                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
-                                    Delete</i>
-                                </a>
-                                <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
-                            </div>
+                    <div class="ui small modal {{logo.id}}">
+                        <div class="header">Delete Logo</div>
+                        <div class="content">
+                            <h4 class="ui headers" >
+                                Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
+                            </h4>
+                            <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
+                                Delete</i>
+                            </a>
+                            <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
             </div>
-        </div>	
-    </div>
+        {% endfor %}
+        </div>
+    </div>	
 </div>
 	
 {% endblock %}
