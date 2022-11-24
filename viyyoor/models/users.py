@@ -76,6 +76,13 @@ class User(me.Document, UserMixin):
     def get_current_organization(self):
         return self.user_setting.current_organization
 
+    def get_current_organization_role(self):
+        from . import OrganizationUserRole
+
+        return OrganizationUserRole.objects.get(
+            user=self, organization=self.get_current_organization(), status="active"
+        ).role
+
     def save_history_log(self, action, owner, details):
         from .history_logs import HistoryLog
 

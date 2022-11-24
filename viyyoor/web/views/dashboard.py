@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 
 from viyyoor import models
 import mongoengine as me
+from viyyoor.web import acl
 
 from .. import redis_rq
 
@@ -23,7 +24,7 @@ def index_admin():
     classes_set = set()
     endorsed_query = dict()
     endorses_query = dict()
-   
+
     for ep in endorser_positions:
         queries = {f"endorsers__{ep[0]}__user": current_user._get_current_object()}
         endorsed_query[
