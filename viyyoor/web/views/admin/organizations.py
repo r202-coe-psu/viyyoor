@@ -118,6 +118,18 @@ def view_classes(organization_id):
     )
 
 
+@module.route("/<organization_id>/logos", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_logos(organization_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    logos = models.CertificateLogo.objects(organization=organization)
+    return render_template(
+        "/admin/organizations/logos.html",
+        organization=organization,
+        logos=logos,
+    )
+
+
 @module.route("/<organization_id>/users", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def view_users(organization_id):
@@ -198,7 +210,7 @@ def submit_add_members(organization_id):
     )
 
 
-@module.route("/<organization_id>/logos", methods=["GET", "POST"])
+@module.route("/<organization_id>/logos/add", methods=["GET", "POST"])
 @acl.roles_required("admin")
 def add_logo(organization_id):
     organization = models.Organization.objects.get(id=organization_id)
@@ -206,6 +218,7 @@ def add_logo(organization_id):
     form = forms.organizations.OrganizationLogoForm()
 
     if not form.validate_on_submit():
+        print(form.errors)
         return render_template(
             "/admin/organizations/add-logo.html",
             organization=organization,
@@ -228,23 +241,24 @@ def add_logo(organization_id):
             content_type=form.uploaded_logo_file.data.content_type,
         )
 
+    logo.organization = organization
     logo.uploaded_by = current_user._get_current_object()
-
+    logo.uploaded_date = datetime.datetime.now()
     logo.save()
 
     return redirect(
-        url_for("admin.organizations.view", organization_id=organization_id)
+        url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
 
 
-@module.route("/<organization_id>/logos/<filename>")
+@module.route("/<organization_id>/logos/<logo_id>/download/<filename>")
 @acl.roles_required("admin")
-def show_logo(organization_id, filename):
+def show_logo(organization_id, logo_id, filename):
     response = Response()
     response.status_code = 404
 
     organization = models.Organization.objects.get(id=organization_id)
-    logo = models.CertificateLogo.objects.get(id=filename)
+    logo = models.CertificateLogo.objects.get(id=logo_id)
 
     if logo:
         response = send_file(

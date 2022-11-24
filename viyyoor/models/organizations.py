@@ -58,11 +58,11 @@ class CertificateLogo(me.Document):
 
     meta = {"collection": "certificate_logos"}
 
+    organization = me.ReferenceField("Organization", dbref=True, required=True)
     logo_name = me.StringField(required=True, max_length=256)
     logo_file = me.FileField(required=True)
-    
+
     uploaded_by = me.ReferenceField("User", dbref=True)
     uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     marked_as_organization_logo = me.BooleanField(default=False)
-

@@ -5,7 +5,12 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-Users
+{% if request.endpoint == 'admin.organizations.view_users' %}
+<div class="active section">Users</div>
+{% else %}
+<a href="{{ url_for('admin.organizations.view_users', organization_id=organization.id) }}" class="section">Users</a>
+<div class="divider"> / </div>
+{% endif %}
 {% endblock %}
 
 
@@ -14,13 +19,13 @@ Users
 	<a class="item" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
 		<i class="home icon"></i>Overview
 	</a>
-	<a class="active item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
+	<a class="item active" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
 		<i class="users icon"></i>Users
 	</a>
 	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
 		<i class="archive icon"></i>Classes
 	</a>
-	<a class="item" href="">
+	<a class="item" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
 		<i class="certificate icon"></i>Logos
 	</a>
 </div>

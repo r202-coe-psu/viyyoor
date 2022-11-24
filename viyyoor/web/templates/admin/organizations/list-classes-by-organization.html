@@ -1,4 +1,4 @@
-{% extends '/admin/organizations/index.html' %}
+{% extends '/admin/organizations/view.html' %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
@@ -12,10 +12,10 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-{% if request.endpoint == 'admin.organizations.view' %}
-<div class="active section">{{ organization.name }}</div>
+{% if request.endpoint == 'admin.organizations.view_classes' %}
+<div class="active section">Classes</div>
 {% else %}
-<a href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
+<a href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}" class="section">Classes</a>
 <div class="divider"> / </div>
 {% endif %}
 {% endblock %}
@@ -33,7 +33,7 @@
 	<a class="item active" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
 		<i class="archive icon"></i>Classes
 	</a>
-	<a class="item" href="">
+	<a class="item" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
 		<i class="certificate icon"></i>Logos
 	</a>
 </div>

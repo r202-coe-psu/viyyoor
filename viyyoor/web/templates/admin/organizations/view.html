@@ -33,7 +33,7 @@
 	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
 		<i class="archive icon"></i>Classes
 	</a>
-	<a class="item" href="">
+	<a class="item" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
 		<i class="certificate icon"></i>Logos
 	</a>
 </div>
