@@ -1,46 +1,54 @@
 
 {% macro render_organization_menu(current_user) %}
-{% if current_user.get_current_organization() %}
-{% set organization = current_user.get_current_organization() %}
-<h1 class="ui right floated big header">
-    <div class="ui dropdown">
-            {% if not organization.logo %}
-                <i class="blue big globe icon" style="margin-bottom: 0.5em;"></i>
-                {% else %}
-                <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
-            {% endif %}
-        <div class="menu">
-            <div class="ui center aligned basic segment">
-                {% if not organization.logo %}
-                    <i class="blue huge globe icon" style="margin-bottom: 0.2em"></i>
-                {% else %}
+    {% if current_user.get_current_organization() %}
+        {% set organization = current_user.get_current_organization() %}
+        <h1 class="ui right floated big header">
+            <div class="ui right top pointing dropdown">
+                <div class="header">
+                    {% if not organization.logo %}
+                    <i class="blue big globe icon" style="margin-bottom: 0.5em;"></i>
+                    {% else %}
                     <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
-                {% endif %} 
-                <br >
-                <span class="ui large text">{{ organization.name }}</span>
-            </div>
-            <div class="divider"></div>
-            {% set count = 0 %}
-            {% for org in current_user.organizations %}
-                {% if org != organization %}
-                    {% set count = count + 1 %}
-                    <a class="item" href="{{ url_for('accounts.change_organization', organization_id=org.id) }}">
+                    {% endif %}
+                </div>
+                <div class="menu">
+                    <div class="ui center aligned basic segment" style="margin-top: 1em">
                         {% if not organization.logo %}
-                            <i class="big globe icon" style="margin: 0.2em"></i>
+                            <i class="blue huge globe icon" style="margin-bottom: 0.2em"></i>
                         {% else %}
-                            <img style="margin-left: 0.5em" src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+                            <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+                        {% endif %} 
+                        <br>
+                        <span class="ui large text">{{ organization.name }}</span>
+                    </div>
+
+                    {% set count = 0 %}
+                    {% for org in current_user.organizations %}
+                        {% if count < 0 %}
+                            <div class="ui horizontal divider" style="color: grey">Change Organization</div>
                         {% endif %}
-                        <span class="ui text">
-                            {{ org.name }}
-                        </span>
-                    </a>
-                {% endif %}
-            {% endfor %}
-            {% if count <= 0 %}
-                <div class="disabled item"></div>
-            {% endif %}
-        </div>
-    </div>
-</h1>
-{% endif %}
+
+                        {% if org != organization %}
+                            {% set count = count + 1 %}
+                            <a class="item" href="{{ url_for('accounts.change_organization', organization_id=org.id) }}">
+                                {% if not organization.logo %}
+                                    <i class="big globe icon" style="margin: 0.2em"></i>
+                                {% else %}
+                                    <img style="margin-left: 0.5em" src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+                                {% endif %}
+                                <span class="ui text">
+                                    {{ org.name }}
+                                </span>
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if count <= 0 %}
+                        <div class="disabled item">
+                            
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </h1>
+    {% endif %}
 {% endmacro %}

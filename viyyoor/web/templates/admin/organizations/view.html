@@ -16,7 +16,7 @@
 <div class="active section">{{ organization.name }}</div>
 {% else %}
 <a href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
-<div class="divider"> / </div>
+<i class="right angle icon divider"></i>
 {% endif %}
 {% endblock %}
 
