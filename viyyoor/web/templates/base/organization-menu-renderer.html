@@ -22,14 +22,14 @@
                         <span class="ui large text">{{ organization.name }}</span>
                     </div>
 
-                    {% set count = 0 %}
+                    {% set count = namespace(value=0) %}
                     {% for org in current_user.organizations %}
-                        {% if count < 0 %}
-                            <div class="ui horizontal divider" style="color: grey">Change Organization</div>
-                        {% endif %}
-
                         {% if org != organization %}
-                            {% set count = count + 1 %}
+                            {% if count.value < 1 %}
+                                <div class="ui horizontal divider" style="color: grey">Change Organization</div>
+                            {% endif %}
+                            
+                            {% set count.value = count.value + 1 %}
                             <a class="item" href="{{ url_for('accounts.change_organization', organization_id=org.id) }}">
                                 {% if not organization.logo %}
                                     <i class="big globe icon" style="margin: 0.2em"></i>
@@ -42,9 +42,8 @@
                             </a>
                         {% endif %}
                     {% endfor %}
-                    {% if count <= 0 %}
+                    {% if count.value <= 0 %}
                         <div class="disabled item">
-                            
                         </div>
                     {% endif %}
                 </div>
