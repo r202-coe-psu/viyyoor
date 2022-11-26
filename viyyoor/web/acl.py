@@ -41,11 +41,20 @@ def organization_roles_required(*roles):
                 raise Forbidden()
 
             current_organization = current_user.user_setting.current_organization
-            organization_role = models.OrganizationUserRole.objects.get(
-                user=current_user, organization=current_organization, status="active"
-            ).role
+            try:
+                organization_role = (
+                    models.OrganizationUserRole.objects(
+                        user=current_user,
+                        organization=current_organization,
+                        status="active",
+                    )
+                    .first()
+                    .role
+                )
+            except:
+                organization_role = ""
             for role in roles:
-                if role in organization_role:
+                if role == organization_role:
                     return func(*args, **kwargs)
             raise Forbidden()
 
