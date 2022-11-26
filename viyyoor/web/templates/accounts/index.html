@@ -11,7 +11,11 @@ Profile
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href="{{ url_for('accounts.index') }}" class="section">Accounts</a>
+{% if request.endpoint == "accounts.index" %}
+Accounts
+{% else %}
+<a href="{{ url_for('accounts.index') }}" class="breadcrumb">Accounts</a>
+{% endif %}
 {% endblock %}
 
 {% block title %}
