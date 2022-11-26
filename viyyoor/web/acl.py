@@ -33,6 +33,36 @@ def roles_required(*roles):
     return wrapper
 
 
+def organization_roles_required(*roles):
+    def wrapper(func):
+        @wraps(func)
+        def wrapped(*args, **kwargs):
+            if not current_user.is_authenticated:
+                raise Forbidden()
+
+            current_organization = current_user.user_setting.current_organization
+            try:
+                organization_role = (
+                    models.OrganizationUserRole.objects(
+                        user=current_user,
+                        organization=current_organization,
+                        status="active",
+                    )
+                    .first()
+                    .role
+                )
+            except:
+                organization_role = ""
+            for role in roles:
+                if role == organization_role:
+                    return func(*args, **kwargs)
+            raise Forbidden()
+
+        return wrapped
+
+    return wrapper
+
+
 @login_manager.user_loader
 def load_user(user_id):
     user = models.User.objects.with_id(user_id)

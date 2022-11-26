@@ -179,6 +179,7 @@ def index():
     form.current_organization.choices = [
         (str(o.id), o.name) for o in current_user.organizations
     ]
+
     if form.validate_on_submit():
         current_user.user_setting.current_organization = (
             models.Organization.objects.get(id=form.current_organization.data)

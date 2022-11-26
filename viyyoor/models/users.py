@@ -7,9 +7,7 @@ from flask import url_for, request
 
 class UserSetting(me.EmbeddedDocument):
     current_organization = me.ReferenceField("Organization", dbref=True)
-    updated_date = me.DateTimeField(
-        required=True, default=datetime.datetime.now, auto_now=True
-    )
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
 
 class User(me.Document, UserMixin):
@@ -49,7 +47,13 @@ class User(me.Document, UserMixin):
         for role in roles:
             if role in self.roles:
                 return True
-        return False
+        return
+
+    def has_organization_role(self, roles):
+        for role in roles:
+            if role == self.get_current_organization_role():
+                return True
+        return
 
     def get_fullname(self):
         return f"{self.first_name} {self.last_name}"
@@ -76,8 +80,24 @@ class User(me.Document, UserMixin):
     def get_current_organization(self):
         return self.user_setting.current_organization
 
+    def get_current_organization_role(self):
+        from . import OrganizationUserRole
+
+        try:
+            return (
+                OrganizationUserRole.objects(
+                    user=self,
+                    organization=self.get_current_organization(),
+                    status="active",
+                )
+                .first()
+                .role
+            )
+        except:
+            return
+
     def save_history_log(self, action, owner, details):
-        from .history_logs import HistoryLog
+        from . import HistoryLog
 
         history_log = HistoryLog()
         history_log.action = action

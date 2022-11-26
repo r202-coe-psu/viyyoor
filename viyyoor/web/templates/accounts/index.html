@@ -11,7 +11,11 @@ Profile
 {% endblock %}
 
 {% block breadcrumbs %}
-<a href="{{ url_for('accounts.index') }}" class="section">Accounts</a>
+{% if request.endpoint == "accounts.index" %}
+Accounts
+{% else %}
+<a href="{{ url_for('accounts.index') }}" class="breadcrumb">Accounts</a>
+{% endif %}
 {% endblock %}
 
 {% block title %}
@@ -81,6 +85,12 @@ Profile
               </td>
               <td>
                 <div style="color: grey">ROLE</div> 
+                {% if current_user.get_current_organization_role()
+                  and "admin" not in user.roles %}
+                  <div class="ui label">
+                    {{ current_user.get_current_organization_role().title() }}
+                  </div>
+                {% endif %}
                 {% for role in user.roles %}
                   <div class="ui label">
                     {{ role }}
