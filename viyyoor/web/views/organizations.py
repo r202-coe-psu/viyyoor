@@ -47,6 +47,25 @@ def view(organization_id):
     )
 
 
+@module.route("/<organization_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit(organization_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    form = forms.organizations.AdminOrganizationEditForm()
+
+    if not form.validate_on_submit():
+        form.name.data = organization.name
+        form.description.data = organization.description
+        return render_template(
+            "/organizations/edit.html", organization=organization, form=form
+        )
+
+    form.populate_obj(organization)
+    organization.save()
+
+    return redirect(url_for("organizations.view", organization_id=organization_id))
+
+
 @module.route("/logos/<logo_id>/download/<filename>")
 def download_logo(logo_id, filename):
     response = Response()

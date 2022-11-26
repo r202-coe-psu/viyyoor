@@ -64,3 +64,8 @@ class OrganizationRoleSelectionForm(BaseOrganizationUserRoleChangeForm):
 
 class OrgnaizationAddMemberForm(FlaskForm):
     members = fields.SelectMultipleField("Select Members")
+
+
+class AdminOrganizationEditForm(FlaskForm):
+    name = fields.StringField("Name")
+    description = fields.StringField("Description")
