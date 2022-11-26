@@ -40,8 +40,8 @@ def organization_roles_required(*roles):
             if not current_user.is_authenticated:
                 raise Forbidden()
 
-            current_organization = current_user.user_setting.current_organization
             try:
+                current_organization = current_user.user_setting.current_organization
                 organization_role = (
                     models.OrganizationUserRole.objects(
                         user=current_user,
@@ -53,6 +53,7 @@ def organization_roles_required(*roles):
                 )
             except:
                 organization_role = ""
+
             for role in roles:
                 if role == organization_role:
                     return func(*args, **kwargs)
