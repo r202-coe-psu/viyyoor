@@ -2,24 +2,30 @@
 {% macro render_organization_menu(current_user) %}
     {% if current_user.get_current_organization() %}
         {% set organization = current_user.get_current_organization() %}
+        {% set logo = organization.get_logo() %}
         <h1 class="ui right floated big header">
             <div class="ui right top pointing dropdown">
                 <div class="header">
-                    {% if not organization.logo %}
+                    {% if not logo %}
                     <i class="blue big globe icon" style="margin-bottom: 0.5em;"></i>
                     {% else %}
-                    <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+                    <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" width="70">
                     {% endif %}
                 </div>
                 <div class="menu">
                     <div class="ui center aligned basic segment" style="margin-top: 1em">
-                        {% if not organization.logo %}
+                        {% if not logo %}
                             <i class="blue huge globe icon" style="margin-bottom: 0.2em"></i>
                         {% else %}
-                            <img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
+                        <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" width="70">
+
                         {% endif %} 
                         <br>
-                        <span class="ui large text">{{ organization.name }}</span>
+                        <a href="">
+                            <span class="ui large black text">
+                                {{ organization.name }}
+                            </span>
+                        </a>
                     </div>
 
                     {% set count = namespace(value=0) %}

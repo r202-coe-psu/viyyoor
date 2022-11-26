@@ -66,9 +66,7 @@ def endorse(class_id):
         # sign_digital_signature(user, certificate, password)
         endorsement = models.Endorsement(
             endorser=current_user._get_current_object(),
-            ip_address=request.headers.get(
-                "X-Forwarded-For", request.remote_addr
-            ),
+            ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
         )
 
         for endorser in endorsers:
