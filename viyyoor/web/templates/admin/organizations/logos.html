@@ -20,8 +20,6 @@
 {% endif %}
 {% endblock %}
 
-
-
 {% block content %}
 <div class="ui top attached tabular menu">
 	<a class="item" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
@@ -49,9 +47,9 @@
 <div class="scroll">
         <div class="ui cards">
         {% for logo in logos %}
-            <div class="card" style="width: 15em;">
-                <div class="small image">
-                    <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
+            <div class="card" style="width: 128px;">
+                <div class="ui image">
+                    <img style="height: 128px; object-fit:contain" src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
                 </div>
 
                 <div class="ui content">
