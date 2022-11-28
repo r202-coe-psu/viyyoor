@@ -69,5 +69,8 @@ class CertificateLogo(me.Document):
 
     uploaded_by = me.ReferenceField("User", dbref=True)
     uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    
+    last_updated_by = me.ReferenceField("User", dbref=True)
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     marked_as_organization_logo = me.BooleanField(default=False)

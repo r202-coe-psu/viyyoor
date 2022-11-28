@@ -80,3 +80,26 @@ def download_logo(logo_id, filename):
         )
 
     return response
+
+
+@module.route(
+    "/<organization_id>/logos/<logo_id>/set_as_organization_logo", methods=["POST"]
+)
+def change_organization_logo(organization_id, logo_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    old_logo = models.CertificateLogo.objects(
+        organization=organization, marked_as_organization_logo=True
+    ).first()
+    if old_logo:
+        old_logo.marked_as_organization_logo = False
+        old_logo.last_updated_by = current_user._get_current_object()
+        old_logo.updated_date = datetime.datetime.now()
+        old_logo.save()
+
+    new_logo = models.CertificateLogo.objects.get(id=logo_id)
+    new_logo.marked_as_organization_logo = True
+    new_logo.last_updated_by = current_user._get_current_object()
+    new_logo.updated_date = datetime.datetime.now()
+    new_logo.save()
+
+    return redirect(url_for("organizations.view", organization_id=organization.id))

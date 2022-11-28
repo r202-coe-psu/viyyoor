@@ -56,10 +56,48 @@
 					</div>
 				</h2>
 
-				<a href="{{ url_for('organizations.edit', organization_id=organization.id) }}" class="ui primary right floated tertiary button" style="height: fit-content">
-					<i class="edit icon"></i> Edit
-				</a>
-
+				<div class="ui right top pointing dropdown icon button" style="height: fit-content">
+					<i class="settings icon"></i>
+					<div class="menu">
+						<a 	href="{{ url_for('organizations.edit', organization_id=organization.id) }}"
+							class="item" style="height: fit-content">
+							<i class="edit icon"></i>Edit
+						</a>
+						<a class="item" onclick="$('.icon.longer.modal').modal('show');">
+							<i class="fruit-apple icon"></i>Change Logo
+						</a>
+						<div class="ui icon longer modal">
+							<i class="close icon"></i>
+							<div class="header">
+								Change <span class="ui blue text">{{ organization.name }}</span> Logo
+							</div>
+							<div class="content">
+								<div class="ui grid">
+									{% for logo in logos %}
+									<form class="form {{logo.id}}" method="POST" action="{{ url_for('organizations.change_organization_logo', organization_id=organization.id, logo_id=logo.id) }}">
+										<i class="icons">
+											<div class="three wide right aligned column">
+												<img class="ui circular image" onclick="selectLogo('{{logo.id}}')" style="cursor: pointer; width: 128px; height: 128px; object-fit: cover"
+												src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}">
+												<i id="{{logo.id}}" class="corner right bottom big {{'green check circle' if logo.marked_as_organization_logo else 'disabled grey circle outline'}} icon"></i>
+											</div>
+										</i>
+									</form>
+									{% endfor %}
+								</div>	
+							</div>
+							<div class="actions">
+								<button onclick="submitChangeLogo()" class="ui positive labeled icon button">
+								<i class="check icon"></i>
+								Save
+								</button>
+								<div class="ui deny button">
+								Cancel
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="ui very padded segment">
@@ -86,7 +124,7 @@
 		</div>
 	</div>
 </div>
-	
+
 {% endblock %}
 
 {% block additional_js %}
@@ -100,7 +138,21 @@
 			show: 800,
 	  }
 	})
+	function selectLogo(logo_id) {
+		selected = "corner right bottom big green check circle icon"
+		unselected = "corner right bottom big disabled grey circle outline icon"
+
+		selected_logo = $('.green.check.circle.icon')
+		if (selected_logo.length > 0) {
+			selected_logo[0].className = unselected
+		}
+		document.getElementById(logo_id).className = selected
+	}
+
+	function submitChangeLogo() {
+		selected_logo = $('.green.check.circle.icon')[0]
+		console.log(selected_logo.id)
+		console.log($('.form.'+selected_logo.id)[0].submit())
+	}
 </script>
 {% endblock %}
-
-onclick="showEditModal('{{organization.id}}')"
