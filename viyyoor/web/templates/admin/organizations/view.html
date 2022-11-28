@@ -43,18 +43,13 @@
 		<div class="ui very padded segment">
 			<div class="ui horizontal grid">
 
-				<h2 class="ui header">
-					{% if not organization.logo %}
-					<i class="blue huge globe icon"></i>
-					{% else %}
-					<img src="{{ url_for('organizations.get_logo', organization_id=organization.id, filename=organization.logo.filename) }}" width="70">
-					{% endif %}
-					
+				<h1 class="ui massive header">
+					<img src="{{ organization.get_logo_picture() }}" width="120" height="120" style="object-fit: contain;">
 					<div class="content">
 						{{ organization.name }}
 						<div class="sub header">{{ organization.description }}</div>
 					</div>
-				</h2>
+				</h1>
 
 				<div class="ui top pointing dropdown " style="height: fit-content">
 					<div class="ui tertiary blue button">
@@ -79,7 +74,7 @@
 									<form class="form {{logo.id}}" method="POST" action="{{ url_for('organizations.change_organization_logo', organization_id=organization.id, logo_id=logo.id) }}">
 										<i class="icons">
 											<div class="three wide right aligned column">
-												<img class="ui circular image" onclick="selectLogo('{{logo.id}}')" style="cursor: pointer; width: 128px; height: 128px; object-fit: cover"
+												<img class="ui circular image" onclick="selectLogo('{{logo.id}}')" style="cursor: pointer; width: 128px; height: 128px; object-fit: contain"
 												src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}">
 												<i id="{{logo.id}}" class="corner right bottom big {{'green check circle' if logo.marked_as_organization_logo else 'disabled grey circle outline'}} icon"></i>
 											</div>

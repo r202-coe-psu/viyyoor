@@ -146,10 +146,11 @@
 
     {# begin default left side toc #}
     <div class="toc">
-      <div class="ui vertical inverted large menu" style="background-color: rgb(25, 60, 108);">
-        {% include "/base/toolbar-dashboard.html" with context %}
+    <div class="ui vertical inverted large menu" style="background-color: rgb(25, 60, 108);">
+      {% include "/base/toolbar-dashboard.html" with context %}
       </div>
     </div>
+    {# end default left side toc #}
     {# end default left side toc #}
 
     {# begin main article #}
@@ -157,7 +158,7 @@
       <header>
         <div class="ui vertical dividing segment">
           <div class="introduction">
-            <div class="ui basic segment" style="padding-bottom: 3em">
+            <div class="ui basic segment" style="padding-bottom: 3.5em">
               <h1 class="ui left floated header">{{ self.dashboard_title() }}</h1>
               {{ org_renderer.render_organization_menu(current_user) }}
             </div>
