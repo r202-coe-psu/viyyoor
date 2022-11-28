@@ -3,13 +3,17 @@
     {% if current_user.get_current_organization() %}
         {% set organization = current_user.get_current_organization() %}
         {% set logo = organization.get_logo() %}
-        <h1 class="ui right floated big header">
+        <h1 class="ui right floated big header" >
             <div class="ui right top pointing dropdown">
                 <div class="header">
+                    <div class="content" style="text-align: right; margin-right: 0.5em">
+                        <div class="sub header" style="font-size: smaller;">ORGANIZATION</div>
+                        {{ organization.name }}
+                    </div>
                     {% if not logo %}
-                    <i class="blue big globe icon" style="margin-bottom: 0.5em;"></i>
+                    <img height="38" src="{{ url_for('static', filename='/images/globe.png' ) }}">
                     {% else %}
-                    <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" width="70">
+                    <img height="38" src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}">
                     {% endif %}
                 </div>
                 <div class="menu">
