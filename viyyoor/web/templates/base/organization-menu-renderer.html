@@ -21,7 +21,7 @@
 
                         {% endif %} 
                         <br>
-                        <a href="">
+                        <a href="{{ url_for('organizations.view', organization_id=organization.id) }}">
                             <span class="ui large black text">
                                 {{ organization.name }}
                             </span>
