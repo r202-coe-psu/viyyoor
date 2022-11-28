@@ -34,13 +34,13 @@
 	Manage Users
 </h2>
 <div class="ui divider"></div>
-<a 	class="ui tertiary black large right floated {{ 'active' if role == 'deactivated' }} button"
+<a 	class="ui tertiary grey large right floated {{ 'active' if role == 'deactivated' }} button"
 href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='deactivated', status='disactive') }}">
-	<i class="user slash icon"></i>Disactive members
+	<i class="user slash icon"></i>View Disactive members
 </a>
 <a 	class="ui tertiary blue large right floated button"
-	onclick="$('.ui.add.member.small.modal').modal('show');">
-	<i class="user plus icon"></i>Add members
+onclick="$('.ui.add.member.small.modal').modal('show');">
+<i class="user plus icon"></i>Add members
 </a>
 <div class="ui secondary  menu" style="width:fit-content">
 	<a class="{{ 'active' if role == 'all' or not role }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
@@ -108,14 +108,14 @@ href="{{ url_for('admin.organizations.view_users', organization_id=organization.
 				</td>
 				<td>{{ org_user_role.added_by.get_fullname() }}</td>
 				<td class="right aligned collapsing">
-					{% if role == 'deactivate' %}
+					{% if role == 'deactivated' %}
 					<a class="ui link pop green icon circular button" data-content="activate"
-					href="{{ url_for('organizations.deactivate_organization_user', organization_id=organization.id, organization_user_id=org_user_role.id) }}">
+					href="{{ url_for('organizations.manage_organization_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='activate') }}">
 					<i class="check icon"></i>
 					</a>
 					{% else %}
 					<a class="ui link pop red icon circular button" data-content="deactivate"
-					href="{{ url_for('organizations.deactivate_organization_user', organization_id=organization.id, organization_user_id=org_user_role.id) }}">
+					href="{{ url_for('organizations.manage_organization_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='deactivate') }}">
 					<i class="ban icon"></i>
 					</a>
 					{% endif %}
