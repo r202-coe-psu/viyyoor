@@ -1,5 +1,5 @@
 {% extends "/base/base-layout.html" %}
-{% import '/base/organization-menu-renderer.html' as org_renderer %}
+{% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}
   {{ self.dashboard_title() }}
@@ -160,7 +160,7 @@
           <div class="introduction">
             <div class="ui basic segment" style="padding-bottom: 3.5em">
               <h1 class="ui left floated header">{{ self.dashboard_title() }}</h1>
-              {{ org_renderer.render_organization_menu(current_user) }}
+              {{ org_renderer.render_organization_selection_menu(current_user) }}
             </div>
           </div>
         </div>

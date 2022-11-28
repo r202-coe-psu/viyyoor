@@ -1,4 +1,5 @@
 {% extends '/admin/organizations/index.html' %}
+{% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
@@ -23,20 +24,7 @@
 
 
 {% block content %}
-<div class="ui top attached tabular menu">
-	<a class="item active" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
-		<i class="home icon"></i>Overview
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
-		<i class="users icon"></i>Users
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
-		<i class="archive icon"></i>Classes
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
-		<i class="certificate icon"></i>Logos
-	</a>
-</div>
+{{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
 
 <div class="ui bottom attached segment">
 	<div class="ui horizontal basic compact segments">
