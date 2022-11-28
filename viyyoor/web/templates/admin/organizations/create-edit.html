@@ -47,12 +47,12 @@
         <div style="margin-top: 2%;">
           
             {% if 'create' in request.path  %}
-            <button name="create" type="submit" class="ui primary button">
-              <i class="icon save"></i>
+            <button name="create" type="submit" class="ui labeled primary icon button">
+              <i class="icon save"></i>Submit
             </button>
             {% elif 'edit' in request.path  %}
-            <a onclick="$('.modal.edit').modal('show')" class="ui primary button">
-              <i class="icon save"></i>
+            <a onclick="$('.modal.edit').modal('show')" class="ui labeled primary icon button">
+              <i class="icon save"></i>Save
             </a>
             {% endif %}
 

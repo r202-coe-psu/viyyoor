@@ -38,6 +38,11 @@ class Organization(me.Document):
     def get_users(self):
         return OrganizationUserRole.objects(organization=self).order_by("-first_name")
 
+    def get_logo(self):
+        return CertificateLogo.objects(
+            organization=self, marked_as_organization_logo=True
+        ).first()
+
 
 class OrganizationQuata(me.Document):
     number_of_uses = me.IntField(require=True, default=0)
