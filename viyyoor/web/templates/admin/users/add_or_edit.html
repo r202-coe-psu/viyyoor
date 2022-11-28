@@ -38,9 +38,30 @@ User
         {{ renderer.render_field(form.first_name_th) }}
         {{ renderer.render_field(form.last_name_th) }}
       </div>
+      
       <div class="field" style="margin-top: 1ex;">
-        <button type="submit" class="ui button primary">Submit</button>
+        {% if 'add' in request.path %}
+        <button name='add' type="submit" class="ui button primary">Submit</button>
+        {% elif 'edit' in request.path %}
+        <a onclick="$('.modal.edit').modal('show')" class="ui labeled primary icon button">
+          Change
+        </a>
+        {% endif %}
       </div>
+
+      <div class="ui small modal edit">
+        <div class="header">Edit User</div>
+        <div class="content">
+          <h4 class="ui headers" >
+            Are you sure you want to edit <span class="ui primary text">{{ user.first_name }} {{ user.last_name }}</span> information?
+          </h4>
+          <button class="ui right floated primary button" onclick="$('.ui.form').submit()" style="margin-bottom: 1em;">
+            Edit
+          </button>
+          <button class="ui right floated button" onclick="$('.modal.edit').modal('hide')">Cancel</button>
+        </div>
+      </div>
+
     </form>
   </div>
 
