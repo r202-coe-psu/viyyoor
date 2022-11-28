@@ -139,6 +139,10 @@ def view_users(organization_id):
     organization_user_roles = organization.get_users()
     if role not in ["all", None]:
         organization_user_roles = organization_user_roles.filter(role=role)
+    if request.args.get("status") == "disactive":
+        organization_user_roles = models.OrganizationUserRole.objects(
+            status="disactive", organization=organization
+        )
 
     org_user_forms = {}
     for u in organization_user_roles:

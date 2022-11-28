@@ -37,7 +37,9 @@ class Organization(me.Document):
     quota = me.IntField(require=True, default=0)
 
     def get_users(self):
-        return OrganizationUserRole.objects(organization=self).order_by("-first_name")
+        return OrganizationUserRole.objects(
+            organization=self, status="active"
+        ).order_by("-first_name")
 
     def get_logo(self):
         return CertificateLogo.objects(

@@ -103,3 +103,29 @@ def change_organization_logo(organization_id, logo_id):
     new_logo.save()
 
     return redirect(url_for("organizations.view", organization_id=organization.id))
+
+
+@module.route(
+    "/<organization_id>/users/<organization_user_id>/deactivate",
+    methods=["GET", "POST"],
+)
+def deactivate_organization_user(organization_id, organization_user_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    organization_user = models.OrganizationUserRole.objects.get(id=organization_user_id)
+
+    organization_user.status = "disactive"
+    organization_user.last_modifier = current_user._get_current_object()
+    organization_user.updated_date = datetime.datetime.now()
+    organization_user.last_ip_address = request.headers.get(
+        "X-Forwarded-For", request.remote_addr
+    )
+    organization_user.save()
+
+    print("Deactivate User", organization_user.user.first_name)
+    return redirect(    
+        url_for(
+            "admin.organizations.view_users",
+            organization_id=organization.id,
+            role="all",
+        )
+    )
