@@ -251,6 +251,7 @@ def add_logo(organization_id):
         url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
 
+
 @module.route("/<organization_id>/<logo_id>/delete")
 @acl.roles_required("admin")
 def delete_logo(organization_id, logo_id):
@@ -259,5 +260,5 @@ def delete_logo(organization_id, logo_id):
     logo.delete()
 
     return redirect(
-        url_for("admin.organizations.view", organization_id=organization_id)
+        url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
