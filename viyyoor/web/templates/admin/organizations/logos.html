@@ -1,4 +1,5 @@
 {% extends '/admin/organizations/view.html' %}
+{% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
@@ -20,23 +21,8 @@
 {% endif %}
 {% endblock %}
 
-
-
 {% block content %}
-<div class="ui top attached tabular menu">
-	<a class="item" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
-		<i class="home icon"></i>Overview
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
-		<i class="users icon"></i>Users
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
-		<i class="archive icon"></i>Classes
-	</a>
-	<a class="item active" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
-		<i class="certificate icon"></i>Logos
-	</a>
-</div>
+{{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
 
 <h2 class="ui header">
     Logos
@@ -49,9 +35,9 @@
 <div class="scroll">
         <div class="ui cards">
         {% for logo in logos %}
-            <div class="card" style="width: 15em;">
-                <div class="small image">
-                    <img src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
+            <div class="card" style="width: 128px;">
+                <div class="ui image">
+                    <img style="height: 128px; object-fit:contain" src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
                 </div>
 
                 <div class="ui content">

@@ -94,7 +94,7 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
-    logos = models.CertificateLogo.objects()
+    logos = models.CertificateLogo.objects(organization=organization)
     classes = models.Class.objects(organization=organization, status="active")
     return render_template(
         "/admin/organizations/view.html",
@@ -139,6 +139,10 @@ def view_users(organization_id):
     organization_user_roles = organization.get_users()
     if role not in ["all", None]:
         organization_user_roles = organization_user_roles.filter(role=role)
+    if request.args.get("status") == "disactive":
+        organization_user_roles = models.OrganizationUserRole.objects(
+            status="disactive", organization=organization
+        )
 
     org_user_forms = {}
     for u in organization_user_roles:
@@ -251,6 +255,7 @@ def add_logo(organization_id):
         url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
 
+
 @module.route("/<organization_id>/<logo_id>/delete")
 @acl.roles_required("admin")
 def delete_logo(organization_id, logo_id):
@@ -259,5 +264,5 @@ def delete_logo(organization_id, logo_id):
     logo.delete()
 
     return redirect(
-        url_for("admin.organizations.view", organization_id=organization_id)
+        url_for("admin.organizations.view_logos", organization_id=organization_id)
     )

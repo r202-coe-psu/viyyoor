@@ -37,7 +37,7 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
-    logos = models.CertificateLogo.objects()
+    logos = models.CertificateLogo.objects(organization=organization)
     classes = models.Class.objects(organization=organization, status="active")
     return render_template(
         "/admin/organizations/view.html",
@@ -80,3 +80,56 @@ def download_logo(logo_id, filename):
         )
 
     return response
+
+
+@module.route(
+    "/<organization_id>/logos/<logo_id>/set_as_organization_logo", methods=["POST"]
+)
+def change_organization_logo(organization_id, logo_id):
+    organization = models.Organization.objects.get(id=organization_id)
+    old_logo = models.CertificateLogo.objects(
+        organization=organization, marked_as_organization_logo=True
+    ).first()
+    if old_logo:
+        old_logo.marked_as_organization_logo = False
+        old_logo.last_updated_by = current_user._get_current_object()
+        old_logo.updated_date = datetime.datetime.now()
+        old_logo.save()
+
+    new_logo = models.CertificateLogo.objects.get(id=logo_id)
+    new_logo.marked_as_organization_logo = True
+    new_logo.last_updated_by = current_user._get_current_object()
+    new_logo.updated_date = datetime.datetime.now()
+    new_logo.save()
+
+    return redirect(url_for("organizations.view", organization_id=organization.id))
+
+
+@module.route(
+    "/<organization_id>/users/<organization_user_id>/<operator>",
+    methods=["GET", "POST"],
+)
+def manage_organization_user(organization_id, organization_user_id, operator):
+    organization = models.Organization.objects.get(id=organization_id)
+    organization_user = models.OrganizationUserRole.objects.get(id=organization_user_id)
+
+    if operator == "deactivate":
+        organization_user.status = "disactive"
+    elif operator == "activate":
+        organization_user.status = "active"
+
+    organization_user.last_modifier = current_user._get_current_object()
+    organization_user.updated_date = datetime.datetime.now()
+    organization_user.last_ip_address = request.headers.get(
+        "X-Forwarded-For", request.remote_addr
+    )
+    organization_user.save()
+
+    print(operator, "user", organization_user.user.first_name)
+    return redirect(
+        url_for(
+            "admin.organizations.view_users",
+            organization_id=organization.id,
+            role="all",
+        )
+    )

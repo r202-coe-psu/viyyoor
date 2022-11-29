@@ -1,5 +1,6 @@
 {% extends '/admin/organizations/view.html' %}
 {% import '/base/html-renderer.html' as renderer %}
+{% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
@@ -15,26 +16,20 @@
 
 
 {% block content %}
-<div class="ui top attached tabular menu">
-	<a class="item" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
-		<i class="home icon"></i>Overview
-	</a>
-	<a class="item active" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
-		<i class="users icon"></i>Users
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
-		<i class="archive icon"></i>Classes
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
-		<i class="certificate icon"></i>Logos
-	</a>
-</div>
+{{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
 
 <h2 class="ui header">
 	Manage Users
 </h2>
 <div class="ui divider"></div>
-<a class="ui tertiary blue large right floated button" onclick="$('.ui.add.member.small.modal').modal('show');"><i class="user plus icon"></i>Add members</a>
+<a 	class="ui tertiary grey large right floated {{ 'active' if role == 'deactivated' }} button"
+href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='deactivated', status='disactive') }}">
+	<i class="user slash icon"></i>View Disactive members
+</a>
+<a 	class="ui tertiary blue large right floated button"
+onclick="$('.ui.add.member.small.modal').modal('show');">
+<i class="user plus icon"></i>Add members
+</a>
 <div class="ui secondary  menu" style="width:fit-content">
 	<a class="{{ 'active' if role == 'all' or not role }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
 		All
@@ -49,6 +44,7 @@
 		Endorser
 	</a>
 </div>
+
 
 <div class="ui add member small modal">
 	<div class="content">
@@ -100,10 +96,17 @@
 				</td>
 				<td>{{ org_user_role.added_by.get_fullname() }}</td>
 				<td class="right aligned collapsing">
-					<a class="ui link pop red icon circular button" data-content="delete"
-					href="">
-					<i class="trash icon"></i>
+					{% if role == 'deactivated' %}
+					<a class="ui link pop green icon circular button" data-content="activate"
+					href="{{ url_for('organizations.manage_organization_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='activate') }}">
+					<i class="check icon"></i>
 					</a>
+					{% else %}
+					<a class="ui link pop red icon circular button" data-content="deactivate"
+					href="{{ url_for('organizations.manage_organization_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='deactivate') }}">
+					<i class="ban icon"></i>
+					</a>
+					{% endif %}
 					<a class="ui primary icon circular link pop button" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
 						<i class="user icon"></i>
 					</a>
