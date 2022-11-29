@@ -1,4 +1,4 @@
-{% extends '/admin/organizations/view.html' %}
+{% extends '/organizations/home.html' %}
 {% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
@@ -26,9 +26,11 @@
 
 <h2 class="ui header">
     Templates
-    <a class="ui primary tertiary icon right floated large button" href="">
-        <i class="add icon"></i> Buy Template
-    </a>
+    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+        <a class="ui primary tertiary icon right floated large button" href="">
+            <i class="add icon"></i> Buy Template
+        </a>
+    {% endif %}
 </h2>
 <div class="ui divider"></div>
 <div class="ui basic segment">

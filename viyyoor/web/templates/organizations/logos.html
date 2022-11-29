@@ -1,4 +1,4 @@
-{% extends '/admin/organizations/view.html' %}
+{% extends '/organizations/home.html' %}
 {% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
@@ -26,16 +26,18 @@
 
 <h2 class="ui header">
     Logos
-    <a class="ui primary tertiary icon right floated large button" href="{{ url_for('organizations.add_logo', organization_id=organization.id) }}">
-        <i class="add icon"></i> Add Logo
-    </a>
+    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+        <a class="ui primary tertiary icon right floated large button" href="{{ url_for('organizations.add_logo', organization_id=organization.id) }}">
+            <i class="add icon"></i> Add Logo
+        </a>
+    {% endif %}
 </h2>
 <div class="ui divider"></div>
 <div class="ui basic segment">
 <div class="scroll">
         <div class="ui cards">
         {% for logo in logos %}
-            <div class="card" style="width: 128px;">
+            <div class="card">
                 <div class="ui image">
                     <img style="height: 128px; object-fit:contain" src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
                 </div>
