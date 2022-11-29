@@ -6,10 +6,10 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-{% if request.endpoint == 'admin.organizations.view_users' %}
+{% if request.endpoint == 'organizations.view_users' %}
 <div class="active section">Users</div>
 {% else %}
-<a href="{{ url_for('admin.organizations.view_users', organization_id=organization.id) }}" class="section">Users</a>
+<a href="{{ url_for('organizations.view_users', organization_id=organization.id) }}" class="section">Users</a>
 <i class="right angle icon divider"></i>
 {% endif %}
 {% endblock %}
@@ -23,7 +23,7 @@
 </h2>
 <div class="ui divider"></div>
 <a 	class="ui tertiary grey large right floated {{ 'active' if role == 'deactivated' }} button"
-href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='deactivated', status='disactive') }}">
+href="{{ url_for('organizations.view_users', organization_id=organization.id, role='deactivated', status='disactive') }}">
 	<i class="user slash icon"></i>View Disactive members
 </a>
 <a 	class="ui tertiary blue large right floated button"
@@ -31,16 +31,16 @@ onclick="$('.ui.add.member.small.modal').modal('show');">
 <i class="user plus icon"></i>Add members
 </a>
 <div class="ui secondary  menu" style="width:fit-content">
-	<a class="{{ 'active' if role == 'all' or not role }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
+	<a class="{{ 'active' if role == 'all' or not role }} item" href="{{ url_for('organizations.view_users', organization_id=organization.id, role='all') }}">
 		All
 	</a>
-	<a class="{{ 'active' if role == 'staff' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='staff') }}">
+	<a class="{{ 'active' if role == 'staff' }} item" href="{{ url_for('organizations.view_users', organization_id=organization.id, role='staff') }}">
 		Staff
 	</a>
-	<a class="{{ 'active' if role == 'admin' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='admin') }}">
+	<a class="{{ 'active' if role == 'admin' }} item" href="{{ url_for('organizations.view_users', organization_id=organization.id, role='admin') }}">
 		Admin
 	</a>
-	<a class="{{ 'active' if role == 'endorser' }} item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='endorser') }}">
+	<a class="{{ 'active' if role == 'endorser' }} item" href="{{ url_for('organizations.view_users', organization_id=organization.id, role='endorser') }}">
 		Endorser
 	</a>
 </div>
@@ -48,7 +48,7 @@ onclick="$('.ui.add.member.small.modal').modal('show');">
 
 <div class="ui add member small modal">
 	<div class="content">
-		<form method="POST" class="ui form" action="{{ url_for('admin.organizations.submit_add_members', organization_id=organization.id) }}">
+		<form method="POST" class="ui form" action="{{ url_for('organizations.submit_add_members', organization_id=organization.id) }}">
 			<div class="ui grid">
 				<div class="thirteen wide column">
 					{{ add_member_form.csrf_token() }}
@@ -118,7 +118,7 @@ onclick="$('.ui.add.member.small.modal').modal('show');">
 							role change
 						</div>
 						<div class="content">
-							<form method="post" class="ui form" action="{{ url_for('admin.organizations.view_users', organization_id=organization.id, user_role_id=org_user_role.id, role=role) }}">
+							<form method="post" class="ui form" action="{{ url_for('organizations.view_users', organization_id=organization.id, user_role_id=org_user_role.id, role=role) }}">
 								<div class="ui grid">
 									<div class="seven wide column">
 										{{ org_user_forms[org_user_role.id].csrf_token() }}

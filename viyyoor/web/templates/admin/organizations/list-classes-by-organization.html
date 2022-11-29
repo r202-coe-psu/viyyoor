@@ -13,10 +13,10 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-{% if request.endpoint == 'admin.organizations.view_classes' %}
+{% if request.endpoint == 'organizations.view_classes' %}
 <div class="active section">Classes</div>
 {% else %}
-<a href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}" class="section">Classes</a>
+<a href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}" class="section">Classes</a>
 <i class="right angle icon divider"></i>
 {% endif %}
 {% endblock %}

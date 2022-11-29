@@ -59,25 +59,25 @@
 
 {% macro render_organization_dashboard_menu_bar(organization) %}
 <div class="ui top attached tabular menu">
-	<a class="item {{ 'active' if request.endpoint == 'organizations.view' or request.endpoint == 'admin.organizations.view' }}"
-        href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
+	<a class="item {{ 'active' if request.endpoint == 'organizations.view' or request.endpoint == 'organizations.view' }}"
+        href="{{ url_for('organizations.view', organization_id=organization.id) }}">
 		<i class="home icon"></i>Overview
 	</a>
 	<a  class="item {{ 'active' if 'organizations.view_users' in request.endpoint }}" 
-        href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
+        href="{{ url_for('organizations.view_users', organization_id=organization.id, role='all') }}">
 		<i class="users icon"></i>Users
 	</a>
 	<a  class="item {{ 'active' if 'organizations.view_classes' in request.endpoint }}" 
-        href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
+        href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}">
 		<i class="archive icon"></i>Classes
 	</a>
-	<a  class="item {{ 'active' if 'organizations.view_logos' in request.endpoint }}" 
-        href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
-		<i class="certificate icon"></i>Logos
-	</a>
     <a  class="item {{ 'active' if 'organizations.view_templates' in request.endpoint }}" 
-        href="{{ url_for('admin.organizations.view_templates', organization_id=organization.id)}}">
-		<i class="id card icon"></i>Templates
+        href="{{ url_for('organizations.view_templates', organization_id=organization.id)}}">
+        <i class="id card icon"></i>Templates
+    </a>
+	<a  class="item {{ 'active' if 'organizations.view_logos' in request.endpoint }}" 
+        href="{{ url_for('organizations.view_logos', organization_id=organization.id)}}">
+		<i class="certificate icon"></i>Logos
 	</a>
 </div>
 {% endmacro %}

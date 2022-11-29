@@ -13,10 +13,10 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-{% if request.endpoint == 'admin.organizations.view_templates' %}
+{% if request.endpoint == 'organizations.view_templates' %}
 <div class="active section">Templates</div>
 {% else %}
-<a href="{{ url_for('admin.organizations.view_templates', organization_id=organization.id) }}" class="section">Templates</a>
+<a href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}" class="section">Templates</a>
 <i class="right angle icon divider"></i>
 {% endif %}
 {% endblock %}
@@ -62,39 +62,39 @@
                         </div>
                         <div class="ui content" >
                             <div class="ui grid">
-                            <div class="left aligned twelve wide column">
-                                <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
-                                Use 
-                                </a>
-                                {% if template.owner == current_user %}
-                                <a 
-                                class=" 
-                                {{'green' if template.share_status.status == 'publish'}} 
-                                {{'teal' if template.share_status.status == 'shared'}} 
-                                ui right labeled icon button"
-                                href="{{ url_for('admin.templates.set_share_status', template_id=template.id) }}" 
-                                style="width: fit-content; ">
-                                {{ template.share_status.get_status_display()  }}
-                                <i class="edit icon"></i>
-                                </a>
-                                {% endif %}
-                            </div>
-                            <div class="middle aligned four wide column" style="text-align:right;">
-                                <div class="ui dropdown">
-                                    <i class="large cog icon"></i>
-                                    <div class="menu">
-                                        <div class="item">
-                                            <a href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i>Edit</a>
-                                        </div>
+                                <div class="left aligned twelve wide column">
+                                    <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
+                                    Use 
+                                    </a>
+                                    {% if template.owner == current_user %}
+                                    <a 
+                                    class=" 
+                                    {{'green' if template.share_status.status == 'publish'}} 
+                                    {{'teal' if template.share_status.status == 'shared'}} 
+                                    ui right labeled icon button"
+                                    href="{{ url_for('admin.templates.set_share_status', template_id=template.id) }}" 
+                                    style="width: fit-content; ">
+                                    {{ template.share_status.get_status_display()  }}
+                                    <i class="edit icon"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <div class="middle aligned four wide column" style="text-align:right;">
+                                    <div class="ui dropdown">
+                                        <i class="large cog icon"></i>
+                                        <div class="menu">
                                             <div class="item">
-                                            <a href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i>View</a>
-                                        </div>
-                                        <div class="item">
-                                            <a onclick="showDeleteModal('{{template.id}}')" ><i class="trash icon"></i>Delete</a>
+                                                <a href="{{ url_for('admin.templates.create_or_edit', template_id=template.id) }}"><i class="edit icon"></i>Edit</a>
+                                            </div>
+                                                <div class="item">
+                                                <a href="{{ url_for('admin.templates.view', template_id=template.id) }}"><i class="eye icon"></i>View</a>
+                                            </div>
+                                            <div class="item">
+                                                <a onclick="showDeleteModal('{{template.id}}')" ><i class="trash icon"></i>Delete</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                         </div>
