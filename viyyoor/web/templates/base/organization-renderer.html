@@ -34,10 +34,12 @@
                             
                             {% set count.value = count.value + 1 %}
                             <a class="item" href="{{ url_for('accounts.change_organization', organization_id=org.id) }}">
-                                <div class="ui tiny  header">
-                                    <img src="{{ org.get_logo_picture() }}" width="30" height="30" ">
-                                    <div class="content">
-                                        <span class="ui sub header" style="font-weight: 500 ;">{{ org.name }}</span>
+                                <div class="ui vertically fitted basic segment">
+                                    <div class="ui tiny  header">
+                                        <img src="{{ org.get_logo_picture() }}" width="30" height="30" ">
+                                        <div class="content">
+                                            <span class="ui sub header" style="font-weight: 500 ;">{{ org.name }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </a>
@@ -72,6 +74,10 @@
 	<a  class="item {{ 'active' if 'organizations.view_logos' in request.endpoint }}" 
         href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
 		<i class="certificate icon"></i>Logos
+	</a>
+    <a  class="item {{ 'active' if 'organizations.view_templates' in request.endpoint }}" 
+        href="{{ url_for('admin.organizations.view_templates', organization_id=organization.id)}}">
+		<i class="id card icon"></i>Templates
 	</a>
 </div>
 {% endmacro %}

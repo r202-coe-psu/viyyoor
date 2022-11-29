@@ -23,54 +23,54 @@ Templates
   <div style="margin-top: 5ex;">
     <div class="ui link cards">
       {% for template in templates %}
-      <div class="card" style="width: 24em;">
-
-        {% if template.thumbnail_file %} 
-        <div class="image">
-          <img src="{{ url_for('admin.templates.download_thumbnail', template_id=template.id, filename=template.thumbnail_file.filename) }}"/>
-        </div>
-        {% else %}
-        <div class="image">
-          <img src="{{ url_for('admin.templates.download_template', template_id=template.id, filename=template.template_file.filename) }}"/>
-        </div>
-        {% endif %}
-
-        <div class="content">
-          
-          <div class="header">{{ template.name }}</div>
-
-          <div class="meta">
-            <a>{{ template.tags | join(', ') }}</a>
+        <div class="card" style="width: 24em;">
+          {% if template.thumbnail_file %} 
+          <div class="image">
+            <img src="{{ url_for('admin.templates.download_thumbnail', template_id=template.id, filename=template.thumbnail_file.filename) }}"/>
           </div>
-
-          <div class="description">
-            {{ template.description }}
+          {% else %}
+          <div class="image">
+            <img src="{{ url_for('admin.templates.download_template', template_id=template.id, filename=template.template_file.filename) }}"/>
           </div>
+          {% endif %}
 
-          <div class="owner"> 
-            <b>Owner : </b> {{ template.owner.first_name }} {{ template.owner.last_name }}
-          </div>
+          <div class="content">
+            
+            <div class="header">{{ template.name }}</div>
 
-        </div>
-        <div class="ui content" >
-          <div class="ui grid">
-            <div class="left aligned twelve wide column">
-              <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
-                Use 
-              </a>
-              {% if template.owner == current_user %}
-              <a 
-                class=" 
-                {{'green' if template.share_status.status == 'publish'}} 
-                {{'teal' if template.share_status.status == 'shared'}} 
-                ui right labeled icon button"
-                href="{{ url_for('admin.templates.set_share_status', template_id=template.id) }}" 
-                style="width: fit-content; ">
-                {{ template.share_status.get_status_display()  }}
-                <i class="edit icon"></i>
-              </a>
-              {% endif %}
+            <div class="meta">
+              <a>{{ template.tags | join(', ') }}</a>
             </div>
+
+            <div class="description">
+              {{ template.description }}
+            </div>
+
+            <div class="owner"> 
+              <b>Owner : </b> {{ template.owner.first_name }} {{ template.owner.last_name }}
+            </div>
+
+          </div>
+          <div class="ui content" >
+            <div class="ui grid">
+              <div class="left aligned twelve wide column">
+                <a class="ui primary button" onclick="showUseTemplate('{{ template.id }}')">
+                  Use 
+                </a>
+                {% if template.owner == current_user %}
+                <a 
+                  class=" 
+                  {{'green' if template.share_status.status == 'publish'}} 
+                  {{'teal' if template.share_status.status == 'shared'}} 
+                  ui right labeled icon button"
+                  href="{{ url_for('admin.templates.set_share_status', template_id=template.id) }}" 
+                  style="width: fit-content; ">
+                  {{ template.share_status.get_status_display()  }}
+                  <i class="edit icon"></i>
+                </a>
+                {% endif %}
+              </div>
+
               <div class="middle aligned four wide column" style="text-align:right;">
                 <div class="ui dropdown">
                   <i class="large cog icon"></i>
@@ -84,25 +84,27 @@ Templates
                     <div class="item">
                       <a onclick="showDeleteModal('{{template.id}}')" ><i class="trash icon"></i>Delete</a>
                     </div>
-                    <div class="ui small modal {{template.id}}">
-                      <div class="header">Delete Template</div>
-                      <div class="content">
-                        <h4 class="ui headers" >
-                          Are you sure you want to delete <span class="ui red text">{{ template.name }}</span> template?
-                        </h4>
-                        <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.templates.delete', template_id=template.id) }}">
-                          Delete</i>
-                        </a>
-                        <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
         </div>
-      </div>
-        <div class="ui modal {{template.id}}">
+
+        <div class="ui small modal delete {{template.id}}">
+          <div class="header">Delete Template</div>
+          <div class="content">
+            <h4 class="ui headers" >
+              Are you sure you want to delete <span class="ui red text">{{ template.name }}</span> template?
+            </h4>
+            <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.templates.delete', template_id=template.id) }}">
+              Delete</i>
+            </a>
+            <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+          </div>
+        </div>
+
+        <div class="ui modal use {{template.id}}">
           <div class="header">Use <span class="ui blue text">{{ template.name }}</span> template</div>
           <div class="content">
               <form method="POST" class="ui form">
@@ -129,15 +131,13 @@ Templates
 {% block additional_js %}
 <script>
   function showUseTemplate(template_id) {
-      $('.ui.modal.'+template_id)
-        .modal('show')
-    ;
+    $('.use.'+template_id).modal('show')
   }
 
   function showDeleteModal(template_id) {
-    template_id ?  $('.ui.small.modal.'+template_id).modal('show') : $('.ui.small.modal').modal('hide') 
-  ;
+    $('.delete.'+template_id).modal('show')
   }
+
   $('.icon.link.pop')
       .popup({
           delay: {
