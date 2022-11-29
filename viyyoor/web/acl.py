@@ -52,7 +52,7 @@ def organization_roles_required(*roles):
                     .role
                 )
             except:
-                organization_role = ""
+                organization_role = None
 
             for role in roles:
                 if role == organization_role:

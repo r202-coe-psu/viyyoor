@@ -21,7 +21,7 @@
 <a class="item" href="{{ url_for('dashboard.index') }}"><i class="icon dashboard"></i>Dashboard</a>
 <a class="item" href="{{ url_for('dashboard.show_my_certificates') }}"><i class="icon certificate"></i>My Certificate</a>
 
-{% if current_user.has_organization_role(['admin', 'staff']) or current_user.has_roles(['admin']) %}
+{% if current_user.has_organization_roles(['admin', 'staff']) or current_user.has_roles(['admin']) %}
 <div class="sidebar-heading">
   Administration
 </div>
