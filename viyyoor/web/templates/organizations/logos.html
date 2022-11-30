@@ -45,21 +45,24 @@
                 <div class="ui content">
                     <div class="header">{{ logo.logo_name }}</div>
                     <div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
-                    <div class="right floated">
-                        <a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
-                    </div>
-                    <div class="ui small modal {{logo.id}}">
-                        <div class="header">Delete Logo</div>
-                        <div class="content">
-                            <h4 class="ui headers" >
-                                Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
-                            </h4>
-                            <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
-                                Delete</i>
-                            </a>
-                            <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+
+                    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+                        <div class="right floated">
+                            <a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
                         </div>
-                    </div>
+                        <div class="ui small modal {{logo.id}}">
+                            <div class="header">Delete Logo</div>
+                            <div class="content">
+                                <h4 class="ui headers" >
+                                    Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
+                                </h4>
+                                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
+                                    Delete</i>
+                                </a>
+                                <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         {% endfor %}
