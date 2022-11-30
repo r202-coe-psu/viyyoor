@@ -1,5 +1,6 @@
 import mongoengine as me
 import datetime
+from flask import url_for, request
 
 
 ORGANIZATION_ROLES = [("staff", "Staff"), ("endorser", "Endorser"), ("admin", "Admin")]
@@ -36,12 +37,27 @@ class Organization(me.Document):
     quota = me.IntField(require=True, default=0)
 
     def get_users(self):
-        return OrganizationUserRole.objects(organization=self).order_by("-first_name")
+        return OrganizationUserRole.objects(
+            organization=self, status="active"
+        ).order_by("-first_name")
 
     def get_logo(self):
         return CertificateLogo.objects(
             organization=self, marked_as_organization_logo=True
         ).first()
+
+    def get_logo_picture(self):
+        logo = CertificateLogo.objects(
+            organization=self, marked_as_organization_logo=True
+        ).first()
+        if logo:
+            return url_for(
+                "organizations.download_logo",
+                logo_id=logo.id,
+                filename=logo.logo_file.filename,
+            )
+
+        return url_for("static", filename="images/globe.png")
 
 
 class OrganizationQuata(me.Document):
@@ -69,7 +85,7 @@ class CertificateLogo(me.Document):
 
     uploaded_by = me.ReferenceField("User", dbref=True)
     uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)
-    
+
     last_updated_by = me.ReferenceField("User", dbref=True)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 

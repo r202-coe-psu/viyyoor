@@ -1,4 +1,5 @@
-{% extends '/admin/organizations/view.html' %}
+{% extends '/organizations/home.html' %}
+{% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
@@ -12,42 +13,31 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-{% if request.endpoint == 'admin.organizations.view_logos' %}
+{% if request.endpoint == 'organizations.view_logos' %}
 <div class="active section">Logos</div>
 {% else %}
-<a href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id) }}" class="section">Logos</a>
+<a href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}" class="section">Logos</a>
 <i class="right angle icon divider"></i>
 {% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="ui top attached tabular menu">
-	<a class="item" href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}">
-		<i class="home icon"></i>Overview
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_users', organization_id=organization.id, role='all') }}">
-		<i class="users icon"></i>Users
-	</a>
-	<a class="item" href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}">
-		<i class="archive icon"></i>Classes
-	</a>
-	<a class="item active" href="{{ url_for('admin.organizations.view_logos', organization_id=organization.id)}}">
-		<i class="certificate icon"></i>Logos
-	</a>
-</div>
+{{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
 
 <h2 class="ui header">
     Logos
-    <a class="ui primary tertiary icon right floated large button" href="{{ url_for('admin.organizations.add_logo', organization_id=organization.id) }}">
-        <i class="add icon"></i> Add Logo
-    </a>
+    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+        <a class="ui primary tertiary icon right floated large button" href="{{ url_for('organizations.add_logo', organization_id=organization.id) }}">
+            <i class="add icon"></i> Add Logo
+        </a>
+    {% endif %}
 </h2>
 <div class="ui divider"></div>
 <div class="ui basic segment">
 <div class="scroll">
         <div class="ui cards">
         {% for logo in logos %}
-            <div class="card" style="width: 128px;">
+            <div class="card">
                 <div class="ui image">
                     <img style="height: 128px; object-fit:contain" src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}" />
                 </div>
@@ -64,7 +54,7 @@
                             <h4 class="ui headers" >
                                 Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
                             </h4>
-                            <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
+                            <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
                                 Delete</i>
                             </a>
                             <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>

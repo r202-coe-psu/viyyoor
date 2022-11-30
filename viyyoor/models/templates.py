@@ -34,6 +34,7 @@ class Template(me.Document):
     )
 
     owner = me.ReferenceField("User", dbref=True, required=True)
+    organization = me.ReferenceField("Organization", dbref=True)
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
 
     status = me.StringField(required=True, default="active")

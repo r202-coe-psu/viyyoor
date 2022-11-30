@@ -11,31 +11,36 @@
   <br>
   <a style="font-size: small;" href="{{ url_for('accounts.index') }}">{{ current_user.first_name }} {{ current_user.last_name }}</a>
   <br>
-  {% if current_user.get_current_organization() %} 
-  <b style="font-size: small;color: rgb(250, 241, 210)">
-    {{ current_user.user_setting.current_organization.name }}
-  </b>
-  {% endif %}
 </div>
 
 <a class="item" href="{{ url_for('dashboard.index') }}"><i class="icon dashboard"></i>Dashboard</a>
 <a class="item" href="{{ url_for('dashboard.show_my_certificates') }}"><i class="icon certificate"></i>My Certificate</a>
 
-{% if current_user.has_organization_role(['admin', 'staff']) or current_user.has_roles(['admin']) %}
-<div class="sidebar-heading">
-  Administration
-</div>
-{% if current_user.has_roles(['admin']) %}
-<a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
-<a class="item" href="{{ url_for('admin.organizations.index') }}"><i class="icon synagogue"></i>Organizations</a>
-<a class="item" href="{{ url_for('admin.users.index') }}"><i class="icon user"></i>Users</a>
+{% set organization = current_user.get_current_organization() %}
+{% if organization %}
+  <div class="sidebar-heading">
+    Organizations
+  </div>
+  <a class="item" href="{{ url_for('organizations.view', organization_id=organization.id) }}">Home</a>
+  <a class="item" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">Users</a>
+  <a class="item" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}">Classes</a>
+  <a class="item" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">Template</a>
+  <a class="item" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}">Logos</a>
 {% endif %}
-<a class="item" href="{{ url_for('admin.classes.index') }}"><i class="icon archive "></i>Classes</a>
-<a class="item" href="{{ url_for('admin.templates.index') }}"><i class="icon id card outline"></i>Template</a>
-<a class="item" href="{{ url_for('admin.certificates.index') }}"><i class="icon certificate file"></i>Certificates</a>
-<a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon user check"></i>Endorsers</a>
-<a class="item" href="{{ url_for('admin.signatures.index') }}"><i class="icon signature file"></i>Signature</a>
-<a class="item" href="{{ url_for('admin.digital_certificates.index') }}"><i class="icon stamp file"></i>Digital Certificate</a>
+
+{% if current_user.has_roles(['admin']) %}
+  <div class="sidebar-heading">
+    Administration
+  </div>
+  <a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
+  <a class="item" href="{{ url_for('admin.organizations.index') }}"><i class="icon synagogue"></i>Organizations</a>
+  <a class="item" href="{{ url_for('admin.users.index') }}"><i class="icon user"></i>Users</a>
+  <a class="item" href="{{ url_for('admin.classes.index') }}"><i class="icon archive "></i>Classes</a>
+  <a class="item" href="{{ url_for('admin.templates.index') }}"><i class="icon id card outline"></i>Template</a>
+  <a class="item" href="{{ url_for('admin.certificates.index') }}"><i class="icon certificate file"></i>Certificates</a>
+  <a class="item" href="{{ url_for('admin.endorsers.index') }}"><i class="icon user check"></i>Endorsers</a>
+  <a class="item" href="{{ url_for('admin.signatures.index') }}"><i class="icon signature file"></i>Signature</a>
+  <a class="item" href="{{ url_for('admin.digital_certificates.index') }}"><i class="icon stamp file"></i>Digital Certificate</a>
 {% endif %}
 
 <div class="sidebar-heading">

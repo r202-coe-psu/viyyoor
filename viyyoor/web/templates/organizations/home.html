@@ -1,4 +1,4 @@
-{% extends '/admin/organizations/index.html' %}
+{% extends '/base/default-dashboard.html' %}
 {% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
@@ -12,7 +12,6 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-{{ super() }}
 {% if request.endpoint == 'organizations.view' %}
 <div class="active section">{{ organization.name }}</div>
 {% else %}
@@ -38,51 +37,53 @@
 						<div class="sub header">{{ organization.description }}</div>
 					</div>
 				</h1>
-
-				<div class="ui top pointing dropdown " style="height: fit-content">
-					<div class="ui tertiary blue button">
-						<i class="blue settings icon"></i> SETTINGS 
-					</div>
-					<div class="menu">
-						<a 	href="{{ url_for('organizations.edit', organization_id=organization.id) }}"
-							class="item" style="height: fit-content">
-							<i class="edit icon"></i>Edit
-						</a>
-						<a class="item" onclick="$('.icon.longer.modal').modal('show');">
-							<i class="fruit-apple icon"></i>Change Logo
-						</a>
-						<div class="ui icon longer modal">
-							<i class="close icon"></i>
-							<div class="header">
-								Change <span class="ui blue text">{{ organization.name }}</span> Logo
-							</div>
-							<div class="content">
-								<div class="ui grid">
-									{% for logo in logos %}
-									<form class="form {{logo.id}}" method="POST" action="{{ url_for('organizations.change_organization_logo', organization_id=organization.id, logo_id=logo.id) }}">
-										<i class="icons">
-											<div class="three wide right aligned column">
-												<img class="ui circular image" onclick="selectLogo('{{logo.id}}')" style="cursor: pointer; width: 128px; height: 128px; object-fit: contain"
-												src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}">
-												<i id="{{logo.id}}" class="corner right bottom big {{'green check circle' if logo.marked_as_organization_logo else 'disabled grey circle outline'}} icon"></i>
-											</div>
-										</i>
-									</form>
-									{% endfor %}
-								</div>	
-							</div>
-							<div class="actions">
-								<button onclick="submitChangeLogo()" class="ui positive labeled icon button">
-								<i class="check icon"></i>
-								Save
-								</button>
-								<div class="ui deny button">
-								Cancel
+				
+				{% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+					<div class="ui top pointing dropdown " style="height: fit-content">
+						<div class="ui tertiary blue button">
+							<i class="blue settings icon"></i> SETTINGS 
+						</div>
+						<div class="menu">
+							<a 	href="{{ url_for('organizations.edit', organization_id=organization.id) }}"
+								class="item" style="height: fit-content">
+								<i class="edit icon"></i>Edit
+							</a>
+							<a class="item" onclick="$('.icon.longer.modal').modal('show');">
+								<i class="fruit-apple icon"></i>Change Logo
+							</a>
+							<div class="ui icon longer modal">
+								<i class="close icon"></i>
+								<div class="header">
+									Change <span class="ui blue text">{{ organization.name }}</span> Logo
+								</div>
+								<div class="content">
+									<div class="ui grid">
+										{% for logo in logos %}
+										<form class="form {{logo.id}}" method="POST" action="{{ url_for('organizations.change_organization_logo', organization_id=organization.id, logo_id=logo.id) }}">
+											<i class="icons">
+												<div class="three wide right aligned column">
+													<img class="ui circular image" onclick="selectLogo('{{logo.id}}')" style="cursor: pointer; width: 128px; height: 128px; object-fit: contain"
+													src="{{ url_for('organizations.download_logo', logo_id=logo.id, filename=logo.logo_file.filename) }}">
+													<i id="{{logo.id}}" class="corner right bottom big {{'green check circle' if logo.marked_as_organization_logo else 'disabled grey circle outline'}} icon"></i>
+												</div>
+											</i>
+										</form>
+										{% endfor %}
+									</div>	
+								</div>
+								<div class="actions">
+									<button onclick="submitChangeLogo()" class="ui positive labeled icon button">
+									<i class="check icon"></i>
+									Save
+									</button>
+									<div class="ui deny button">
+									Cancel
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
+			 	{% endif %}
 			</div>
 		</div>
 		<div class="ui very padded segment">

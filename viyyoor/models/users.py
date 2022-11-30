@@ -49,7 +49,7 @@ class User(me.Document, UserMixin):
                 return True
         return
 
-    def has_organization_role(self, roles):
+    def has_organization_roles(self, roles):
         for role in roles:
             if role == self.get_current_organization_role():
                 return True
@@ -95,6 +95,12 @@ class User(me.Document, UserMixin):
             )
         except:
             return
+
+    def get_organizations_endorser(self):
+        pass
+
+    def is_endorser(self):
+        pass
 
     def save_history_log(self, action, owner, details):
         from . import HistoryLog
