@@ -26,7 +26,7 @@
 
 <h2 class="ui header">
     Templates
-    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+    {% if current_user.is_admin_current_organization() %}
         <a class="ui primary tertiary icon right floated large button" href="">
             <i class="add icon"></i> Buy Template
         </a>

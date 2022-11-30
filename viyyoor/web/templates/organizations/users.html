@@ -23,7 +23,7 @@
 </h2>
 <div class="ui divider"></div>
 
-{% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+{% if current_user.is_admin_current_organization() %}
 	{% if role == "deactivated" %}
 		<a 	class="ui tertiary grey large right floated active button"
 			href="{{ url_for('organizations.view_users', organization_id=organization.id, role='all') }}">
@@ -84,7 +84,7 @@
 				<th>Name</th>
 				<th>Role</th>
 				<th>Added by</th>
-				{% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+				{% if current_user.is_admin_current_organization() %}
 				<th>Actions</th>
 				{% endif %}
 			</tr>
@@ -101,7 +101,7 @@
 						<div class="two wide column">
 							{{ org_user_role.get_role_display() }}
 						</div>
-						{% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+						{% if current_user.is_admin_current_organization() %}
 						<div class="one wide column">
 							<a style="cursor: pointer;" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
 								<i class="sync blue icon"></i>
@@ -111,7 +111,7 @@
 					</div>
 				</td>
 				<td>{{ org_user_role.added_by.get_fullname() }}</td>
-				{% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+				{% if current_user.is_admin_current_organization() %}
 					<td class="right aligned collapsing">
 						{% if role == 'deactivated' %}
 						<a class="ui link pop green icon circular button" data-content="activate"

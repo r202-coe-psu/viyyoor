@@ -26,7 +26,7 @@
 
 <h2 class="ui header">
     Logos
-    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+    {% if current_user.is_admin_current_organization() %}
         <a class="ui primary tertiary icon right floated large button" href="{{ url_for('organizations.add_logo', organization_id=organization.id) }}">
             <i class="add icon"></i> Add Logo
         </a>
@@ -46,7 +46,7 @@
                     <div class="header">{{ logo.logo_name }}</div>
                     <div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
 
-                    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+                    {% if current_user.is_admin_current_organization() %}
                         <div class="right floated">
                             <a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash icon"></i></a>
                         </div>
