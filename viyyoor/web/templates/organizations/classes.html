@@ -28,7 +28,7 @@
 
 <h2 class="ui header">
     Classes
-    {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+    {% if current_user.is_admin_current_organization() %}
         <a class="ui primary tertiary right floated large button" href="{{ url_for('admin.classes.create_or_edit', organization_id=organization.id) }}">
             <i class="add icon"></i> Add Class
         </a>
@@ -55,7 +55,7 @@
         </td>
         <td class="single line">
             <a class="ui circular primary icon button link pop" data-content="view" data-position="bottom left" href="{{ url_for('admin.classes.view', class_id=class_.id) }}"><i class="eye icon"></i></a>
-            {% if 'admin' in current_user.roles or current_user.get_current_organization_role() == "admin" %}
+            {% if current_user.is_admin_current_organization() %}
                 <a class="ui circular primary icon button link pop" data-content="edit" data-position="bottom left" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i></a>
                 <a class="ui circular primary icon button link pop" data-content="copy" data-position="bottom left" href="{{ url_for('admin.classes.copy', class_id=class_.id) }}"><i class="copy icon"></i></a>
                 <a onclick="showDeleteModal('{{ class_.id }}')" class="ui circular button negative icon"><i class="ban icon"></i></a>

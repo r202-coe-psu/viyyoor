@@ -285,7 +285,7 @@ def add_logo(organization_id):
     logo.save()
 
     return redirect(
-        url_for("admin.organizations.view_logos", organization_id=organization_id)
+        url_for("organizations.view_logos", organization_id=organization_id)
     )
 
 
@@ -297,7 +297,7 @@ def delete_logo(organization_id, logo_id):
     logo.delete()
 
     return redirect(
-        url_for("admin.organizations.view_logos", organization_id=organization_id)
+        url_for("organizations.view_logos", organization_id=organization_id)
     )
 
 

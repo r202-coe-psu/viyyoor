@@ -96,6 +96,12 @@ class User(me.Document, UserMixin):
         except:
             return
 
+    def is_admin_current_organization(self):
+        if self.get_current_organization_role() == "admin" or "admin" in self.roles:
+                return True
+        
+        return
+
     def get_organizations_endorser(self):
         pass
 
