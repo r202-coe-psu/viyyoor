@@ -81,7 +81,7 @@ def create_or_edit(class_id):
 
 
 @module.route("/<class_id>")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
     job_keys = {

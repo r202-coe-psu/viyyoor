@@ -1,14 +1,111 @@
 {%extends '/base/default-dashboard.html' %}
 
 {% block content %}
-  <div>    
-    <h3>Hello, {{ current_user.first_name }} {{ current_user.last_name }}<br>
-      {{ current_user.user_setting.current_organization.name }}</h3><br>
-  </div>
+  {% set organization = current_user.get_current_organization() %}
+  {% if organization %}
+  
+  <div class="ui segments">
 
-  <div>
-    <a class="ui primary button" href="{{ url_for('admin.classes.index') }}">Class</a>
+    <div class="ui segment">
+      <h1 class="ui huge header" style="margin-left: 0.5em">
+        <img src="{{ organization.get_logo_picture() }}" width="120" height="120" style="object-fit: contain;">
+        <div class="content">
+          {{ organization.name }}
+          <div class="sub header">{{ organization.description }}</div>
+        </div>
+      </h1>
+    </div>
+
+    <div class="ui segment">
+      <div class="ui cards">
+
+          <div class="ui card" style="width: 14em">
+            <div class="content" style="margin: 0.5em">
+              <div class="header">
+                <span class="ui big blue text">
+                  240
+                </span>
+                <i class="right floated users large icon" style="margin-top: 0.5em"></i>
+              </div>
+              <div class="meta">
+                <span class="ui black large text">
+                  Member
+                </span>
+              </div>
+            </div>
+            <a class="ui fluid blue button" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">
+              View
+            </a>
+          </div>
+
+          <div class="ui card" style="width: 14em">
+              <div class="content" style="margin: 0.5em">
+                <div class="header">
+                  <span class="ui big green text">
+                    120
+                  </span>
+                  <i class="right floated archive large icon" style="margin-top: 0.5em"></i>
+                </div>
+                <div class="meta">
+                  <span class="ui black large text">
+                    Class
+                  </span>
+                </div>
+              </div>
+              <a class="ui fluid green button" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}">
+                View
+              </a>
+          </div>
+
+          
+          <div class="ui card" style="width: 14em">
+            <div class="content" style="margin: 0.5em">
+              <div class="header">
+                <span class="ui big orange text">
+                  240
+                </span>
+                <i class="right floated id card large icon" style="margin-top: 0.5em"></i>
+              </div>
+              <div class="meta">
+                <span class="ui black large text">
+                  Template
+                </span>
+              </div>
+            </div>
+            <a class="ui fluid orange button" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">
+              View
+            </a>
+        </div>
+
+        <div class="ui card" style="width: 14em">
+          <div class="content" style="margin: 0.5em">
+            <div class="header">
+              <span class="ui big purple text">
+                120
+              </span>
+              <i class="right floated fruit-apple large icon" style="margin-top: 0.5em"></i>
+            </div>
+            <div class="meta">
+              <span class="ui black large text">
+                Logo
+              </span>
+            </div>
+          </div>
+          <a class="ui fluid purple button" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}">
+            View
+          </a>
+      </div>
+
+
+      </div>
+    </div>
+
   </div>
+      
+
+    
+  
+  {% endif %}
 
     <div class="ui segment">
       <h3>Endorsement</h3>
