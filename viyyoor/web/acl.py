@@ -54,6 +54,9 @@ def organization_roles_required(*roles):
             except:
                 organization_role = None
 
+            if "admin" in current_user.roles:
+                return func(*args, **kwargs)
+
             for role in roles:
                 if role == organization_role:
                     return func(*args, **kwargs)
