@@ -1,13 +1,17 @@
-{%extends '/base/default-dashboard.html' %}
+{% extends '/base/default-dashboard.html' %}
+
+{% block additional_js %}
+<script>
+  $('.ui.big.breadcrumb')[0].parentElement.style.display = "none"
+</script>
+{% endblock%}
 
 {% block content %}
   {% set organization = current_user.get_current_organization() %}
   {% if organization %}
   
-  <div class="ui segments">
 
-    <div class="ui segment">
-      <h1 class="ui huge header">
+      <h2 class="ui header">
         <img src="{{ organization.get_logo_picture() }}" width="120" height="120" style="object-fit: contain;">
         <div class="content">
           <a class="ui header" onmouseover="this.style.color='#2185d0'" onmouseout="this.style.color='black'" href="{{ url_for('organizations.view', organization_id=organization.id) }}">
@@ -15,12 +19,10 @@
           </a>
           <div class="sub header">{{ organization.description }}</div>
         </div>        
-      </h1>
-    </div>
+      </h2>
+      <div class="ui divider"></div>
 
-    <div class="ui segment">
       <div class="ui cards">
-
           <div class="ui card" style="width: 16em; margin-right: 1em">
             <div class="content" style="margin: 0.5em">
               <div class="header">
@@ -96,13 +98,9 @@
           <a class="ui fluid purple button" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}">
             View
           </a>
+        </div>
       </div>
 
-
-      </div>
-    </div>
-
-  </div>
       
 
     
