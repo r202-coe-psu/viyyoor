@@ -1,7 +1,7 @@
 import mongoengine as me
 import datetime
 from flask import url_for, request
-
+from viyyoor import models
 
 ORGANIZATION_ROLES = [("staff", "Staff"), ("endorser", "Endorser"), ("admin", "Admin")]
 
@@ -58,6 +58,17 @@ class Organization(me.Document):
             )
 
         return url_for("static", filename="images/globe.png")
+
+    def get_logos(self):
+        return models.CertificateLogo.objects(organization=self).order_by("-id")
+
+    def get_classes(self):
+        return models.Class.objects(organization=self, status="active").order_by("-id")
+
+    def get_templates(self):
+        return models.Template.objects(organization=self, status="active").order_by(
+            "-id"
+        )
 
 
 class OrganizationQuata(me.Document):

@@ -7,25 +7,27 @@
   <div class="ui segments">
 
     <div class="ui segment">
-      <h1 class="ui huge header" style="margin-left: 0.5em">
+      <h1 class="ui huge header">
         <img src="{{ organization.get_logo_picture() }}" width="120" height="120" style="object-fit: contain;">
         <div class="content">
-          {{ organization.name }}
+          <a class="ui header" onmouseover="this.style.color='#2185d0'" onmouseout="this.style.color='black'" href="{{ url_for('organizations.view', organization_id=organization.id) }}">
+            {{ organization.name }}
+          </a>
           <div class="sub header">{{ organization.description }}</div>
-        </div>
+        </div>        
       </h1>
     </div>
 
     <div class="ui segment">
       <div class="ui cards">
 
-          <div class="ui card" style="width: 14em">
+          <div class="ui card" style="width: 16em; margin-right: 1em">
             <div class="content" style="margin: 0.5em">
               <div class="header">
-                <span class="ui big blue text">
-                  240
+                <span class="ui big teal text">
+                  {{ organization.get_users().count() }}
                 </span>
-                <i class="right floated users large icon" style="margin-top: 0.5em"></i>
+                <i class="  right floated users large icon" style="margin-top: 0.5em"></i>
               </div>
               <div class="meta">
                 <span class="ui black large text">
@@ -33,16 +35,16 @@
                 </span>
               </div>
             </div>
-            <a class="ui fluid blue button" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">
+            <a class="ui fluid teal button" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">
               View
             </a>
           </div>
 
-          <div class="ui card" style="width: 14em">
+          <div class="ui card" style="width: 16em; margin-right: 1em">
               <div class="content" style="margin: 0.5em">
                 <div class="header">
                   <span class="ui big green text">
-                    120
+                    {{ organization.get_classes().count() }}
                   </span>
                   <i class="right floated archive large icon" style="margin-top: 0.5em"></i>
                 </div>
@@ -58,11 +60,11 @@
           </div>
 
           
-          <div class="ui card" style="width: 14em">
+          <div class="ui card" style="width: 16em; margin-right: 1em">
             <div class="content" style="margin: 0.5em">
               <div class="header">
-                <span class="ui big orange text">
-                  240
+                <span class="ui big pink text">
+                  {{ organization.get_templates().count() }}
                 </span>
                 <i class="right floated id card large icon" style="margin-top: 0.5em"></i>
               </div>
@@ -72,16 +74,16 @@
                 </span>
               </div>
             </div>
-            <a class="ui fluid orange button" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">
+            <a class="ui fluid pink button" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">
               View
             </a>
         </div>
 
-        <div class="ui card" style="width: 14em">
+        <div class="ui card" style="width: 16em; margin-right: 1em">
           <div class="content" style="margin: 0.5em">
             <div class="header">
               <span class="ui big purple text">
-                120
+                {{ organization.get_logos().count() }}
               </span>
               <i class="right floated fruit-apple large icon" style="margin-top: 0.5em"></i>
             </div>
