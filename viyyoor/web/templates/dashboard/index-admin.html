@@ -45,7 +45,7 @@
           <div class="ui card" style="width: 16em; margin-right: 1em">
               <div class="content" style="margin: 0.5em">
                 <div class="header">
-                  <span class="ui big green text">
+                  <span class="ui big pink text">
                     {{ organization.get_classes().count() }}
                   </span>
                   <i class="right floated archive large icon" style="margin-top: 0.5em"></i>
@@ -56,7 +56,7 @@
                   </span>
                 </div>
               </div>
-              <a class="ui fluid green button" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}">
+              <a class="ui fluid pink button" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}">
                 View
               </a>
           </div>
@@ -65,7 +65,7 @@
           <div class="ui card" style="width: 16em; margin-right: 1em">
             <div class="content" style="margin: 0.5em">
               <div class="header">
-                <span class="ui big pink text">
+                <span class="ui big purple text">
                   {{ organization.get_templates().count() }}
                 </span>
                 <i class="right floated id card large icon" style="margin-top: 0.5em"></i>
@@ -76,7 +76,7 @@
                 </span>
               </div>
             </div>
-            <a class="ui fluid pink button" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">
+            <a class="ui fluid purple button" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">
               View
             </a>
         </div>
@@ -84,7 +84,7 @@
         <div class="ui card" style="width: 16em; margin-right: 1em">
           <div class="content" style="margin: 0.5em">
             <div class="header">
-              <span class="ui big purple text">
+              <span class="ui big violet text">
                 {{ organization.get_logos().count() }}
               </span>
               <i class="right floated fruit-apple large icon" style="margin-top: 0.5em"></i>
@@ -95,7 +95,7 @@
               </span>
             </div>
           </div>
-          <a class="ui fluid purple button" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}">
+          <a class="ui fluid violet button" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}">
             View
           </a>
         </div>
