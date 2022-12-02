@@ -35,10 +35,7 @@ module = Blueprint("classes", __name__, url_prefix="/classes")
 def index():
     organization = current_user.get_current_organization()
     classes = models.Class.objects(status="active").order_by("-id")
-    # if not "superadmin" in current_user.roles:
-    #     classes = models.Class.objects(
-    #         organization=current_user.get_current_organization()
-    #     )
+
     return render_template(
         "/admin/classes/index.html",
         classes=classes,
