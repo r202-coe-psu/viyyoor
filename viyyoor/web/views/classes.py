@@ -34,7 +34,6 @@ def index():
 
 
 @module.route("/<class_id>")
-@login_required
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
     if "admin" in current_user.roles or "endorse" in current_user.roles:

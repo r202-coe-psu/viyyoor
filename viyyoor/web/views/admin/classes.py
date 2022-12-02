@@ -31,7 +31,7 @@ module = Blueprint("classes", __name__, url_prefix="/classes")
 
 
 @module.route("/")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def index():
     organization = current_user.get_current_organization()
     classes = models.Class.objects(status="active").order_by("-id")
@@ -49,7 +49,7 @@ def index():
     defaults={"class_id": None},
 )
 @module.route("/<class_id>/edit", methods=["GET", "POST"])
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def create_or_edit(class_id):
     organization = current_user.get_current_organization()
     form = forms.classes.ClassForm()
@@ -78,7 +78,7 @@ def create_or_edit(class_id):
 
 
 @module.route("/<class_id>")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
     job_keys = {
@@ -105,7 +105,7 @@ def view(class_id):
 
 
 @module.route("/<class_id>/delete")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def delete(class_id):
     class_ = models.Class.objects.get(id=class_id)
     class_.status = "delete"
@@ -115,7 +115,7 @@ def delete(class_id):
 
 
 @module.route("/<class_id>/copy")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def copy(class_id):
     class_ = models.Class.objects.get(id=class_id)
     if not class_:
@@ -144,7 +144,7 @@ def copy(class_id):
     defaults={"endorser_id": None},
 )
 @module.route("/<class_id>/endorsers/<endorser_id>/edit", methods=["GET", "POST"])
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def add_or_edit_endorser(class_id, endorser_id):
     form = forms.classes.EndorserForm()
     endorser = None
@@ -181,7 +181,7 @@ def add_or_edit_endorser(class_id, endorser_id):
 
 
 @module.route("/<class_id>/endorsers/<endorser_id>/delete", methods=["GET", "POST"])
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def delete_endorser(class_id, endorser_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -200,7 +200,7 @@ def delete_endorser(class_id, endorser_id):
     defaults={"participant_id": ""},
 )
 @module.route("/<class_id>/participants/<participant_id>/edit", methods=["GET", "POST"])
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def add_or_edit_participant(class_id, participant_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -237,7 +237,7 @@ def add_or_edit_participant(class_id, participant_id):
 
 
 @module.route("/<class_id>/participants/<participant_id>/delete")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def delete_participant(class_id, participant_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -263,7 +263,7 @@ def delete_participant(class_id, participant_id):
     "/<class_id>/participants/add-from-file",
     methods=["GET", "POST"],
 )
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def add_participant_from_file(class_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -344,7 +344,7 @@ def add_participant_from_file(class_id):
     "/<class_id>/certificate_templates/<certificate_template_id>/edit",
     methods=["GET", "POST"],
 )
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def add_or_edit_certificate_template(class_id, certificate_template_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -386,7 +386,7 @@ def add_or_edit_certificate_template(class_id, certificate_template_id):
 
 
 @module.route("/<class_id>/certificate_templates/<certificate_template_id>/delete")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def delete_certificate_template(class_id, certificate_template_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -400,7 +400,7 @@ def delete_certificate_template(class_id, certificate_template_id):
 
 
 @module.route("/<class_id>/prepair_certificate")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def prepare_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -428,7 +428,7 @@ def prepare_certificate(class_id):
 
 
 @module.route("/<class_id>/rebuild_certificate")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def rebuild_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -456,7 +456,7 @@ def rebuild_certificate(class_id):
 
 
 @module.route("/<class_id>/purge_certificate")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def purge_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -479,7 +479,7 @@ def purge_certificate(class_id):
 
 
 @module.route("/<class_id>/export_certificate")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def export_certificate(class_id):
     class_ = models.Class.objects.get(id=class_id)
     required_signature = True
@@ -525,7 +525,7 @@ def export_certificate(class_id):
 
 
 @module.route("/<class_id>/export_certificate_url")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def export_certificate_url(class_id):
     class_ = models.Class.objects.get(id=class_id)
 
@@ -571,7 +571,7 @@ def export_certificate_url(class_id):
 
 
 @module.route("/<class_id>/export_participant_data")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def export_participant_data(class_id):
     class_ = models.Class.objects.get(id=class_id)
     row_list = []
@@ -607,7 +607,7 @@ def export_participant_data(class_id):
 
 
 @module.route("/<class_id>/download/<filename>")
-@acl.roles_required("admin")
+@acl.organization_roles_required()
 def download(class_id, filename):
     p = pathlib.Path(f"{current_app.config['VIYYOOR_CACHE_DIR']}/{filename}")
     if not p.exists():

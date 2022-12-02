@@ -54,6 +54,11 @@ def organization_roles_required(*roles):
             except:
                 organization_role = None
 
+            # required only if in organization
+            if not roles:
+                return func(*args, **kwargs)
+
+            # bypass admin to access any organization
             if "admin" in current_user.roles:
                 return func(*args, **kwargs)
 
