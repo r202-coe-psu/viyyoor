@@ -62,7 +62,11 @@ def create_or_edit(template_id):
 
     if template_id:
         template = models.Template.objects.get(id=template_id)
-        form = forms.templates.TemplateForm(obj=template)
+        form = forms.templates.TemplateForm(
+            obj=template,
+            uploaded_template_file=template.template_file,
+            uploaded_thumbnail_file=template.thumbnail_file,
+        )
 
     if not form.validate_on_submit():
         return render_template(
