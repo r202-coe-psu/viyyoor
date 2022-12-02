@@ -198,9 +198,7 @@ def index():
 @module.route("/accounts/edit-profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
-    form = forms.accounts.ProfileForm(
-        obj=current_user,
-    )
+    form = forms.accounts.ProfileForm(obj=current_user, pic=current_user.picture)
     if not form.validate_on_submit():
         return render_template("/accounts/edit-profile.html", form=form)
 

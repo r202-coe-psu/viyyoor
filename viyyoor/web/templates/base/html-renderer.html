@@ -26,7 +26,7 @@
 <div class="field">
   {{ field.label }}
   <div class="ui action input">
-    <input type="text" placeholder="{{ field.label.text }}" readonly class="attach-file-{{field.name}}">
+    <input type="text" placeholder="{{ field.label.text if not field.data else field.data.filename }}" readonly class="attach-file-{{field.name}}">
     {{ field(style="display: none;") }}
     <div class="ui icon button attach-file-{{field.name}}">
       <i class="attach icon"></i>
