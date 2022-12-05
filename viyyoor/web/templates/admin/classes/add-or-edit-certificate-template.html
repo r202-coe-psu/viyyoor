@@ -18,7 +18,6 @@
 
 {% block breadcrumbs %}
   {{ super() }}
-  <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
     <div class="active section">Edit Certificate Template</div>
   {% else %}

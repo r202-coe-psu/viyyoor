@@ -1,6 +1,7 @@
-    {% extends '/organizations/home.html' %}
+{% extends '/organizations/home.html' %}
 {% import '/base/organization-renderer.html' as org_renderer %}
 
+{% set organization = current_user.get_current_organization() %}
 {% block title %}{{ organization.name }}{% endblock %}
 
 {% block dashboard_title %}
