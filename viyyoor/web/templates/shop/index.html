@@ -1,0 +1,60 @@
+{% extends "/base/default-dashboard.html" %}
+
+{% block title %}Shop{% endblock %}
+
+{% block dashboard_title %}Shop{% endblock %}
+
+{% block breadcrumbs %}
+<div class="active section">
+    
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="ui segment" style="margin-top: 5ex;">
+        <div class="ui cards">
+            {% for template in templates %}
+                <div class="card" style="width: 24em;">
+                    <div class="ui image">
+                        {% if template.thumbnail_file %}
+                        <div class="image">
+                            <img style="height: 256px; object-fit:contain" src="{{ url_for('admin.templates.download_thumbnail', template_id=template.id, filename=template.thumbnail_file.filename) }}">
+                        </div>
+                        {% else %}
+                        <div class="image">
+                            <img style="height: 256px; object-fit:contain" src="{{ url_for('admin.templates.download_template', template_id=template.id, filename=template.template_file.filename) }}">
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="content">
+
+                        <div class="header">{{template.name}}</div>
+
+                        <div class="meta">
+                            <a>{{ template.tags | join(', ') }}</a>
+                        </div>
+              
+                        <div class="description">
+                            {{ template.description }}
+                        </div>
+              
+                        <div class="owner"> 
+                            <b>Owner : </b> {{ template.owner.first_name }} {{ template.owner.last_name }}
+                        </div>
+
+                    </div>
+                    <div class="ui content">
+                        <div class="ui grid">
+                            <div class="lleft aligned twelve wide column">
+                                <a class="ui primary button">Buy</a>
+                                <a class="ui primary button">View</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
