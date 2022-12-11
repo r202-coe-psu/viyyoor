@@ -125,7 +125,51 @@
   </div>
 </div>
 
-<div style="margin-top: 1rem;">
+<div class="">
+  <div class="ui big four item stackable tabs menu">
+    <div class="ui pointing dropdown link item">
+      <i class="certificate icon"></i>
+      Certificate
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
+      </div>
+    </div>
+
+    <div class="ui pointing dropdown link item">
+      <i class="user tie icon"></i>
+      Endorser
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
+      </div>
+    </div>
+
+    <div class="ui pointing dropdown link item">
+      <i class="user graduate icon"></i>
+      Participant
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
+      </div>
+    </div>
+
+    <div class="ui pointing dropdown link item">
+      <i class="export file icon"></i>
+      Export
+      <i class="dropdown icon"></i>
+      <div class="menu">
+        <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}"><i class="export file icon"></i>Export Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id, signature='off') }}"><i class="export file icon"></i>Export Certificate Without Sign</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate_url', class_id=class_.id) }}" target="_blank"><i class="export globe icon"></i>Export Certificate URL</a>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- <div style="margin-top: 1rem;">
   <div style="width:auto;overflow:auto">
     <pre><div class="ui compact icon menu" >
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
@@ -139,7 +183,7 @@
       <a class="item" href="{{ url_for('admin.classes.export_certificate_url', class_id=class_.id) }}" target="_blank"><i class="export globe icon"></i>Export Certificate URL</a>
     </div></pre>
   </div>
-</div>
+</div> -->
 
 <div class="" style="margin-top: 1em;">
   <h2>Paticipants</h2>
