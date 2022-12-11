@@ -8,7 +8,7 @@
   {% if request.path == url_for('admin.classes.view', class_id=class_.id) %}
   <div class="active section">{{ class_.name }}</div>
   {% else %}
-  <a class="section" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a>
+  <a class="section" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a> 
   <i class="right angle icon divider"></i>
   {% endif %}
 {% endblock %}
@@ -18,6 +18,9 @@
 
 <div class="">
   <div class="ui segment">
+    <div class="ui large right floated segment">
+      <a class="item" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i>Edit Class</a>
+    </div>
     <div>
       <b>Organization:</b> {{ class_.organization.name }}
     </div>
@@ -125,7 +128,6 @@
 <div style="margin-top: 1rem;">
   <div style="width:auto;overflow:auto">
     <pre><div class="ui compact icon menu" >
-      <a class="item" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i>Edit</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
       <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
