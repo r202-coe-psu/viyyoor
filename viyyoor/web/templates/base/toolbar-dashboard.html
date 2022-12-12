@@ -20,6 +20,7 @@
 {% set organization = current_user.get_current_organization() %}
 {% if organization %}
   <div class="sidebar-heading">
+  <i class="icon synagogue"></i>
     Organizations
   </div>
   <a class="item" href="{{ url_for('organizations.view', organization_id=organization.id) }}">Home</a>
@@ -31,6 +32,7 @@
 
 {% if current_user.has_roles(['admin']) %}
   <div class="sidebar-heading">
+  <i class="user shield icon"></i>
     Administration
   </div>
   <a class="item" href="{{ url_for('admin.index') }}"><i class="icon user shield"></i>Admin</a>
@@ -45,6 +47,7 @@
 {% endif %}
 
 <div class="sidebar-heading">
+<i class="cog icon"></i>
   Settings
 </div>
 <a class="item" href="{{ url_for('accounts.index') }}"><i class="address book icon"></i>Account</a>
