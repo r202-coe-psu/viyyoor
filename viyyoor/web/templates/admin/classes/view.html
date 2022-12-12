@@ -132,25 +132,21 @@
       Certificate
       <i class="dropdown icon"></i>
       <div class="menu">
-        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Selact Certificate Template</a>
       </div>
     </div>
 
-    <div class="ui pointing dropdown link item">
-      <i class="user tie icon"></i>
-      Endorser
-      <i class="dropdown icon"></i>
-      <div class="menu">
-        <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
-      </div>
-    </div>
+    
+    <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
+      
 
     <div class="ui pointing dropdown link item">
       <i class="user graduate icon"></i>
       Participant
       <i class="dropdown icon"></i>
       <div class="menu">
-        <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Participant</a>
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Add Participant</a>
+        <a class="item" href="{{ url_for('admin.classes.add_participant_from_file', class_id=class_.id) }}"><i class="user graduate file icon"></i>Add Participant From File</a>
       </div>
     </div>
 
@@ -159,7 +155,8 @@
       Export
       <i class="dropdown icon"></i>
       <div class="menu">
-        <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}"><i class="export file icon"></i>Export Certificate</a>
+      <a class="item" href="{{ url_for('admin.classes.export_participant_data', class_id=class_.id) }}" target="_blank"><i class="list icon"></i>Export Participant Data</a>
+      <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id) }}"><i class="export file icon"></i>Export Certificate</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate', class_id=class_.id, signature='off') }}"><i class="export file icon"></i>Export Certificate Without Sign</a>
       <a class="item" href="{{ url_for('admin.classes.export_certificate_url', class_id=class_.id) }}" target="_blank"><i class="export globe icon"></i>Export Certificate URL</a>
       </div>
