@@ -132,7 +132,8 @@
       Certificate
       <i class="dropdown icon"></i>
       <div class="menu">
-        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Selact Certificate Template</a>
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Select Certificate Template</a>
+        <a class="item" href="{{ url_for('admin.classes.prepare_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
       </div>
     </div>
 
