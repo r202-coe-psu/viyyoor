@@ -33,11 +33,11 @@
       </h2>
       <div class="ui divider"></div>
 
-      <div class="ui cards">
+      <div class="ui centered cards">
           <div class="ui card" style="width: 16em; margin-right: 1em">
             <div class="content" style="margin: 0.5em">
               <div class="header">
-                <span class="ui big teal text">
+                <span class="ui big psu-deep-blue text">
                   {{ organization.get_users().count() }}
                 </span>
                 <i class="  right floated users large icon" style="margin-top: 0.5em"></i>
@@ -48,7 +48,7 @@
                 </span>
               </div>
             </div>
-            <a class="ui fluid teal button" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">
+            <a class="ui fluid psu-deep-blue button" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">
               View
             </a>
           </div>
@@ -114,12 +114,11 @@
       <br>
   {% endif %}
 
-
-    <h1 class="ui horizontal header divider">
-     Endorsement
-    </h1>
-
-    {% if not endorses_classes and 'endorser' in current_user.roles %}
+{% if 'endorser' in current_user.roles %}
+  <h1 class="ui horizontal header divider">
+    Endorsement
+  </h1>
+  {% if not endorses_classes %}
     <div class="ui horizontal divider" style="margin: 3em 40% 3em 40%"><span style="color: rgb(172, 172, 172);">Waiting for new endorsement</span> </div>
     {% else %}
     <div class="ui cards">
@@ -155,6 +154,7 @@
       {% endfor %}
     </div>
   {% endif %}
+  
 
   
   <h2 class="ui horizontal header divider">
@@ -173,6 +173,7 @@
     {% if job %}
     <div class="{{ 'red' if job.get_status(refresh=True) == 'failed' }}
                 {{ 'yellow' if job.get_status(refresh=True) in ['queued', 'started']}}
+                {{ '' if job.get_status(refresh=True) == 'finished'}}
                 card">
     {% else %}
     <div class="green card">
@@ -217,5 +218,6 @@
     {% endfor %}
   </div>
   {% endif %}
+{% endif %}
 
 {% endblock %}
