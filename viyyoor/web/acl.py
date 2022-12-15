@@ -11,9 +11,13 @@ login_manager = LoginManager()
 def init_acl(app):
     login_manager.init_app(app)
 
-    @app.errorhandler(403)
-    def page_not_found(e):
+    @app.errorhandler(401)
+    def unauthorized(e):
         return unauthorized_callback()
+
+    @app.errorhandler(403)
+    def forbidden(e):
+        return "You don't have permission."
 
 
 def roles_required(*roles):
@@ -40,12 +44,17 @@ def organization_roles_required(*roles):
             if not current_user.is_authenticated:
                 raise Forbidden()
 
+            # bypass admin to access any organization
+            if "admin" in current_user.roles:
+                return func(*args, **kwargs)
+
             try:
-                current_organization = current_user.user_setting.current_organization
+                organization_id = request.view_args.get("organization_id")
+                organization = models.Organization.objects.get(id=organization_id)
                 organization_role = (
                     models.OrganizationUserRole.objects(
                         user=current_user,
-                        organization=current_organization,
+                        organization=organization,
                         status="active",
                     )
                     .first()
@@ -54,17 +63,10 @@ def organization_roles_required(*roles):
             except:
                 organization_role = None
 
-            # required only if in organization
-            if not roles:
-                return func(*args, **kwargs)
-
-            # bypass admin to access any organization
-            if "admin" in current_user.roles:
-                return func(*args, **kwargs)
-
             for role in roles:
-                if role == organization_role:
+                if role in organization_role:
                     return func(*args, **kwargs)
+
             raise Forbidden()
 
         return wrapped

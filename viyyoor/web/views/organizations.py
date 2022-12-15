@@ -31,7 +31,7 @@ def index():
 
 
 @module.route("/<organization_id>")
-@acl.organization_roles_required()
+@acl.organization_roles_required("endorser")
 def view(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,

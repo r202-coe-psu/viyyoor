@@ -70,10 +70,14 @@ class Organization(me.Document):
             "-id"
         )
 
+    def get_quota(self):
+        return 0
+
 
 class OrganizationQuata(me.Document):
     number_of_uses = me.IntField(require=True, default=0)
     quota = me.IntField(require=True, default=0)
+    price = me.FloatField(require=True, default=0.0)
 
     created_by = me.ReferenceField("User", dbref=True)
     last_updated_by = me.ReferenceField("User", dbref=True)
@@ -82,8 +86,25 @@ class OrganizationQuata(me.Document):
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
 
     ip_address = me.StringField(required=True, default="0.0.0.0")
+    organization = me.ReferenceField("Organization", dbref=True, requrired=True)
 
     meta = {"collection": "organization_quatas"}
+
+
+class OrganizationQuataUsage(me.Document):
+    certificates = me.ListField(me.ReferenceField("Certificate", dbref=True))
+    number = me.IntField(require=True, default=0)
+
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+
+    class_ = me.ReferenceField("Class", dbref=True, requrired=True)
+    organization = me.ReferenceField("Organization", dbref=True, requrired=True)
+    organization_quota = me.ReferenceField(
+        "OrganizationQuota", dbref=True, requrired=True
+    )
+
+    meta = {"collection": "organization_quata_usages"}
 
 
 class CertificateLogo(me.Document):
