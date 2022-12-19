@@ -61,7 +61,7 @@
 		<div class="ui grid">
 			<div class="thirteen wide column">
 				{{ add_member_form.csrf_token() }}
-				{{ renderer.render_multiple_select(add_member_form.members) }}
+				{{ add_member_form.members(class_="ui fluid search selection dropdown") }}
 			</div>
 			<div class="three wide column">
 				<br>
