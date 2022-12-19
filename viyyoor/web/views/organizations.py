@@ -230,6 +230,13 @@ def manage_user(organization_id, organization_user_id, operator):
         organization_user.status = "disactive"
     elif operator == "activate":
         organization_user.status = "active"
+    elif operator == "delete":
+        user = organization_user.user
+        user.organizations.remove(organization)
+        if user.get_current_organization() == organization:
+            user.user_setting.current_organization = None
+        user.save()
+        organization_user.delete()
 
     organization_user.last_modifier = current_user._get_current_object()
     organization_user.updated_date = datetime.datetime.now()
