@@ -70,7 +70,7 @@
 		<div class="ui grid">
 			<div class="thirteen wide column">
 				{{ add_member_form.csrf_token() }}
-				{{ renderer.render_multiple_select(add_member_form.members) }}
+				{{ add_member_form.members(class_="ui fluid search selection dropdown") }}
 			</div>
 			<div class="three wide column">
 				<br>
@@ -127,16 +127,20 @@
 						href="{{ url_for('organizations.manage_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='activate') }}">
 						<i class="check icon"></i>
 						</a>
+						<a class="ui link pop negative icon circular button" data-content="delete"
+						href="{{ url_for('organizations.manage_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='delete') }}">
+						<i class="trash icon"></i>
+						</a>
 						{% else %}
 						<a class="ui link pop red icon circular button" data-content="deactivate"
 						href="{{ url_for('organizations.manage_user', organization_id=organization.id, organization_user_id=org_user_role.id, operator='deactivate') }}">
 						<i class="ban icon"></i>
 						</a>
-						{% endif %}
-						
 						<a class="ui primary icon circular link pop button" data-content="change role" onclick="showRoleSelectionForm('{{ org_user_role.user.id }}')">
 							<i class="user icon"></i>
 						</a>
+						{% endif %}
+						
 						<div id="{{org_user_role.user.id}}" class="ui mini modal {{ org_user_role.user.id }}" >
 							<div class="header">
 								<span class="ui blue text">

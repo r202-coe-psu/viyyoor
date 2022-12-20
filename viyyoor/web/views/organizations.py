@@ -37,7 +37,7 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
-    logos = models.CertificateLogo.objects(organization=organization)
+    logos = models.Logo.objects(organization=organization)
     classes = models.Class.objects(organization=organization, status="active")
     return render_template(
         "/organizations/view.html",
@@ -70,7 +70,7 @@ def edit(organization_id):
 def download_logo(logo_id, filename):
     response = Response()
     response.status_code = 404
-    logo = models.CertificateLogo.objects.get(id=logo_id)
+    logo = models.Logo.objects.get(id=logo_id)
 
     if logo:
         response = send_file(
@@ -97,7 +97,7 @@ def change_organization_logo(organization_id, logo_id):
         old_logo.updated_date = datetime.datetime.now()
         old_logo.save()
 
-    new_logo = models.CertificateLogo.objects.get(id=logo_id)
+    new_logo = models.Logo.objects.get(id=logo_id)
     new_logo.marked_as_organization_logo = True
     new_logo.last_updated_by = current_user._get_current_object()
     new_logo.updated_date = datetime.datetime.now()
@@ -230,6 +230,13 @@ def manage_user(organization_id, organization_user_id, operator):
         organization_user.status = "disactive"
     elif operator == "activate":
         organization_user.status = "active"
+    elif operator == "delete":
+        user = organization_user.user
+        user.organizations.remove(organization)
+        if user.get_current_organization() == organization:
+            user.user_setting.current_organization = None
+        user.save()
+        organization_user.delete()
 
     organization_user.last_modifier = current_user._get_current_object()
     organization_user.updated_date = datetime.datetime.now()

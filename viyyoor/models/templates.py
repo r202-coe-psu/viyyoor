@@ -42,7 +42,3 @@ class Template(me.Document):
 
     template_file = me.FileField(required=True)
     thumbnail_file = me.FileField()
-
-
-class Logo(me.EmbeddedDocument):
-    logo_file = me.ReferenceField("Certificate_logo", dbref=True, required=True)

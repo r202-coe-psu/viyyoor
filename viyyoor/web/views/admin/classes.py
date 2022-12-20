@@ -60,6 +60,7 @@ def create_or_edit(class_id):
         form = forms.classes.ClassForm(obj=class_)
 
     if not form.validate_on_submit():
+        print(form.errors)
         return render_template(
             "/admin/classes/create-edit.html",
             class_=class_,

@@ -42,14 +42,10 @@ class Organization(me.Document):
         ).order_by("-first_name")
 
     def get_logo(self):
-        return CertificateLogo.objects(
-            organization=self, marked_as_organization_logo=True
-        ).first()
+        return Logo.objects(organization=self, marked_as_organization_logo=True).first()
 
     def get_logo_picture(self):
-        logo = CertificateLogo.objects(
-            organization=self, marked_as_organization_logo=True
-        ).first()
+        logo = Logo.objects(organization=self, marked_as_organization_logo=True).first()
         if logo:
             return url_for(
                 "organizations.download_logo",
@@ -60,7 +56,7 @@ class Organization(me.Document):
         return url_for("static", filename="images/globe.png")
 
     def get_logos(self):
-        return models.CertificateLogo.objects(organization=self).order_by("-id")
+        return models.Logo.objects(organization=self).order_by("-id")
 
     def get_classes(self):
         return models.Class.objects(organization=self, status="active").order_by("-id")
@@ -107,13 +103,13 @@ class OrganizationQuataUsage(me.Document):
     meta = {"collection": "organization_quata_usages"}
 
 
-class CertificateLogo(me.Document):
+class Logo(me.Document):
 
-    meta = {"collection": "certificate_logos"}
+    meta = {"collection": "logos"}
 
     organization = me.ReferenceField("Organization", dbref=True, required=True)
     logo_name = me.StringField(required=True, max_length=256)
-    logo_file = me.FileField(required=True)
+    logo_file = me.FileField(required=True, collection_name="logo_fs")
 
     uploaded_by = me.ReferenceField("User", dbref=True)
     uploaded_date = me.DateTimeField(required=True, default=datetime.datetime.now)

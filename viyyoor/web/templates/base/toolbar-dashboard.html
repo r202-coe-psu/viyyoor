@@ -23,11 +23,11 @@
   <i class="icon synagogue"></i>
     Organizations
   </div>
-  <a class="item" href="{{ url_for('organizations.view', organization_id=organization.id) }}">Home</a>
-  <a class="item" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}">Users</a>
-  <a class="item" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}">Classes</a>
-  <a class="item" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}">Template</a>
-  <a class="item" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}">Logos</a>
+  <a class="item" href="{{ url_for('organizations.view', organization_id=organization.id) }}"><i class="home icon"></i>Home</a>
+  <a class="item" href="{{ url_for('organizations.view_users', organization_id=organization.id) }}"><i class="icon user"></i>Users</a>
+  <a class="item" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}"><i class="icon archive "></i>Classes</a>
+  <a class="item" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}"><i class="icon id card outline"></i>Template</a>
+  <a class="item" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}"><i class="brush icon"></i>Logos</a>
 {% endif %}
 
 {% if current_user.has_roles(['admin']) %}

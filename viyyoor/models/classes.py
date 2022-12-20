@@ -74,6 +74,15 @@ class CertificateTemplate(me.EmbeddedDocument):
     )
 
 
+class CertificateLogo(me.EmbeddedDocument):
+    logo = me.ReferenceField("Logo", dbref=True, required=True)
+    order = me.IntField(required=True, default=0)
+    last_updated_by = me.ReferenceField("User", dbref=True, required=True)
+    updated_date = me.DateTimeField(
+        required=True, auto_now=True, default=datetime.datetime.now
+    )
+
+
 class Class(me.Document):
     meta = {"collection": "classes"}
 
@@ -84,12 +93,14 @@ class Class(me.Document):
 
     participants = me.MapField(field=me.EmbeddedDocumentField(Participant))
     endorsers = me.MapField(field=me.EmbeddedDocumentField(Endorser))
+
     instructors = me.ListField(me.StringField())
 
     issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     certificate_templates = me.MapField(
         field=me.EmbeddedDocumentField(CertificateTemplate)
     )
+    certificate_logs = me.EmbeddedDocumentListField("CertificateLogo")
 
     tags = me.ListField(me.StringField(required=True))
 
