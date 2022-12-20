@@ -17,6 +17,7 @@
 
 {% block breadcrumbs %}
 	{% if 'admin' in request.path %}
+		{{ super() }}
 		{% if request.endpoint == 'admin.organizations.view' %}
 		<div class="active section">{{ organization.name }}</div>
 		{% else %}
@@ -37,7 +38,6 @@
 
 {% block content %}
 {{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
-
 <div class="ui bottom attached segment">
 	<div class="ui horizontal basic compact segments">
 		<div class="ui very padded segment">
