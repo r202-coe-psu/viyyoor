@@ -16,7 +16,6 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-	{{ super() }}
 	{% if 'admin' in request.path %}
 		{% if request.endpoint == 'admin.organizations.view' %}
 		<div class="active section">{{ organization.name }}</div>

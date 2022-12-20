@@ -26,6 +26,7 @@ Classes
           <tr>
             <th>Name</th>
             <th>Description</th>
+            <th>Organization</th>
             <th>Operation</th>
           </tr>
         </thead>
@@ -37,6 +38,9 @@ Classes
             </td>
             <td>
               {{ class_.description }}
+            </td>
+            <td>  
+              {{ class_.organization.name }}
             </td>
             <td class="single line">
               <a class="ui circular button primary icon" href="{{ url_for('admin.classes.create_or_edit', class_id=class_.id) }}"><i class="edit icon"></i></a>

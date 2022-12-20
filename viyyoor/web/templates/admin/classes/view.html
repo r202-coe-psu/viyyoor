@@ -11,6 +11,7 @@
   <i class="right angle icon divider"></i>
   <div class="active section">{{ class_.name }}</div>
   {% else %}
+  <i class="right angle icon divider"></i>
   <a class="section" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a> 
   <i class="right angle icon divider"></i>
   {% endif %}
