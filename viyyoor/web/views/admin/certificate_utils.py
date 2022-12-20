@@ -65,19 +65,22 @@ def create_certificates(
         certificate.save()
 
 
-def prepare_template(certificate_template):
+def prepare_template(class_, participant_group):
 
     px_to_mm = 0.2645833333
     logo_space = 2
 
-    certificate_template.template.template_file.seek(0)
-    # svg = certificate_template.template.template_file.read().decode()
+    certificate_template = class_.certificate_templates.get(participant_group)
+
+    if not certificate_template:
+        return None
+
+    class_certificate_template.template.template_file.seek(0)
 
     image_names = ["PSU Logo.png", "PSU_EN-S.jpg"]
 
     et = parse(certificate_template.template.template_file)
     root = et.getroot()
-    # print(root.attrib)
 
     page_width = 0
     page_width_str = root.attrib.get("width")
@@ -85,30 +88,25 @@ def prepare_template(certificate_template):
         page_width_str = page_width_str.replace("mm", "")
         page_width = int(page_width_str)
 
-    cert_logo = root.find(".//*[@id='cert-logo']")
+    cert_logoo_et = root.find(".//*[@id='cert-logo']")
 
-    if not cert_logo:
-        print("There are not id")
+    if not cert_logo_et:
         return et
 
-    # print("->", cert_logo.tag, cert_logo.attrib)
-    logo_template = cert_logo[0]
-    # print("xxx>", logo_template.tag, logo_template.attrib)
+    logo_template = cert_logo_et[0]
     logo_template_height = float(logo_template.attrib.get("height"))
-    # print("--->", logo_template_height)
 
     cert_logo.clear()
 
     logo_elements = []
     total_width = 0
 
-    for idx, img_name in enumerate(logo):
-        img = Image.open(img_name)
+    for idx, certificate_log in enumerate(class_.certificate_logs):
+        img = Image.open(certificate_log.logo)
         if not img:
             continue
 
         logo_width, logo_height = img.size
-        print(logo_width, logo_height)
 
         ratio = logo_height / (logo_template_height / px_to_mm)
 
@@ -116,17 +114,13 @@ def prepare_template(certificate_template):
             int(round(logo_width / ratio)),
             int(round(logo_height / ratio)),
         )
-        print(new_logo_size)
 
-        ximg = img.resize(new_logo_size)
-        ximg.save(f"xxx-{img_name}")
-        print("height ->", new_logo_size[1] * px_to_mm)
+        scal_logo_img = img.resize(new_logo_size)
 
         new_element = copy.deepcopy(logo_template)
         new_element.set("width", str(new_logo_size[0] * px_to_mm))
         new_element.set("height", str(new_logo_size[1] * px_to_mm))
         new_element.set("id", f"logo-{idx}")
-        print("new>", new_element.tag, new_element.attrib)
 
         buffered = io.BytesIO()
         ximg.save(buffered, format="PNG")
@@ -139,20 +133,14 @@ def prepare_template(certificate_template):
     diff_page_width = (page_width - total_width + logo_space) / 2
 
     start_logo_x = diff_page_width
-    print("----->", total_width)
-    print("page >", page_width)
-    print("start>", start_logo_x)
 
     for element in logo_elements:
-        print("x>", start_logo_x)
         element.set("x", str(start_logo_x))
         cert_logo.append(element)
 
         start_logo_x += float(element.get("width")) + logo_space
 
-    et.write("xxx.svg")
-
-    return
+    return et
 
 
 def rener_qr_code(validated_url):
@@ -181,12 +169,7 @@ def render_certificate(
 ):
 
     participant = class_.get_participant(participant_id)
-    certificate_template = class_.certificate_templates.get(participant.group)
-
-    if not certificate_template:
-        return None
-
-    data = prepare_template(certificate_template)
+    data = prepare_template(class_, participant_group)
 
     template = Template(data)
 
@@ -267,7 +250,7 @@ def render_certificate(
             sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
 
         variables[f"{ endorser.endorser_id }_sign"] = f"image/png;base64,{sign_encoded}"
-    # print(variables)
+
     data = template.render(**variables)
 
     if extension == "png":

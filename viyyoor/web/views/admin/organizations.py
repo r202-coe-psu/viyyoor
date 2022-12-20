@@ -94,7 +94,7 @@ def view(organization_id):
         id=organization_id,
         status="active",
     )
-    logos = models.CertificateLogo.objects(organization=organization)
+    logos = models.Logo.objects(organization=organization)
     classes = models.Class.objects(organization=organization, status="active")
     return render_template(
         "/admin/organizations/view.html",
@@ -102,5 +102,3 @@ def view(organization_id):
         organization=organization,
         classes=classes,
     )
-
-

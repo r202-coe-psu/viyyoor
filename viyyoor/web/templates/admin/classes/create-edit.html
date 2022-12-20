@@ -20,17 +20,26 @@
 
     $('#started_date_calendar').calendar({
       type: 'date',
-      formatter: datetime_formatter,
+      formatter: {
+        date: 'YYYY-MM-DD'
+      },
       endCalendar: $('#ended_date_calendar')
     });
+
     $('#ended_date_calendar').calendar({
       type: 'date',
-      formatter: datetime_formatter,
-      startCalendar: $('#started_date_calendar')
-        });
+      formatter: {
+        date: 'YYYY-MM-DD'
+      },
+      startCalendar: $('#started_date_calendar'),
+      endCalendar: $('#issued_date_calendar')
+    });
+
     $('#issued_date_calendar').calendar({
       type: 'date',
-      formatter: datetime_formatter,
+      formatter: {
+        date: 'YYYY-MM-DD'
+      },
       startCalendar: $('#ended_date_calendar')
     });
 
