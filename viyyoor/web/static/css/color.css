@@ -12,7 +12,7 @@
 
 .psu-deep-blue.button:hover,
 .psu-deep-blue.buttons .button:hover {
-    background-color: rgb(0, 71, 125);
+    background-color: rgb(2, 45, 78);
     color: #fff
 }
 
@@ -30,7 +30,7 @@
 
 .psu-sky-blue.button:hover,
 .psu-sky-blue.buttons .button:hover {
-    background-color: rgb(0, 156, 222);
+    background-color: rgb(3, 123, 174);
     color: #fff
 }
 
@@ -66,7 +66,7 @@
 
 .psu-andaman-blue.button:hover,
 .psu-andaman-blue.buttons .button:hover {
-    background-color: rgb(0, 133, 173);
+    background-color: rgb(22, 110, 137);
     color: #fff
 }
 
@@ -84,7 +84,7 @@
 
 .psu-river-blue.button:hover,
 .psu-river-blue.buttons .button:hover {
-    background-color: rgb(89, 203, 232);
+    background-color: rgb(59, 175, 204);
     color: #fff
 }
 
@@ -102,6 +102,6 @@
 
 .psu-sritrang-blue.button:hover,
 .psu-sritrang-blue.buttons .button:hover {
-    background-color: rgb(182, 184, 220);
+    background-color: rgb(139, 142, 209);
     color: #fff
 }
