@@ -45,4 +45,4 @@ class Template(me.Document):
 
 
 class Logo(me.EmbeddedDocument):
-    logo_file = me.ReferenceField("Certificate_logo", dbref=True, required=True)
+    logo_file = me.ReferenceField("CertificateLogo", dbref=True, required=True)
