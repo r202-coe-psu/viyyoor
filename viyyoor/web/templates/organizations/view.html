@@ -1,4 +1,8 @@
-{% extends '/base/default-dashboard.html' %}
+{% if 'admin' in request.path %}
+	{% extends '/admin/organizations/index.html' %}
+{% else %}
+	{% extends '/base/default-dashboard.html' %}
+{% endif %}
 {% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
@@ -12,12 +16,22 @@
 {% endblock %}
 
 {% block breadcrumbs %}
-{% if request.endpoint == 'organizations.view' %}
-<div class="active section">{{ organization.name }}</div>
-{% else %}
-<a href="{{ url_for('organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
-<i class="right angle icon divider"></i>
-{% endif %}
+	{{ super() }}
+	{% if 'admin' in request.path %}
+		{% if request.endpoint == 'admin.organizations.view' %}
+		<div class="active section">{{ organization.name }}</div>
+		{% else %}
+		<a href="{{ url_for('admin.organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
+		<i class="right angle icon divider"></i>
+		{% endif %}
+	{% else %}
+		{% if request.endpoint == 'organizations.view' %}
+		<div class="active section">{{ organization.name }}</div>
+		{% else %}
+		<a href="{{ url_for('organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
+		<i class="right angle icon divider"></i>
+		{% endif %}
+	{% endif %}
 {% endblock %}
 
 

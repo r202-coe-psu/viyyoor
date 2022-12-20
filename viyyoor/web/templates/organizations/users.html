@@ -1,17 +1,26 @@
-{% extends '/organizations/home.html' %}
+{% extends '/organizations/view.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 {% import '/base/organization-renderer.html' as org_renderer %}
 
 {% block title %}{{ organization.name }}{% endblock %}
 
 {% block breadcrumbs %}
-{{ super() }}
-{% if request.endpoint == 'organizations.view_users' %}
-<div class="active section">Users</div>
-{% else %}
-<a href="{{ url_for('organizations.view_users', organization_id=organization.id) }}" class="section">Users</a>
-<i class="right angle icon divider"></i>
-{% endif %}
+	{{ super() }}
+	{% if 'admin' in request.path %}
+		{% if request.endpoint == 'admin.organizations.view_users' %}
+		<div class="active section">Users</div>
+		{% else %}
+		<a href="{{ url_for('admin.organizations.view_users', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
+		<i class="right angle icon divider"></i>
+		{% endif %}
+	{% else %}
+		{% if request.endpoint == 'organizations.view_users' %}
+		<div class="active section">Users</div>
+		{% else %}
+		<a href="{{ url_for('organizations.view_users', organization_id=organization.id) }}" class="section">Users</a>
+		<i class="right angle icon divider"></i>
+		{% endif %}
+	{% endif %}
 {% endblock %}
 
 

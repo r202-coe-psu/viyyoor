@@ -13,7 +13,7 @@
 
 {% block breadcrumbs %}
 {{ super() }}
-{% if request.endpoint == 'organizations.view' %}
+{% if request.endpoint == 'admin.organizations.view' %}
 <div class="active section">{{ organization.name }}</div>
 {% else %}
 <a href="{{ url_for('organizations.view', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>

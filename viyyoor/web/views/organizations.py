@@ -31,7 +31,7 @@ def index():
 
 
 @module.route("/<organization_id>")
-@acl.organization_roles_required("endorser")
+@acl.organization_roles_required("admin", "endorser", "staff")
 def view(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
@@ -40,7 +40,7 @@ def view(organization_id):
     logos = models.CertificateLogo.objects(organization=organization)
     classes = models.Class.objects(organization=organization, status="active")
     return render_template(
-        "/organizations/home.html",
+        "/organizations/view.html",
         logos=logos,
         organization=organization,
         classes=classes,
@@ -107,7 +107,7 @@ def change_organization_logo(organization_id, logo_id):
 
 
 @module.route("/<organization_id>/classes", methods=["GET", "POST"])
-@acl.organization_roles_required()
+@acl.organization_roles_required("admin", "endorser", "staff")
 def view_classes(organization_id):
     organization = models.Organization.objects.get(
         id=organization_id,
@@ -122,7 +122,7 @@ def view_classes(organization_id):
 
 
 @module.route("/<organization_id>/logos", methods=["GET", "POST"])
-@acl.organization_roles_required()
+@acl.organization_roles_required("admin", "endorser", "staff")
 def view_logos(organization_id):
     organization = models.Organization.objects.get(id=organization_id)
     logos = models.CertificateLogo.objects(organization=organization)
@@ -134,7 +134,7 @@ def view_logos(organization_id):
 
 
 @module.route("/<organization_id>/users", methods=["GET", "POST"])
-@acl.organization_roles_required()
+@acl.organization_roles_required("admin", "endorser", "staff")
 def view_users(organization_id):
     organization = models.organizations.Organization.objects.get(id=organization_id)
     role = request.args.get("role")
@@ -302,7 +302,7 @@ def delete_logo(organization_id, logo_id):
 
 
 @module.route("/<organization_id>/templates", methods=["GET", "POST"])
-@acl.organization_roles_required()
+@acl.organization_roles_required("admin", "endorser", "staff")
 def view_templates(organization_id):
     organization = models.Organization.objects.get(id=organization_id)
 
