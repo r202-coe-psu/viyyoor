@@ -63,8 +63,10 @@ def create_or_edit(class_id):
         class_ = models.Class.objects.get(id=class_id)
         form = forms.classes.ClassForm(obj=class_)
 
+    form.organization.choices = [
+        (str(o.id), o.name) for o in models.Organization.objects()
+    ]
     if not form.validate_on_submit():
-        print(form.errors)
         return render_template(
             "/admin/classes/create-edit.html",
             class_=class_,
@@ -75,6 +77,8 @@ def create_or_edit(class_id):
     if not class_id:
         class_ = models.Class()
         class_.owner = current_user._get_current_object()
+    if form.organization.data:
+        organization = models.Organization.objects.get(id=form.organization.data)
 
     form.populate_obj(class_)
     class_.organization = organization
@@ -87,6 +91,8 @@ def create_or_edit(class_id):
 @acl.organization_roles_required()
 def view(class_id):
     class_ = models.Class.objects.get(id=class_id)
+    organization = class_.organization
+
     job_keys = {
         f"prepare certificates": f"prepare_certificates_{class_.id}",
         f"export certificates": f"export_certificates_{class_.id}_on",
@@ -107,6 +113,7 @@ def view(class_id):
         class_=class_,
         jobs=jobs,
         job_data=job_data,
+        organization=organization,
     )
 
 

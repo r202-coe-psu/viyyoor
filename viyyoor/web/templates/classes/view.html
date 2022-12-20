@@ -1,6 +1,9 @@
 {% extends '/classes/index.html' %}
 {% import '/base/error-handler.html' as eh %}
 
+{% block breadcrumbs %}
+{{ super() }}
+{% endblock %}
 
 {% block content %}
 <div class="row">

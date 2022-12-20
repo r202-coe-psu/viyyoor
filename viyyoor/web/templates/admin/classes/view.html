@@ -1,11 +1,14 @@
 {% extends '/organizations/classes.html' %}
+
 {% import '/base/error-handler.html' as eh %}
+{% set organization = class_.organization %}
 
 {% block dashboard_title %}Classes: {{ class_.name }}{% endblock %}
 
 {% block breadcrumbs %}
   {{ super() }}
   {% if request.path == url_for('admin.classes.view', class_id=class_.id) %}
+  <i class="right angle icon divider"></i>
   <div class="active section">{{ class_.name }}</div>
   {% else %}
   <a class="section" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a> 

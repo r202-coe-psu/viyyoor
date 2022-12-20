@@ -74,6 +74,12 @@
   <div class="ui segment">
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
+      
+      <b>
+        {{ form.organization.label }}
+      </b>
+      {{ form.organization(class_="ui fluid search selection dropdown") }}<br>
+      
       {{ renderer.render_field(form.name) }}
       {{ renderer.render_field(form.printed_name) }}
       {{ renderer.render_field(form.description) }}
