@@ -51,7 +51,11 @@ def index():
 @module.route("/<class_id>/edit", methods=["GET", "POST"])
 @acl.organization_roles_required()
 def create_or_edit(class_id):
-    organization = current_user.get_current_organization()
+    organization_id = request.args.get("organization_id")
+    organization = None
+    if organization_id:
+        organization = models.Organization.objects.get(id=organization_id)
+
     form = forms.classes.ClassForm()
 
     class_ = None
@@ -65,6 +69,7 @@ def create_or_edit(class_id):
             "/admin/classes/create-edit.html",
             class_=class_,
             form=form,
+            organization=organization,
         )
 
     if not class_id:

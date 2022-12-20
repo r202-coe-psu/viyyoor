@@ -17,8 +17,7 @@
 		{% if request.endpoint == 'admin.organizations.view_classes' %}
 		<div class="active section">Classes</div>
 		{% else %}
-		<a href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}" class="section">{{ organization.name }}</a>
-		<i class="right angle icon divider"></i>
+		<a href="{{ url_for('admin.organizations.view_classes', organization_id=organization.id) }}" class="section">Classes</a>
 		{% endif %}
 	{% else %}
         {% if request.endpoint == 'organizations.view_classes' %}

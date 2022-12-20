@@ -1,4 +1,8 @@
+{% if request.args.get("organization_id") %}
+{% extends '/organizations/classes.html' %}
+{% else %}
 {% extends '/admin/classes/index.html' %}
+{% endif %}
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block additional_js %}
@@ -56,7 +60,7 @@
 
 {% block breadcrumbs %}
   {{ super() }}
-  <div class="divider"> / </div>
+  <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
     <div class="active section">Edit Class: {{ form.name.data }}</div>
   {% else %}
