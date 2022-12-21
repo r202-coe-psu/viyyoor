@@ -258,12 +258,12 @@ def render_certificate(
     template = Template(data)
 
     certificate_template = class_.certificate_templates.get(participant.group)
-    text = [t.strip() for t in certificate_template.appreciate_text.split("\n")]
+    text = [t.strip() for t in certificate_template.certificate_text.split("\n")]
 
-    appreciate_text = []
+    certificate_text = []
     if len(text) > 0:
-        appreciate_text = [f"<tspan>{text[0]}</tspan>"]
-        appreciate_text.extend(
+        certificate_text = [f"<tspan>{text[0]}</tspan>"]
+        certificate_text.extend(
             [f'<tspan x="50%" dy="10">{t.strip()}</tspan>' for t in text[1:]]
         )
 
@@ -284,7 +284,7 @@ def render_certificate(
     variables = dict(
         certificate_name=certificate_template.name,
         participant_name=participant.name.strip(),
-        appreciate_text="".join(appreciate_text),
+        certificate_text="".join(certificate_text),
         class_name=class_.printed_name,
         issued_date=class_.issued_date.strftime("%-d %B %Y"),
         class_date=class_date,

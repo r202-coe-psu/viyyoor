@@ -105,7 +105,7 @@ BaseCertificateTemplateForm = model_form(
     exclude=["updated_date", "last_updated_by", "template"],
     field_args={
         "name": {"label": "Name"},
-        "appreciate_text": {"label": "Appreciate Text"},
+        "certificate_text": {"label": "Certificate Text"},
         "group": {"label": "Group"},
     },
 )

@@ -61,7 +61,7 @@ class Endorser(me.EmbeddedDocument):
 
 class CertificateTemplate(me.EmbeddedDocument):
     name = me.StringField(required=True, max_length=256)
-    appreciate_text = me.StringField(required=True)
+    certificate_text = me.StringField(required=True)
     template = me.ReferenceField("Template", required=True)
     group = me.StringField(
         required=True,
