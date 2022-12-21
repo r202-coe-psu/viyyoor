@@ -1,4 +1,4 @@
-{% extends '/organizations/classes.html' %}
+{% extends '/admin/classes/index.html' %}
 
 {% import '/base/error-handler.html' as eh %}
 {% set organization = class_.organization %}
@@ -136,14 +136,10 @@
       Certificate
       <i class="dropdown icon"></i>
       <div class="menu">
-        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Select Certificate Template</a>
-        <a class="item" href="{{ url_for('admin.classes.prepare_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id) }}"><i class="certificate icon"></i>Certificate Template</a>
+        <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Certificate Endorser</a>
       </div>
     </div>
-
-    
-    <a class="item" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id) }}"><i class="user tie icon"></i>Endorser</a>
-      
 
     <div class="ui pointing dropdown link item">
       <i class="user graduate icon"></i>
@@ -152,6 +148,16 @@
       <div class="menu">
         <a class="item" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id) }}"><i class="user graduate icon"></i>Add Participant</a>
         <a class="item" href="{{ url_for('admin.classes.add_participant_from_file', class_id=class_.id) }}"><i class="user graduate file icon"></i>Add Participant From File</a>
+      </div>
+    </div>
+
+    <div class="ui pointing dropdown link item">
+      <i class="cogs icon"></i>
+      Operation
+      <i class="dropdown icon"></i>
+      <div class="menu">
+
+        <a class="item" href="{{ url_for('admin.classes.prepare_certificate', class_id=class_.id) }}"><i class="stamp file icon"></i>Prepair Certificate</a>
       </div>
     </div>
 

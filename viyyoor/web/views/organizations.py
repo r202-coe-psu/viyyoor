@@ -125,7 +125,7 @@ def view_classes(organization_id):
 @acl.organization_roles_required("admin", "endorser", "staff")
 def view_logos(organization_id):
     organization = models.Organization.objects.get(id=organization_id)
-    logos = models.CertificateLogo.objects(organization=organization)
+    logos = models.Logo.objects(organization=organization)
     return render_template(
         "/organizations/logos.html",
         organization=organization,
