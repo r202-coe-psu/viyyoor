@@ -224,6 +224,8 @@ def render_certificate(
         validation_qrcode=f"image/png;base64,{qrcode_encoded}",
     )
 
+    print(">>>", variables)
+
     # variables.update(participant.extra)
 
     for k, v in participant.extra.items():
