@@ -6,7 +6,7 @@ import cairosvg
 import qrcode
 import base64
 
-from defusedxml.ElementTree import parse
+from defusedxml import ElementTree
 
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from viyyoor import models
@@ -75,11 +75,11 @@ def prepare_template(class_, participant_group):
     if not certificate_template:
         return None
 
-    class_certificate_template.template.template_file.seek(0)
+    certificate_template.template.template_file.seek(0)
 
     image_names = ["PSU Logo.png", "PSU_EN-S.jpg"]
 
-    et = parse(certificate_template.template.template_file)
+    et = ElementTree.parse(certificate_template.template.template_file)
     root = et.getroot()
 
     page_width = 0
@@ -88,7 +88,7 @@ def prepare_template(class_, participant_group):
         page_width_str = page_width_str.replace("mm", "")
         page_width = int(page_width_str)
 
-    cert_logoo_et = root.find(".//*[@id='cert-logo']")
+    cert_logo_et = root.find(".//*[@id='cert-logo']")
 
     if not cert_logo_et:
         return et
@@ -96,7 +96,7 @@ def prepare_template(class_, participant_group):
     logo_template = cert_logo_et[0]
     logo_template_height = float(logo_template.attrib.get("height"))
 
-    cert_logo.clear()
+    cert_logo_et.clear()
 
     logo_elements = []
     total_width = 0
@@ -136,14 +136,14 @@ def prepare_template(class_, participant_group):
 
     for element in logo_elements:
         element.set("x", str(start_logo_x))
-        cert_logo.append(element)
+        cert_logo_et.append(element)
 
         start_logo_x += float(element.get("width")) + logo_space
 
     return et
 
 
-def rener_qr_code(validated_url):
+def render_qrcode(validation_url):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_M,
@@ -169,10 +169,17 @@ def render_certificate(
 ):
 
     participant = class_.get_participant(participant_id)
-    data = prepare_template(class_, participant_group)
+    et = prepare_template(class_, participant.group)
 
+    print(et)
+    data = ElementTree.tostring(et.getroot(), encoding="utf-8", method="xml").decode(
+        "utf-8"
+    )
+
+    print("--->", data)
     template = Template(data)
 
+    certificate_template = class_.certificate_templates.get(participant.group)
     text = [t.strip() for t in certificate_template.appreciate_text.split("\n")]
 
     appreciate_text = []
@@ -188,7 +195,9 @@ def render_certificate(
     if certificate:
         validation_url = validated_url_template.format(certificate_id=certificate.id)
 
-    qrcode_encoded = render_qr_code(validation_url)
+    qrcode_encoded = render_qrcode(validation_url)
+
+    print("qr code", type(qrcode_encoded))
 
     class_date = class_.started_date.strftime("%-d %B %Y")
     if class_.started_date != class_.ended_date:
@@ -252,6 +261,7 @@ def render_certificate(
         variables[f"{ endorser.endorser_id }_sign"] = f"image/png;base64,{sign_encoded}"
 
     data = template.render(**variables)
+    print("-->", type(data))
 
     if extension == "png":
         output = cairosvg.svg2png(bytestring=data.encode())

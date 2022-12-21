@@ -13,11 +13,12 @@ from flask_login import current_user
 
 import datetime
 import pathlib
-
 import pandas
 import xlsxwriter
 import json
 import io
+import markdown
+
 from copy import deepcopy
 from urllib import parse
 
@@ -175,6 +176,7 @@ def add_or_edit_endorser(class_id, endorser_id):
             "/admin/classes/add-or-edit-endorser.html",
             form=form,
             class_=class_,
+            markdown=markdown,
         )
 
     endorser = class_.get_endorser(endorser_id)

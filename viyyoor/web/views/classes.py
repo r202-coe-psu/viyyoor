@@ -102,8 +102,8 @@ def endorse(class_id):
     return redirect(url_for("dashboard.index"))
 
 
-@module.route("/<class_id>/certificate/<participant_id>.<extension>")
-# @login_required
+@module.route("/<class_id>/certificates/<participant_id>.<extension>")
+@login_required
 def render_certificate(class_id, participant_id, extension):
     response = Response()
     response.status_code = 404

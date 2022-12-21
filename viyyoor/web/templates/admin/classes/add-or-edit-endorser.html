@@ -57,10 +57,10 @@
     </thead>
     <tbody>
       {% for key, endorser in class_.endorsers.items() | sort(attribute='1.endorser_id') %}
-        <tr>
+        <tr class="top aligned">
           <td>{{ endorser.get_endorser_id_display() }}</td>
           <td>{{ endorser.name }}</td>
-          <td>{{ endorser.position }}</td>
+          <td>{{ endorser.position.replace('\n', '<br>') | safe }}</td>
           <td>
             <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="edit icon"></i></a>
             <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_endorser', class_id=class_.id, endorser_id=endorser.endorser_id) }}"><i class="trash icon"></i></a>

@@ -49,13 +49,14 @@
       {{ renderer.render_fileinput(form.signature_file) }}
       </div>
       {% if 'create' in request.path %}
-      <button name="create" type="submit" class="ui button primary"></button>
+      <button name="create" type="submit" class="ui button primary">Create</button>
       {% elif 'edit' in request.path %}
       <a onclick="$('.modal.edit').modal('show')" class="ui primary button">
         Edit
       </a>
       {% endif %}
 
+      {% if 'edit' in request.path %}
       <div class="ui small modal edit">
         <div class="header">Edit Signature</div>
         <div class="content">
@@ -68,6 +69,7 @@
           <button class="ui right floated button" onclick="$('.modal.edit').modal('hide')">Cancel</button>
         </div>
       </div>
+    {% endif %}
 
     </form>
     {% if form.errors | length > 0 %}
