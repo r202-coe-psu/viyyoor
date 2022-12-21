@@ -15,7 +15,7 @@ import datetime
 from viyyoor.web import acl, forms
 from viyyoor import models
 
-module = Blueprint("shops", __name__, url_prefix="/shops")
+module = Blueprint("store", __name__, url_prefix="/store")
 
 
 @module.route("/")
@@ -26,7 +26,7 @@ def index():
     )
 
     return render_template(
-        "/shop/index.html",
+        "/store/index.html",
         organizations=organizations,
         templates=templates,
     )

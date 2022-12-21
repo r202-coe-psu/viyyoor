@@ -15,7 +15,6 @@
 
 <a class="item" href="{{ url_for('dashboard.index') }}"><i class="icon dashboard"></i>Dashboard</a>
 <a class="item" href="{{ url_for('dashboard.show_my_certificates') }}"><i class="icon certificate"></i>My Certificate</a>
-<a class="item" href="{{ url_for('shops.index')}}"><i class="icon shopping cart"></i>Shop</a>
 
 {% set organization = current_user.get_current_organization() %}
 {% if organization %}
@@ -28,6 +27,7 @@
   <a class="item" href="{{ url_for('organizations.view_classes', organization_id=organization.id) }}"><i class="icon archive "></i>Classes</a>
   <a class="item" href="{{ url_for('organizations.view_templates', organization_id=organization.id) }}"><i class="icon id card outline"></i>Template</a>
   <a class="item" href="{{ url_for('organizations.view_logos', organization_id=organization.id) }}"><i class="brush icon"></i>Logos</a>
+  <a class="item" href="{{ url_for('store.index')}}"><i class="icon shopping cart"></i>Store</a>
 {% endif %}
 
 {% if current_user.has_roles(['admin']) %}
