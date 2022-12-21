@@ -5,11 +5,17 @@ import io
 import cairosvg
 import qrcode
 import base64
+import copy
 
 from defusedxml import ElementTree
 
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from viyyoor import models
+
+
+PX_TO_MM = 0.2645833333
+LOGO_SPACE = 2
+ENDORSER_POSSITION_DY = 5
 
 
 def create_certificates(
@@ -65,38 +71,23 @@ def create_certificates(
         certificate.save()
 
 
-def prepare_template(class_, participant_group):
-
-    px_to_mm = 0.2645833333
-    logo_space = 2
-
-    certificate_template = class_.certificate_templates.get(participant_group)
-
-    if not certificate_template:
-        return None
-
-    certificate_template.template.template_file.seek(0)
-
-    image_names = ["PSU Logo.png", "PSU_EN-S.jpg"]
-
-    et = ElementTree.parse(certificate_template.template.template_file)
-    root = et.getroot()
+def add_certificate_logo(element, class_):
 
     page_width = 0
-    page_width_str = root.attrib.get("width")
+    page_width_str = element.attrib.get("width")
     if "mm" in page_width_str:
         page_width_str = page_width_str.replace("mm", "")
         page_width = int(page_width_str)
 
-    cert_logo_et = root.find(".//*[@id='cert-logo']")
+    cert_logo_element = element.find(".//*[@id='cert-logo']")
 
-    if not cert_logo_et:
-        return et
+    if not cert_logo_element:
+        return element
 
-    logo_template = cert_logo_et[0]
-    logo_template_height = float(logo_template.attrib.get("height"))
+    logo_template_element = cert_logo_element[0]
+    logo_template_height = float(logo_template_element.attrib.get("height"))
 
-    cert_logo_et.clear()
+    cert_logo_element.remove(logo_template_element)
 
     logo_elements = []
     total_width = 0
@@ -108,7 +99,7 @@ def prepare_template(class_, participant_group):
 
         logo_width, logo_height = img.size
 
-        ratio = logo_height / (logo_template_height / px_to_mm)
+        ratio = logo_height / (logo_template_height / PX_TO_MM)
 
         new_logo_size = (
             int(round(logo_width / ratio)),
@@ -118,19 +109,21 @@ def prepare_template(class_, participant_group):
         scal_logo_img = img.resize(new_logo_size)
 
         new_element = copy.deepcopy(logo_template)
-        new_element.set("width", str(new_logo_size[0] * px_to_mm))
-        new_element.set("height", str(new_logo_size[1] * px_to_mm))
+        new_element.set("width", str(new_logo_size[0] * PX_TO_MM))
+        new_element.set("height", str(new_logo_size[1] * PX_TO_MM))
         new_element.set("id", f"logo-{idx}")
 
         buffered = io.BytesIO()
         ximg.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
-        new_element.set("xlink:href", f"data:image/png;base64,{img_str}")
+        new_element.set(
+            "{http://www.w3.org/1999/xlink}href", f"data:image/png;base64,{img_str}"
+        )
 
         logo_elements.append(new_element)
-        total_width += new_logo_size[0] * px_to_mm + logo_space
+        total_width += new_logo_size[0] * PX_TO_MM + LOGO_SPACE
 
-    diff_page_width = (page_width - total_width + logo_space) / 2
+    diff_page_width = (page_width - total_width + LOGO_SPACE) / 2
 
     start_logo_x = diff_page_width
 
@@ -138,9 +131,21 @@ def prepare_template(class_, participant_group):
         element.set("x", str(start_logo_x))
         cert_logo_et.append(element)
 
-        start_logo_x += float(element.get("width")) + logo_space
+        start_logo_x += float(element.get("width")) + LOGO_SPACE
 
-    return et
+    return element
+
+
+def prepare_template(
+    class_,
+    root,
+    required_signature=True,
+):
+
+    element = add_certificate_logo(root, class_)
+    element = add_endorsers(element, class_, required_signature)
+
+    return element
 
 
 def render_qrcode(validation_url):
@@ -157,7 +162,66 @@ def render_qrcode(validation_url):
 
     qrcode_io = io.BytesIO()
     qrcode_image.save(qrcode_io, "PNG", quality=100)
-    return base64.b64encode(qrcode_io.getvalue()).decode("ascii")
+    return base64.b64encode(qrcode_io.getvalue()).decode("utf-8")
+
+
+def add_qrcode(element, validation_url):
+    base64_qrcode_image = render_qrcode(validation_url)
+
+    qrcode_element = element.find(".//*[@id='validation_qrcode']")
+
+    if qrcode_element is not None:
+        qrcode_element.set(
+            "{http://www.w3.org/1999/xlink}href",
+            f"data:image/png;base64,{base64_qrcode_image}",
+        )
+
+    return element
+
+
+def add_endorsers(element, class_, required_signature=True):
+
+    ENDOSER_NUMS = 5
+    for idx in range(1, ENDOSER_NUMS + 1):
+        endorser_element = element.find(f".//*[@id='endorser_{idx}']")
+        if not endorser_element:
+            continue
+
+        endorser = class_.endorsers.get(f"endorser_{idx}")
+        if not endorser:
+            element.remove(endorser_element)
+
+            endorser_sign_element = element.find(f".//*[@id='endorser_{idx}_sign']")
+            if endorser_sign_element:
+                element.remove(endorser_sign_element)
+
+        signature = endorser.user.get_signature()
+        sign_encoded = ""
+        if signature and required_signature:
+            sign_encoded = base64.b64encode(signature.file.read()).decode("utf-8")
+
+        endorser_sign_element = element.find(f".//*[@id='endorser_{idx}_sign']")
+        if endorser_sign_element is not None:
+            endorser_sign_element.set(
+                "{http://www.w3.org/1999/xlink}href",
+                f"data:{signature.file.content_type};base64,{sign_encoded}",
+            )
+
+        template_element = endorser_element[0]
+        template_element.attrib.pop("y")
+        endorser_element.remove(template_element)
+
+        endorser_name_element = copy.deepcopy(template_element)
+        endorser_name_element.text = f"({endorser.name})"
+        endorser_element.append(endorser_name_element)
+
+        for possition_id, text in enumerate(endorser.position.split("\n")):
+            endorser_pos_element = copy.deepcopy(template_element)
+            endorser_pos_element.set("id", f"endorser_{idx}_position_{possition_id}")
+            endorser_pos_element.text = text
+            endorser_pos_element.set("dy", str(ENDORSER_POSSITION_DY))
+            endorser_element.append(endorser_pos_element)
+    return element
 
 
 def render_certificate(
@@ -169,14 +233,28 @@ def render_certificate(
 ):
 
     participant = class_.get_participant(participant_id)
-    et = prepare_template(class_, participant.group)
 
-    print(et)
-    data = ElementTree.tostring(et.getroot(), encoding="utf-8", method="xml").decode(
-        "utf-8"
-    )
+    certificate_template = class_.certificate_templates.get(participant.group)
 
-    print("--->", data)
+    if not certificate_template:
+        return None
+
+    certificate_template.template.template_file.seek(0)
+
+    et = ElementTree.parse(certificate_template.template.template_file)
+    root = et.getroot()
+
+    element = prepare_template(class_, root, required_signature=True)
+
+    certificate = class_.get_certificate(participant_id)
+
+    validation_url = validated_url_template.format(certificate_id="test")
+    if certificate:
+        validation_url = validated_url_template.format(certificate_id=certificate.id)
+
+    element = add_qrcode(root, validation_url)
+    data = ElementTree.tostring(element, encoding="utf-8", method="xml").decode("utf-8")
+
     template = Template(data)
 
     certificate_template = class_.certificate_templates.get(participant.group)
@@ -188,16 +266,6 @@ def render_certificate(
         appreciate_text.extend(
             [f'<tspan x="50%" dy="10">{t.strip()}</tspan>' for t in text[1:]]
         )
-
-    certificate = class_.get_certificate(participant_id)
-
-    validation_url = validated_url_template.format(certificate_id="test")
-    if certificate:
-        validation_url = validated_url_template.format(certificate_id=certificate.id)
-
-    qrcode_encoded = render_qrcode(validation_url)
-
-    print("qr code", type(qrcode_encoded))
 
     class_date = class_.started_date.strftime("%-d %B %Y")
     if class_.started_date != class_.ended_date:
@@ -221,12 +289,7 @@ def render_certificate(
         issued_date=class_.issued_date.strftime("%-d %B %Y"),
         class_date=class_date,
         validation_url=validation_url,
-        validation_qrcode=f"image/png;base64,{qrcode_encoded}",
     )
-
-    print(">>>", variables)
-
-    # variables.update(participant.extra)
 
     for k, v in participant.extra.items():
         if type(v) is not str:
@@ -247,23 +310,7 @@ def render_certificate(
             printed_text.append(f'<tspan x="50%" dy="{10*(i+1)}">{t.strip()}</tspan>')
         variables[k] = "".join(printed_text)
 
-    for key, endorser in class_.endorsers.items():
-        variables[f"{ endorser.endorser_id }_name"] = endorser.name.strip()
-
-        text = [t.strip() for t in endorser.position.split("\n")]
-        for i, t in enumerate(text):
-            variables[f"{ endorser.endorser_id }_position_{i}"] = t
-
-        signature = endorser.user.get_signature()
-
-        sign_encoded = ""
-        if signature and required_signature:
-            sign_encoded = base64.b64encode(signature.file.read()).decode("ascii")
-
-        variables[f"{ endorser.endorser_id }_sign"] = f"image/png;base64,{sign_encoded}"
-
     data = template.render(**variables)
-    print("-->", type(data))
 
     if extension == "png":
         output = cairosvg.svg2png(bytestring=data.encode())
