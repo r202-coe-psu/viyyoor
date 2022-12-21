@@ -151,6 +151,13 @@ def add_or_edit_endorser(class_id, endorser_id):
     form.user.queryset = users
 
     if not form.validate_on_submit():
+        endorser_ids = class_.endorsers.keys()
+        form.endorser_id.choices = [
+            idx
+            for idx in form.endorser_id.choices
+            if idx[0] not in endorser_ids or idx[0] == form.endorser_id.data
+        ]
+
         return render_template(
             "/admin/classes/add-or-edit-endorser.html",
             form=form,
