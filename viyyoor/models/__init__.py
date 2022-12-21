@@ -11,7 +11,8 @@ from .organizations import (
     Organization,
     OrganizationUserRole,
     Logo,
-    OrganizationQuata,
+    CertificateQuota,
+    CertificateQuotaUsage,
 )
 from .history_logs import HistoryLog
 

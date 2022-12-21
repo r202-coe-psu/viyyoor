@@ -70,7 +70,7 @@ class Organization(me.Document):
         return 0
 
 
-class OrganizationQuata(me.Document):
+class CertificateQuota(me.Document):
     number_of_uses = me.IntField(require=True, default=0)
     quota = me.IntField(require=True, default=0)
     price = me.FloatField(require=True, default=0.0)
@@ -84,10 +84,10 @@ class OrganizationQuata(me.Document):
     ip_address = me.StringField(required=True, default="0.0.0.0")
     organization = me.ReferenceField("Organization", dbref=True, requrired=True)
 
-    meta = {"collection": "organization_quatas"}
+    meta = {"collection": "certificate_quotas"}
 
 
-class OrganizationQuataUsage(me.Document):
+class CertificateQuotaUsage(me.Document):
     certificates = me.ListField(me.ReferenceField("Certificate", dbref=True))
     number = me.IntField(require=True, default=0)
 
@@ -96,11 +96,12 @@ class OrganizationQuataUsage(me.Document):
 
     class_ = me.ReferenceField("Class", dbref=True, requrired=True)
     organization = me.ReferenceField("Organization", dbref=True, requrired=True)
-    organization_quota = me.ReferenceField(
-        "OrganizationQuota", dbref=True, requrired=True
+    certificate_quota = me.ReferenceField(
+        "CertificateQuota", dbref=True, requrired=True
     )
 
-    meta = {"collection": "organization_quata_usages"}
+    used_by = me.ReferenceField("User", dbref=True)
+    meta = {"collection": "certificate_quota_usages"}
 
 
 class Logo(me.Document):
