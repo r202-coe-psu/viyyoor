@@ -66,3 +66,18 @@ def add():
     dc.save()
 
     return redirect(url_for("admin.digital_certificates.index"))
+
+
+@module.route("/<digital_certificate_id>/action/<action>")
+@acl.roles_required("admin")
+def action(digital_certificate_id, action):
+    dc = models.DigitalCertificate.objects.get(id=digital_certificate_id)
+    if action == "deactivate":
+        dc.status = "inactive"
+        dc.save()
+
+    elif action == "activate":
+        dc.status = "active"
+        dc.save()
+
+    return redirect(url_for("admin.digital_certificates.index"))
