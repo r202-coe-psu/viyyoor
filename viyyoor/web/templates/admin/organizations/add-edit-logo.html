@@ -1,0 +1,49 @@
+{% extends "/organizations/logos.html" %}
+{% import '/base/html-renderer.html' as renderer %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block breadcrumbs %}
+{{ super() }}
+{{ 'Edit' if 'edit' in request.path else 'Add' }} Logo
+{% endblock %}
+
+{% block content %}
+
+<div class="ui segment">
+    <form method="POST", class="ui form" enctype="multipart/form-data">
+
+        {{ form.csrf_token }}
+        {{ renderer.render_field(form.logo_name) }}
+        {{ renderer.render_fileinput(form.uploaded_logo_file, required=True) }}
+
+        <ul class="list">
+          <li>Allowed types: <b>png</b>  <b>jpg</b></li>
+          <li>Logo size should be 1,920 x 1,080</li>
+        </ul>
+      <button name="Add Logo" type="submit" class="ui button primary">
+        {{ 'Edit' if 'edit' in request.path else 'Add' }} Logo
+      </button>
+
+    </form>
+</div>
+{% endblock %}
+
+{% block additional_js %}
+    {{ super() }}
+
+    <script type="text/javascript">
+
+    $(".attach-file-uploaded_logo_file").click(function() {
+        $(this).parent().find("#uploaded_logo_file").click();
+      });
+
+      $('#uploaded_logo_file')
+      .on('change', function(e) {
+        var name = e.target.files[0].name;
+        $('.attach-file-uploaded_logo_file', $(e.target).parent()).val(name);
+      });
+  
+
+    </script>
+{% endblock %}

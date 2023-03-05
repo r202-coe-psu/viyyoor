@@ -35,6 +35,8 @@ class Certificate(me.Document):
     ca_download_url = me.StringField()
     validated_url = me.StringField()
 
+    # is_sent_to_participant_email = me.BooleanField(required=True, default=False)
+
     file = me.FileField(required=True, collection_name="certificate_fs")
 
     def get_participant(self):

@@ -15,13 +15,22 @@ class DigitalCertificate(me.Document):
     ca_download_url = me.StringField(max_length=1024)
 
     owner = me.ReferenceField("User", dbref=True, required=True)
-    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     status = me.StringField(required=True, default="active")
+
+    subject = me.StringField(required=True, default="")
+    issuer = me.StringField(required=True, default="")
+
+    started_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    expired_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+
+    created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    updated_date = me.DateTimeField(
+        required=True, default=datetime.datetime.now, auto_now=True
+    )
 
     ip_address = me.StringField(required=True, default="0.0.0.0")
 
     def get_key(self):
-
         password = self.ip_address.encode()
         salt = str(self.owner.id).rjust(16, "0")[:16].encode()
         kdf = PBKDF2HMAC(
@@ -40,7 +49,6 @@ class DigitalCertificate(me.Document):
         return f.encrypt(password.encode())
 
     def decrypt_password(self, token):
-
         key = self.get_key()
         f = Fernet(key)
         return f.decrypt(token)

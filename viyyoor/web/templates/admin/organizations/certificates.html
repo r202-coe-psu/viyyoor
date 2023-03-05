@@ -1,0 +1,241 @@
+{% extends '/organizations/view.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+{% import '/base/organization-renderer.html' as org_renderer %}
+
+{% block title %}{{ organization.name }}{% endblock %}
+
+{% block dashboard_title %}
+{{ organization.name }}
+{# <a class="bug popup icon item" data-content="Edit This Page" href="{{ url_for('organizations.edit', organization_id=organization.id) }}">
+    <h3><i class="edit icon"></i></h3>
+</a>
+#}
+{% endblock %}
+
+{% set is_admin_URL = '' %}
+{% if 'admin' in request.path %}
+    {% set is_admin_URL = 'admin.' %}
+{% endif %}
+
+{% block breadcrumbs %}
+    {{ super() }}
+        {% if request.endpoint == is_admin_URL + 'organizations.view_certificates' %}
+            <div class="active section">Certificates</div>
+        {% else %}
+            <a href="{{ url_for(is_admin_URL + 'organizations.view_certificates', organization_id=organization.id) }}" class="section">Certificates</a>
+            <i class="right angle icon divider"></i>
+        {% endif %}
+{% endblock %}
+
+{% block content %}
+{{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
+
+<h2 class="ui header">
+    Certificates
+</h2>
+<div class="ui divider"></div>
+
+
+<div class="ui fitted basic segment">
+  <form method="POST" class="ui form">
+    {{ search_form.csrf_token() }}
+
+    <div class="three fields">
+        {{ renderer.render_field(search_form.owner) }} 
+        {{ renderer.render_search_select(search_form.class_) }} 
+
+        <button class="ui teal button" type="submit" style="margin-top: 1.5em">
+          <i class="search icon"></i>
+          Search
+        </button>
+      </div>
+
+
+  </form>
+
+    <table class="ui celled table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Owner Name</th>
+            <th>Class</th>
+            <th>Issued Date</th>
+            <th>Signed Date</th>
+            <th>Status</th>
+            <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+            
+    {% if certificates %}
+      {% for certificate in certificates %}
+        {% set participant = certificate.get_participant() %}
+        <tr>
+          <td>{{ certificate.id }}</td>
+          <td>
+            {{ participant.name }}
+          </td>
+          <td>
+            <a target="_blank" href="{{ url_for('admin.classes.view', class_id=certificate.class_.id, organization_id=organization.id) }}">{{ certificate.class_.name }}</a>
+          </td>
+          <td>
+            {% if certificate.issued_date %}
+              {{ certificate.get_issued_date_display() }}
+            {% else %}
+              <span class="ui grey text">
+                This certificate has not been issued yet.
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            {% if certificate.signed_date %}
+              {{ certificate.get_signed_date_display() }}
+            {% else %}
+              <span class="ui grey text">
+                This certificate has not been signed yet.
+              </span>
+            {% endif %}
+          </td>
+          <td class="one wide single line">
+            <div class="ui circular 
+            {{ 'green' if certificate.status == 'completed' }}
+            {{ 'blue' if certificate.status == 'prerelease' }}
+            {{ 'yellow' if certificate.status == 'signing' }}
+            {{ 'red' if certificate.status == 'purge' }} icon label link pop"
+              style="padding: 0.75em !important;"
+              data-content="certificate status" 
+              data-position="bottom left">
+              <i class="certificate icon"></i>
+              {{ certificate.status.title() }}
+            </div>
+            <div class="ui circular {{ 'green' if certificate.is_sent_to_participant_email else '' }} icon label link pop" 
+              style="padding: 0.75em !important;"
+              data-content="email status" 
+              data-position="bottom left">
+              <i class="envelope icon"></i>
+              {{ 'Sent' if certificate.is_sent_to_participant_email else 'Not sent' }}
+            </div>
+          </td>
+          <td class="single line">
+            <a class="ui circular icon blue button link pop"
+              data-content="view" 
+              data-position="bottom left"
+              target="_blank"
+              href="{{ url_for('certificates.view', certificate_id=certificate.id) }}">
+              <i class="eye icon"></i>
+            </a>
+            {% if participant.email and certificate.status == 'completed' %}
+              <a class="ui circular icon psu-ocean-blue button link pop"
+                onclick="$('.ui.modal.force-email.participant-{{ participant.id }}').modal('show')"
+                data-content="force sent email" 
+                data-position="bottom left">
+                <i class="paper plane icon"></i>
+              </a>
+            {% elif certificate.status != 'completed' %}
+              <a class="ui circular icon {{ participant.id }} email button" 
+                data-variation="very wide" 
+                data-position="bottom center">
+                <i class="paper plane icon"></i>
+              </a>
+              <div class="ui popup email {{ participant.id }}" id="{{ participant.id }}-popup">
+                This certificate is <b>Not Completed</b>
+              </div>
+            {% else %}
+              <a class="ui circular icon {{ participant.id }} email button" 
+                data-variation="very wide" 
+                data-position="bottom center">
+                <i class="paper plane icon"></i>
+              </a>
+              <div class="ui popup email {{ participant.id }}" id="{{ participant.id }}-popup">
+                This participant <b>does not have an <i class="envelope outline icon"></i>Email</b>
+                <a href="{{ url_for('admin.classes.add_or_edit_participant', class_id=certificate.class_.id, participant_id=participant.id) }}">Click to Edit Participant</a>
+              </div>
+            {% endif %}
+            <script>
+              $('.{{ participant.id }}.email.button')
+                  .popup({
+                      popup : $('.ui.popup.email.{{ participant.id }}'),
+                      on    : 'click'
+                    })
+            </script>
+            {# <a onclick="showDeleteModal('{{ certificate.id }}')" class="ui circular button negative icon" ><i class="trash icon"></i></a>
+  
+            <div class="ui small modal {{certificate.id}}">
+              <div class="header">Delete Certificate</div>
+              <div class="content">
+                <h4 class="ui headers" >
+                  Are you sure you want to delete <span class="ui red text">{{ certificate.get_participant().name  }}</span> 's certificate?
+                </h4>
+                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.certificates.delete', certificate_id=certificate.id) }}">
+                  Delete</i>
+                </a>
+                <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
+              </div>
+            </div>
+            #}
+          </td>
+        </tr>
+        
+        <div class="ui modal force-email participant-{{ participant.id }}">
+
+          <div class="header">Force sent email <b>{{ participant.name }}</b></div>
+          <div class="content">
+            Are you sure you want to sent email certificate <b>{{ certificate.class_.name }}</b>.
+            <ul>
+              <li>
+                Participant {{ participant.name }} with email {{ participant.email }}
+              </li>
+              <li>
+                <a target="_blank" href="{{ url_for('email_templates.view', organization_id=organization.id) }}">Click to see Email Template</a>
+              </li>
+            </ul>
+          </div>
+          <div class="actions">
+            <a class="ui primary labeled icon button"href="{{ url_for('email_templates.force_send_email', organization_id=organization.id, certificate_id=certificate.id) }}">
+              <i class="paper plane icon"></i>
+              Send
+            </a>
+            <a class="ui button" onclick="$('.force-email.participant-{{ participant.id }}').modal('hide')">
+              Cancel
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+      </tbody>
+    </table>
+
+    {% if not certificates %}
+      {% if search_form.owner.data or search_form.class_.data %}
+        <div class="ui horizontal divider" style="width: 33vw; margin: 3em auto 0 auto">
+          <span class="ui header grey" style="font-weight: 600;">
+            No search results 
+              {% if search_form.owner.data %}
+                for "{{ search_form.owner.data }}" 
+              {% endif %}
+
+              {% if search_form.class_.data %}
+                in "{{ get_class_name(search_form.class_.data).name }}" class
+              {% endif %}
+          </span>
+        </div>
+      {% endif %}
+    {% endif %}
+</div>
+	
+{% endblock %}
+
+{% block additional_js %}
+<script>
+    function showDeleteModal(logo_id) {
+        logo_id ?  $('.ui.small.modal.'+logo_id).modal('show') : $('.ui.small.modal').modal('hide') 
+    ;
+    }
+	$('.link.pop').popup({
+		delay: {
+			show: 500,
+	  }
+	})
+</script>
+{% endblock %}
