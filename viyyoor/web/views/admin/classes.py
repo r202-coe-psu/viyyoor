@@ -57,6 +57,7 @@ def create_or_edit(class_id):
     if not form.validate_on_submit():
         return render_template(
             "/admin/classes/create-edit.html",
+            class_=class_,
             form=form,
         )
 

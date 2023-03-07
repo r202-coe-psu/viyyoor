@@ -99,7 +99,7 @@ class Class(me.Document):
     meta = {"collection": "classes"}
 
     name = me.StringField(required=True, max_length=256)
-    printed_name = me.StringField(required=True, max_length=256)
+    printed_name = me.StringField(required=True)
     description = me.StringField()
 
     participants = me.MapField(field=me.EmbeddedDocumentField(Participant))

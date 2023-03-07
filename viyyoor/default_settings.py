@@ -9,5 +9,5 @@ VIYYOOR_CACHE_DIR = "/tmp/viyyoor/cache"
 REDIS_URL = "redis://localhost:6379"
 
 DEFAULT_AUTHENTICITY_TEXT = (
-    "Department of Computer Engineering, Prince of Songkla University"
+    "Department of Computer Engineering\n Prince of Songkla University"
 )

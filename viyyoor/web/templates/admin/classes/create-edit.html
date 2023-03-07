@@ -52,10 +52,10 @@
         {{ renderer.render_field(form.instructors) }}
         {{ renderer.render_field(form.tags) }}
       </div>
-      
+      {#      
       {{ renderer.render_multiple_radio_checkbox(form.endorse_method) }}
       {{ renderer.render_multiple_radio_checkbox(form.allow_duplicate_participant) }}
-  
+      #}
       {% if 'create' in request.path %}
       <button name="create" type="submit" class="ui button primary">Create</button>
       {% elif 'edit' in request.path %}

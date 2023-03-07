@@ -51,7 +51,7 @@ def download_logo(logo_id, filename, thumbnail):
 
 @module.route("/logos", methods=["GET", "POST"])
 @acl.roles_required("admin")
-def view_logos():
+def logos():
     logos = models.Logo.objects()
     return render_template(
         "/admin/organizations/logos.html",
@@ -100,7 +100,7 @@ def add_or_edit_logo(logo_id):
     logo.uploaded_date = datetime.datetime.now()
     logo.save()
 
-    return redirect(url_for("admin.organizations.view_logos"))
+    return redirect(url_for("admin.organizations.logos"))
 
 
 @module.route("/logos/<logo_id>/delete")

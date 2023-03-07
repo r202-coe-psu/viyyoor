@@ -17,7 +17,7 @@ from viyyoor import models
 
 PX_TO_MM = 0.2645833333
 LOGO_SPACE = 2
-ENDORSER_POSSITION_DY = 5
+ENDORSER_POSSITION_DY = 4
 
 
 def create_certificates(
@@ -309,15 +309,17 @@ def render_certificate(
             else:
                 class_date += " - " + class_.ended_date.strftime("%-d %B %Y")
 
+    academy = participant.organization.strip() or participant.extra.get("academy", "")
+
     add_qrcode(et, validation_url)
     add_multiline(et, "class_name", class_.printed_name, 10)
     add_multiline(et, "authenticity", class_.get_authenticity_text(), 3)
-    add_multiline(et, "organization_name", certificate_template.organization_name)
-    add_multiline(et, "declaration_text", certificate_template.declaration_text)
+    add_multiline(et, "organization_name", certificate_template.organization_name, 9)
+    add_multiline(et, "declaration_text", certificate_template.declaration_text, 5)
     add_multiline(et, "certificate_name", certificate_template.name)
     add_multiline(et, "participant_name", participant.name.strip())
-    add_multiline(et, "academy", participant.organization.strip())
-    add_multiline(et, "certificate_text", certificate_template.certificate_text)
+    add_multiline(et, "academy", academy)
+    add_multiline(et, "certificate_text", certificate_template.certificate_text, 7)
     add_multiline(et, "validation_url", validation_url)
     add_multiline(et, "class_date", class_date)
 
