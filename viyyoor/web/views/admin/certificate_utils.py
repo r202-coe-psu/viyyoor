@@ -7,7 +7,9 @@ import qrcode
 import base64
 import copy
 
-from defusedxml import ElementTree
+import PIL
+
+from lxml import etree
 
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from viyyoor import models
@@ -71,9 +73,9 @@ def create_certificates(
         certificate.save()
 
 
-def add_certificate_logo(element, class_):
-
+def add_certificate_logo(et, class_):
     page_width = 0
+    element = et.getroot()
     page_width_str = element.attrib.get("width")
     if "mm" in page_width_str:
         page_width_str = page_width_str.replace("mm", "")
@@ -81,8 +83,8 @@ def add_certificate_logo(element, class_):
 
     cert_logo_element = element.find(".//*[@id='cert-logo']")
 
-    if not cert_logo_element:
-        return element
+    if cert_logo_element is None:
+        return
 
     logo_template_element = cert_logo_element[0]
     logo_template_height = float(logo_template_element.attrib.get("height"))
@@ -92,8 +94,8 @@ def add_certificate_logo(element, class_):
     logo_elements = []
     total_width = 0
 
-    for idx, certificate_log in enumerate(class_.certificate_logs):
-        img = Image.open(certificate_log.logo)
+    for idx, certificate_logo in enumerate(class_.certificate_logos):
+        img = PIL.Image.open(certificate_logo.logo.logo_file)
         if not img:
             continue
 
@@ -106,18 +108,27 @@ def add_certificate_logo(element, class_):
             int(round(logo_height / ratio)),
         )
 
-        scal_logo_img = img.resize(new_logo_size)
+        resized_logo_img = img
 
-        new_element = copy.deepcopy(logo_template)
+        if logo_height > 500:
+            resize_ratio = logo_height / 500
+            new_logo_resize = (
+                int(round(logo_width / resize_ratio)),
+                int(round(logo_height / resize_ratio)),
+            )
+            resized_logo_img = img.resize(new_logo_resize, PIL.Image.ANTIALIAS)
+
+        new_element = copy.deepcopy(logo_template_element)
         new_element.set("width", str(new_logo_size[0] * PX_TO_MM))
         new_element.set("height", str(new_logo_size[1] * PX_TO_MM))
         new_element.set("id", f"logo-{idx}")
 
         buffered = io.BytesIO()
-        ximg.save(buffered, format="PNG")
-        img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+        resized_logo_img.save(buffered, format="PNG")
+        base64_image = base64.b64encode(buffered.getvalue()).decode("utf-8")
         new_element.set(
-            "{http://www.w3.org/1999/xlink}href", f"data:image/png;base64,{img_str}"
+            "{http://www.w3.org/1999/xlink}href",
+            f"data:image/png;base64,{base64_image}",
         )
 
         logo_elements.append(new_element)
@@ -129,23 +140,18 @@ def add_certificate_logo(element, class_):
 
     for element in logo_elements:
         element.set("x", str(start_logo_x))
-        cert_logo_et.append(element)
+        cert_logo_element.append(element)
 
         start_logo_x += float(element.get("width")) + LOGO_SPACE
-
-    return element
 
 
 def prepare_template(
     class_,
-    root,
+    et,
     required_signature=True,
 ):
-
-    element = add_certificate_logo(root, class_)
-    element = add_endorsers(element, class_, required_signature)
-
-    return element
+    add_certificate_logo(et, class_)
+    add_endorsers(et, class_, required_signature)
 
 
 def render_qrcode(validation_url):
@@ -165,8 +171,9 @@ def render_qrcode(validation_url):
     return base64.b64encode(qrcode_io.getvalue()).decode("utf-8")
 
 
-def add_qrcode(element, validation_url):
+def add_qrcode(et, validation_url):
     base64_qrcode_image = render_qrcode(validation_url)
+    element = et.getroot()
 
     qrcode_element = element.find(".//*[@id='validation_qrcode']")
 
@@ -176,44 +183,76 @@ def add_qrcode(element, validation_url):
             f"data:image/png;base64,{base64_qrcode_image}",
         )
 
-    return element
+
+def add_multiline(et, element_name, print_text, line_dy=4):
+    element = et.getroot()
+    parent_element = element.find(f".//*[@id='{element_name}']")
+    if parent_element is None:
+        return
+
+    template_element = parent_element[0]
+    if "y" in template_element.attrib:
+        template_element.attrib.pop("y")
+
+    for element in parent_element.getchildren():
+        parent_element.remove(element)
+
+    for possition_id, text in enumerate(print_text.split("\n")):
+        pos_element = copy.deepcopy(template_element)
+        pos_element.set("id", f"{element_name}_{possition_id}")
+        pos_element.text = text.strip()
+        if possition_id != 0:
+            pos_element.set("dy", str(line_dy))
+        parent_element.append(pos_element)
 
 
-def add_endorsers(element, class_, required_signature=True):
-
+def add_endorsers(et, class_, required_signature=True):
     ENDOSER_NUMS = 5
+    element = et.getroot()
     for idx in range(1, ENDOSER_NUMS + 1):
         endorser_element = element.find(f".//*[@id='endorser_{idx}']")
-        if not endorser_element:
+        if endorser_element is None:
             continue
 
         endorser = class_.endorsers.get(f"endorser_{idx}")
         if not endorser:
-            element.remove(endorser_element)
+            parent = endorser_element.getparent()
+            parent.remove(endorser_element)
 
             endorser_sign_element = element.find(f".//*[@id='endorser_{idx}_sign']")
-            if endorser_sign_element:
-                element.remove(endorser_sign_element)
+            if endorser_sign_element is not None:
+                parent = endorser_sign_element.getparent()
+                parent.remove(endorser_sign_element)
+            continue
 
         signature = endorser.user.get_signature()
         sign_encoded = ""
         if signature and required_signature:
-            sign_encoded = base64.b64encode(signature.file.read()).decode("utf-8")
+            if signature.file:
+                sign_encoded = base64.b64encode(signature.file.read()).decode("utf-8")
 
         endorser_sign_element = element.find(f".//*[@id='endorser_{idx}_sign']")
         if endorser_sign_element is not None:
-            endorser_sign_element.set(
-                "{http://www.w3.org/1999/xlink}href",
-                f"data:{signature.file.content_type};base64,{sign_encoded}",
-            )
+            if sign_encoded:
+                endorser_sign_element.set(
+                    "{http://www.w3.org/1999/xlink}href",
+                    f"data:{signature.file.content_type};base64,{sign_encoded}",
+                )
+            else:
+                parent = endorser_sign_element.getparent()
+                parent.remove(endorser_sign_element)
+                continue
 
-        template_element = endorser_element[0]
+        endorser_name_element = element.find(f".//*[@id='endorser_{idx}_name']")
+        if endorser_name_element is None:
+            continue
+
+        endorser_name_element.text = f"({endorser.name})"
+        # endorser_element.append(endorser_name_element)
+
+        template_element = element.find(f".//*[@id='endorser_{idx}_position']")
         template_element.attrib.pop("y")
         endorser_element.remove(template_element)
-
-        endorser_name_element = copy.deepcopy(template_element)
-        endorser_name_element.text = f"({endorser.name})"
-        endorser_element.append(endorser_name_element)
 
         for possition_id, text in enumerate(endorser.position.split("\n")):
             endorser_pos_element = copy.deepcopy(template_element)
@@ -221,6 +260,7 @@ def add_endorsers(element, class_, required_signature=True):
             endorser_pos_element.text = text
             endorser_pos_element.set("dy", str(ENDORSER_POSSITION_DY))
             endorser_element.append(endorser_pos_element)
+
     return element
 
 
@@ -231,7 +271,6 @@ def render_certificate(
     required_signature=True,
     validated_url_template="https://localhost/certificates/{certificate_id}",
 ):
-
     participant = class_.get_participant(participant_id)
 
     certificate_template = class_.certificate_templates.get(participant.group)
@@ -239,12 +278,11 @@ def render_certificate(
     if not certificate_template:
         return None
 
-    certificate_template.template.template_file.seek(0)
+    certificate_template.template.file.seek(0)
 
-    et = ElementTree.parse(certificate_template.template.template_file)
-    root = et.getroot()
+    et = etree.parse(certificate_template.template.file)
 
-    element = prepare_template(class_, root, required_signature=True)
+    prepare_template(class_, et, required_signature=True)
 
     certificate = class_.get_certificate(participant_id)
 
@@ -252,44 +290,42 @@ def render_certificate(
     if certificate:
         validation_url = validated_url_template.format(certificate_id=certificate.id)
 
-    element = add_qrcode(root, validation_url)
-    data = ElementTree.tostring(element, encoding="utf-8", method="xml").decode("utf-8")
+    certificate_template = class_.certificate_templates.get(participant.group)
+
+    class_date = certificate_template.class_date
+    if not class_date:
+        class_date = class_.started_date.strftime("%-d %B %Y")
+        if class_.started_date != class_.ended_date:
+            if (
+                class_.started_date.year == class_.ended_date.year
+                and class_.started_date.month == class_.ended_date.month
+            ):
+                class_date = "{sdate} - {edate} {month} {year}".format(
+                    sdate=class_.started_date.strftime("%-d"),
+                    edate=class_.ended_date.strftime("%-d"),
+                    month=class_.ended_date.strftime("%B"),
+                    year=class_.ended_date.year,
+                )
+            else:
+                class_date += " - " + class_.ended_date.strftime("%-d %B %Y")
+
+    add_qrcode(et, validation_url)
+    add_multiline(et, "class_name", class_.printed_name, 10)
+    add_multiline(et, "authenticity", class_.get_authenticity_text(), 3)
+    add_multiline(et, "organization_name", certificate_template.organization_name)
+    add_multiline(et, "declaration_text", certificate_template.declaration_text)
+    add_multiline(et, "certificate_name", certificate_template.name)
+    add_multiline(et, "participant_name", participant.name.strip())
+    add_multiline(et, "academy", participant.organization.strip())
+    add_multiline(et, "certificate_text", certificate_template.certificate_text)
+    add_multiline(et, "validation_url", validation_url)
+    add_multiline(et, "class_date", class_date)
+
+    data = etree.tostring(et.getroot(), encoding="utf-8", method="xml").decode("utf-8")
 
     template = Template(data)
 
-    certificate_template = class_.certificate_templates.get(participant.group)
-    text = [t.strip() for t in certificate_template.certificate_text.split("\n")]
-
-    certificate_text = []
-    if len(text) > 0:
-        certificate_text = [f"<tspan>{text[0]}</tspan>"]
-        certificate_text.extend(
-            [f'<tspan x="50%" dy="10">{t.strip()}</tspan>' for t in text[1:]]
-        )
-
-    class_date = class_.started_date.strftime("%-d %B %Y")
-    if class_.started_date != class_.ended_date:
-        if (
-            class_.started_date.year == class_.ended_date.year
-            and class_.started_date.month == class_.ended_date.month
-        ):
-            class_date = "{sdate} - {edate} {month} {year}".format(
-                sdate=class_.started_date.strftime("%-d"),
-                edate=class_.ended_date.strftime("%-d"),
-                month=class_.ended_date.strftime("%B"),
-                year=class_.ended_date.year,
-            )
-        else:
-            class_date += " - " + class_.ended_date.strftime("%-d %B %Y")
-    variables = dict(
-        certificate_name=certificate_template.name,
-        participant_name=participant.name.strip(),
-        certificate_text="".join(certificate_text),
-        class_name=class_.printed_name,
-        issued_date=class_.issued_date.strftime("%-d %B %Y"),
-        class_date=class_date,
-        validation_url=validation_url,
-    )
+    variables = dict(issued_date=class_.issued_date.strftime("%-d %B %Y"))
 
     for k, v in participant.extra.items():
         if type(v) is not str:

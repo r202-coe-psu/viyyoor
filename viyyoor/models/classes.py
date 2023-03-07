@@ -36,6 +36,7 @@ class Participant(me.EmbeddedDocument):
         required=True,
         choices=PARTICIPANT_GROUP,
     )
+    organization = me.StringField(max_length=256, default="")
 
     last_updated_by = me.ReferenceField("User", dbref=True, required=True)
     updated_date = me.DateTimeField(
@@ -109,6 +110,7 @@ class Class(me.Document):
     certificate_templates = me.MapField(
         field=me.EmbeddedDocumentField(CertificateTemplate)
     )
+    certificate_logos = me.EmbeddedDocumentListField("CertificateLogo")
 
     tags = me.ListField(me.StringField(required=True))
 
@@ -193,3 +195,8 @@ class Class(me.Document):
         )
 
         return completed_certificates
+
+    def get_authenticity_text(self):
+        from flask import current_app
+
+        return current_app.config.get("DEFAULT_AUTHENTICITY_TEXT", "")

@@ -18,7 +18,6 @@
 
 {% block breadcrumbs %}
   {{ super() }}
-  <i class="right angle icon divider"></i>
   {% if 'edit' in request.path %}
     <div class="active section">Edit Certificate Template</div>
   {% else %}
@@ -32,14 +31,15 @@
   <div class="ui segment">
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
-
       {{ renderer.render_field(form.name) }}
+      {{ renderer.render_field(form.organization_name) }}
+      {{ renderer.render_field(form.declaration_text) }}
       {{ renderer.render_field(form.certificate_text) }}
       <div class="two fields">
-      {{ renderer.render_select(form.group) }}
-      {{ renderer.render_select(form.template) }}
+        {{ renderer.render_select(form.group) }}
+        {{ renderer.render_select(form.template) }}
       </div>
-
+        {{ renderer.render_field(form.class_date) }}
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>
   </div>
@@ -51,7 +51,8 @@
       <tr>
         <th>Group</th>
         <th>Name</th>
-        <th>Appreciate Text</th>
+        <th>Declaration Text</th>
+        <th>Certificate Text</th>
         <th>Template</th>
         <th>Operation</th>
       </tr>
@@ -61,11 +62,12 @@
         <tr>
           <td>{{ v.get_group_display() }}</td>
           <td>{{ v.name }}</td>
-          <td>{{ v.appreciate_text }}</td>
+          <td>{{ v.declaration_text }}</td>
+          <td>{{ v.certificate_text }}</td>
           <td>{{ v.template.name }}</td>
           <td class="single line">
-            <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id, certificate_template_id=v.group) }}"><i class="edit icon"></i></a>
-            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_certificate_template', class_id=class_.id, certificate_template_id=v.group) }}"><i class="trash icon"></i></a>
+            <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_certificate_template', class_id=class_.id, certificate_template_id=v.group, organization_id=request.args.get('organization_id')) }}"><i class="edit icon"></i></a>
+            <a class="ui circular icon negative button" href="{{ url_for('admin.classes.delete_certificate_template', class_id=class_.id, certificate_template_id=v.group, organization_id=request.args.get('organization_id')) }}"><i class="trash icon"></i></a>
           </td>
       </tr>
       {% endfor %}

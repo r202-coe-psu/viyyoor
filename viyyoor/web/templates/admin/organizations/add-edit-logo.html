@@ -1,11 +1,12 @@
-{% extends "/organizations/logos.html" %}
+{% extends "/admin/organizations/index.html" %}
 {% import '/base/html-renderer.html' as renderer %}
 
-{% block title %}{{ organization.name }}{% endblock %}
+{% block title %}Logo{% endblock %}
 
 {% block breadcrumbs %}
-{{ super() }}
-{{ 'Edit' if 'edit' in request.path else 'Add' }} Logo
+  {{ super() }}
+  <div class="divider">/</div>
+  {{ 'Edit' if 'edit' in request.path else 'Add' }} Logo
 {% endblock %}
 
 {% block content %}
@@ -15,7 +16,7 @@
 
         {{ form.csrf_token }}
         {{ renderer.render_field(form.logo_name) }}
-        {{ renderer.render_fileinput(form.uploaded_logo_file, required=True) }}
+        {{ renderer.render_fileinput(form.uploaded_logo_file) }}
 
         <ul class="list">
           <li>Allowed types: <b>png</b>  <b>jpg</b></li>

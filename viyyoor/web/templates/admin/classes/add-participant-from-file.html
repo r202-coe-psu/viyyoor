@@ -1,10 +1,37 @@
 {% extends '/admin/classes/view.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 
+
+{% block dashboard_title %}
+    Add Participant From File
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <div class="active section">Add Participant From File</div>
+
+{% endblock %}
+
+{% block content %}
+<div class="ui container">
+  <div class="ui segment">
+    <form method="POST" class="ui form" id="participant_form" enctype="multipart/form-data">
+      {{ form.csrf_token }}
+      {{ renderer.render_fileinput(form.participant_file) }}
+      {% if class_.allow_duplicate_participant == 'allowed' %}
+        <a class="ui button primary" onclick="check_duplicate()" >Add</a>
+      {% else %}
+        <button class="ui button primary" type="submit" >Add</button>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endblock %}
+
 {% block additional_js %}
-  <script type="text/javascript">
-    $('.ui.dropdown')
-      .dropdown();
+<script type="text/javascript">
+  $('.ui.dropdown')
+  .dropdown();
   $(".attach-file-participant_file").click(function() {
     $(this).parent().find("#participant_file").click();
   });
@@ -14,29 +41,47 @@
       var name = e.target.files[0].name;
       $('.attach-file-participant_file', $(e.target).parent()).val(name);
     });
+    
+    function check_duplicate() {
+      const form = document.getElementById('participant_form')
+      const formData = new FormData(form);
+      let a = fetch("{{ url_for('admin.classes.check_duplicate_participant_from_file', class_id=class_.id) }}", {"method": "POST", "body": formData})
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) { // if fetch data get list duplicate participant -> show modal
+            show_duplicate_modal(data)
+          } else { 
+            $('#participant_form').submit() // not have duplicate participant -> go submit form
+          }
+        })
+      }
+  
+    function show_duplicate_modal(participants) {
+      let participant_text = ""
+      for (participant of participants) {
+        participant_text += "<div class='item'><div class='content'><div class='header'>" + participant["group"] + "</div>"
+      + "(" + participant["common_id"] + ") " + participant["name"] + "</div></div>"
+      }
+      $.modal({
+        title: "Duplicate Participants",
 
-	</script>
-{% endblock %}
+        content: "This Participants already in {{ class_.name }}.<br>"
+        + "<div class='ui relaxed divided ordered selection list'>" + participant_text + "</div>"
+          + "If you add, These participants are duplicates.<br>Do you really want do <b><span class='ui blue text'>Duplicate</span></b> this participant ?",
+          
+          actions: [
+            {
+              text    : 'Duplicate',
+              class   : 'psu-ocean-blue',
+              icon    : 'users',
+              click   : function()  { $('#participant_form').submit() },
+            },
+            {
+              text    : 'Cancel',
+            }
+        ],
+      }).modal('show')
 
-{% block dashboard_title %}
-    Add Participant From File
-{% endblock %}
-
-{% block breadcrumbs %}
-  {{ super() }}
-  <i class="right angle icon divider"></i>
-  <div class="active section">Add Participant From File</div>
-
-{% endblock %}
-
-{% block content %}
-<div class="ui container">
-  <div class="ui segment">
-    <form method="POST" class="ui form" enctype="multipart/form-data">
-      {{ form.csrf_token }}
-      {{ renderer.render_fileinput(form.participant_file) }}
-      <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
-    </form>
-  </div>
-</div>
+    }
+  </script>
 {% endblock %}

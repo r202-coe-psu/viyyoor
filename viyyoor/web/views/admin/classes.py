@@ -194,6 +194,111 @@ def delete_endorser(class_id, endorser_id):
     return redirect(url_for("admin.classes.add_or_edit_endorsers", class_id=class_.id))
 
 
+def set_certificate_logo_form(form, class_, index):
+    form.logo.choices = [(str(logo.id), "") for logo in models.Logo.objects()]
+    form.logo.choices.insert(0, (None, "-"))
+
+    return form
+
+
+def get_url_download_logo_images(format=""):
+    logos = models.Logo.objects()
+    data = []
+
+    for logo in logos:
+        data.append(
+            dict(
+                id=str(logo.id),
+                uri=url_for(
+                    "admin.organizations.download_logo",
+                    logo_id=logo.id,
+                    thumbnail="thumbnail",
+                    filename=logo.logo_file.filename,
+                ),
+            )
+        )
+
+    if format == "json":
+        return json.dumps(data)
+
+    return data
+
+
+@module.route("/<class_id>/select_certificate_logos")
+@acl.roles_required("admin")
+def select_certificate_logos(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    logos = models.Logo.objects(status="active")
+    form = forms.classes.GroupCertificateLogoForm()
+
+    LOGO_AMOUNT = 5
+    for n in range(LOGO_AMOUNT):
+        try:
+            order = class_.certificate_logos[n].order
+            logo = class_.certificate_logos[n].logo.id
+        except:
+            order = 0
+            logo = ""
+
+        form.certificate_logos.append_entry(
+            {
+                "order": order,
+                "logo": logo,
+            }
+        )
+
+    return render_template(
+        "/admin/classes/select-certificate-logos.html",
+        class_=class_,
+        logos=logos,
+        LOGO_AMOUNT=LOGO_AMOUNT,
+        form=form,
+        url_download_logo_images=get_url_download_logo_images(format="json"),
+        set_certificate_logo_form=set_certificate_logo_form,
+    )
+
+
+@module.route("/<class_id>/submit_certificate_logos_selection", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def submit_certificate_logo_selection(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    form = forms.classes.GroupCertificateLogoForm()
+    for f in form.certificate_logos:
+        f.logo.choices = [
+            (str(logo.id), logo.logo_name) for logo in models.Logo.objects()
+        ]
+
+    if not form.validate_on_submit():
+        return redirect(
+            url_for(
+                "admin.classes.select_certificate_logos",
+                class_id=class_.id,
+                organization_id=request.args.get("organization_id"),
+            )
+        )
+
+    class_.certificate_logos = [
+        models.CertificateLogo(
+            logo=models.Logo.objects.get(id=cert_form["logo"]),
+            order=cert_form["order"],
+            last_updated_by=current_user._get_current_object(),
+        )
+        for cert_form in form.certificate_logos.data
+        if cert_form["logo"] != "None"
+    ]
+
+    class_.certificate_logos = sorted(class_.certificate_logos, key=lambda x: x.order)
+
+    class_.save()
+    return redirect(
+        url_for(
+            "admin.classes.view",
+            class_id=class_.id,
+            organization_id=request.args.get("organization_id"),
+        )
+    )
+
+
 @module.route(
     "/<class_id>/participants/add",
     methods=["GET", "POST"],
@@ -260,6 +365,46 @@ def delete_participant(class_id, participant_id):
 
 
 @module.route(
+    "/<class_id>/participants/check-duplicate-from-file",
+    methods=["GET", "POST"],
+)
+@acl.roles_required("admin")
+def check_duplicate_participant_from_file(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+    form = forms.classes.ParticipantFileForm()
+
+    data = []
+    dfs = pandas.read_excel(form.participant_file.data)
+    dfs.columns = dfs.columns.str.lower()
+    for index, row in dfs.iterrows():
+        for p_id in class_.participants:
+            p = class_.get_participant(p_id)
+
+            common_id = str(row["common_id"]).strip()
+            participant_common_id = common_id
+
+            if "name" in dfs.columns:
+                participant_name = str(row["name"]).strip()
+
+            if "first_name" in dfs.columns and "last_name" in dfs.columns:
+                participant_name = f"{row['first_name']} {row['last_name']}"
+
+            if "title" in dfs.columns:
+                participant_name = f"{row['title']}{participant_name}"
+
+            if participant_common_id == p.common_id or participant_name == p.name:
+                participant_dict = dict(
+                    name=p.name, common_id=p.common_id, group=p.group.title()
+                )
+                if participant_dict in data:
+                    continue
+
+                data.append(participant_dict)
+
+    return data
+
+
+@module.route(
     "/<class_id>/participants/add-from-file",
     methods=["GET", "POST"],
 )
@@ -322,6 +467,12 @@ def add_participant_from_file(class_id):
 
         if "title" in dfs.columns:
             participant_name = f"{row['title']}{participant_name}"
+
+        if "email" in dfs.columns:
+            participant.group = row["email"]
+
+        if "organization" in dfs.columns:
+            participant.group = row["organization"]
 
         participant.name = participant_name
         participant.last_updated_by = current_user._get_current_object()

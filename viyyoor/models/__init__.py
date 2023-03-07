@@ -2,11 +2,12 @@ from flask_mongoengine import MongoEngine
 
 from .users import User
 from .oauth2 import OAuth2Token
-from .classes import Class, Endorser, Participant, CertificateTemplate
+from .classes import Class, Endorser, Participant, CertificateTemplate, CertificateLogo
 from .templates import Template
 from .signatures import Signature
 from .certificates import Certificate, Endorsement
 from .digital_certificates import DigitalCertificate
+from .organizations import Logo
 
 db = MongoEngine()
 

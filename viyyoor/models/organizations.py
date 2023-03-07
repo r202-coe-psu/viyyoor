@@ -20,3 +20,5 @@ class Logo(me.Document):
 
     last_updated_by = me.ReferenceField("User", dbref=True)
     updated_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+
+    status = me.StringField(default="active")

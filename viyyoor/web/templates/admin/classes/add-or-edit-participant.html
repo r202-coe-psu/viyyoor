@@ -33,14 +33,16 @@
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
 
-      <div class="two fields">
       {{ renderer.render_select(form.common_id) }}
-      {{ renderer.render_select(form.group) }}
-      </div>
       <div class="two fields">
         {{ renderer.render_field(form.name) }}
-        {{ renderer.render_field(form.extra_data) }}
+        {{ renderer.render_select(form.group) }}
       </div>
+      <div class="two fields">
+        {{ renderer.render_field(form.email) }}
+        {{ renderer.render_field(form.organization) }}
+      </div>
+        {{ renderer.render_field(form.extra_data) }}
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>
   </div>
@@ -54,6 +56,7 @@
         <th>ID</th>
         <th>Common ID</th>
         <th>Name</th>
+        <th>Email</th>
         <th>Group</th>
         <th>Operation</th>
       </tr>
@@ -64,7 +67,10 @@
           <td>{{ loop.index }}</td>
           <td>{{ participant.id }}</td>
           <td>{{ participant.common_id }}</td>
-          <td>{{ participant.name }}</td>
+          <td>
+            {{ participant.name }}<br/>
+            {{ participant.organization }}
+          </td>
           <td>{{ participant.get_group_display() }}</td>
           <td>
             <a class="ui circular icon primary button" href="{{ url_for('admin.classes.add_or_edit_participant', class_id=class_.id, participant_id=participant.id) }}"><i class="edit icon"></i></a>

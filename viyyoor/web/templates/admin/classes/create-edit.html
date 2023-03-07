@@ -1,5 +1,88 @@
-{% extends '/admin/classes/index.html' %}
+{% if request.args.get("organization_id") %}
+  {% extends '/organizations/classes.html' %}
+{% else %}
+  {% extends '/admin/classes/index.html' %}
+{% endif %}
+
 {% import '/base/html-renderer.html' as renderer %}
+
+
+{% block dashboard_title %}
+  {% if 'edit' in request.path %}
+    Edit Class: {{ form.name.data }}
+  {% else %}
+    Create Class
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <i class="right angle icon divider"></i>
+  {% if 'edit' in request.path %}
+    <a class="section" href="{{ url_for('admin.classes.view', class_id=class_.id) }}">{{ class_.name }}</a>
+    <i class="right angle icon divider"></i>
+    <div class="active section">Edit</div>
+  {% else %}
+    <div class="active section">Create Class</div>
+  {% endif %}
+
+{% endblock %}
+
+{% block content %}
+<div class="">
+  <div class="ui segment">
+    <form method="POST" class="ui form">
+      {{ form.csrf_token }}
+      
+      {% if not organization and "organization" not in request.path and 'edit' not in request.path %}
+        {{ renderer.render_search_select(form.organization) }}<br>
+      {% endif %}
+      
+      {{ renderer.render_field(form.name) }}
+      {{ renderer.render_field(form.printed_name) }}
+      {{ renderer.render_field(form.description) }}
+
+      <div class="three fields">
+        {{ renderer.render_calendar(form.started_date, calendar_id='started_date_calendar') }}
+        {{ renderer.render_calendar(form.ended_date, calendar_id='ended_date_calendar') }}
+        {{ renderer.render_calendar(form.issued_date, calendar_id='issued_date_calendar') }}
+      </div>
+
+      <div class="two fields">
+        {{ renderer.render_field(form.instructors) }}
+        {{ renderer.render_field(form.tags) }}
+      </div>
+      
+      {{ renderer.render_multiple_radio_checkbox(form.endorse_method) }}
+      {{ renderer.render_multiple_radio_checkbox(form.allow_duplicate_participant) }}
+  
+      {% if 'create' in request.path %}
+      <button name="create" type="submit" class="ui button primary">Create</button>
+      {% elif 'edit' in request.path %}
+      <a onclick="$('.modal.edit').modal('show')" class="ui primary button">
+        Edit
+      </a>
+      {% endif %}
+
+      <div class="ui small modal edit">
+        <div class="header">Edit Class</div>
+        <div class="content">
+          <h4 class="ui headers" >
+            Are you sure you want to edit <span class="ui primary text">{{ class_.name }}</span> class?
+          </h4>
+          <button class="ui right floated primary button" onclick="$('.ui.form').submit()" style="margin-bottom: 1em;">
+            Edit
+          </button>
+          <button class="ui right floated button" onclick="$('.modal.edit').modal('hide')">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
 
 {% block additional_js %}
   <script type="text/javascript">
@@ -20,64 +103,28 @@
 
     $('#started_date_calendar').calendar({
       type: 'date',
-      formatter: datetime_formatter,
+      formatter: {
+        date: 'YYYY-MM-DD'
+      },
       endCalendar: $('#ended_date_calendar')
     });
+
     $('#ended_date_calendar').calendar({
       type: 'date',
-      formatter: datetime_formatter,
-      startCalendar: $('#started_date_calendar')
-        });
+      formatter: {
+        date: 'YYYY-MM-DD'
+      },
+      startCalendar: $('#started_date_calendar'),
+      endCalendar: $('#issued_date_calendar')
+    });
+
     $('#issued_date_calendar').calendar({
       type: 'date',
-      formatter: datetime_formatter,
+      formatter: {
+        date: 'YYYY-MM-DD'
+      },
       startCalendar: $('#ended_date_calendar')
     });
 
 	</script>
-{% endblock %}
-
-{% block dashboard_title %}
-  {% if 'edit' in request.path %}
-    Edit Class: {{ form.name.data }}
-  {% else %}
-    Create Class
-  {% endif %}
-{% endblock %}
-
-{% block breadcrumbs %}
-  {{ super() }}
-  <i class="right angle icon divider"></i>
-  {% if 'edit' in request.path %}
-    <div class="active section">Edit Class: {{ form.name.data }}</div>
-  {% else %}
-    <div class="active section">Create Class</div>
-  {% endif %}
-
-{% endblock %}
-
-{% block content %}
-<div class="">
-  <div class="ui segment">
-    <form method="POST" class="ui form">
-      {{ form.csrf_token }}
-      {{ renderer.render_field(form.name) }}
-      {{ renderer.render_field(form.printed_name) }}
-      {{ renderer.render_field(form.description) }}
-
-      <div class="three fields">
-        {{ renderer.render_calendar(form.started_date, calendar_id='started_date_calendar') }}
-        {{ renderer.render_calendar(form.ended_date, calendar_id='ended_date_calendar') }}
-        {{ renderer.render_calendar(form.issued_date, calendar_id='issued_date_calendar') }}
-      </div>
-
-      <div class="two fields">
-        {{ renderer.render_field(form.instructors) }}
-        {{ renderer.render_field(form.tags) }}
-      </div>
-      <button name="create" type="submit" class="ui button primary">{{ 'Create' if 'create' in request.path else 'Edit' }}</button>
-    </form>
-  </div>
-</div>
-
 {% endblock %}

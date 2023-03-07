@@ -1,17 +1,12 @@
-{% extends "/admin/index.html" %}
 
-{% block title %}Organizations{% endblock %}
-
-{% block dashboard_title %}Organizations{% endblock %}
+{% extends '/base/default-dashboard.html' %}
 
 {% block breadcrumbs %}
-{{ super() }}
-{% if request.endpoint == 'admin.organizations.index' %}
-<div class="active section">Organizations</div>
-{% else %}
-<a href="{{ url_for('admin.organizations.index') }}" class="section">Organizations</a>
-<i class="right angle icon divider"></i>
-{% endif %}
+<a href="{{ url_for('admin.organizations.index') }}" template="section">Organization</a>
+{% endblock %}
+
+{% block dashboard_title %}
+Organization
 {% endblock %}
 
 

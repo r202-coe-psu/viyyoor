@@ -1,14 +1,9 @@
-{% extends '/organizations/view.html' %}
-{% import '/base/organization-renderer.html' as org_renderer %}
+{% extends '/admin/organizations/index.html' %}
 
-{% block title %}{{ organization.name }}{% endblock %}
+{% block title %}Logos{% endblock %}
 
 {% block dashboard_title %}
-{{ organization.name }}
-{# <a class="bug popup icon item" data-content="Edit This Page" href="{{ url_for('organizations.edit', organization_id=organization.id) }}">
-    <h3><i class="edit icon"></i></h3>
-</a>
-#}
+Logos
 {% endblock %}
 
 {% set is_admin_URL = '' %}
@@ -18,20 +13,15 @@
 
 {% block breadcrumbs %}
     {{ super() }}
-        {% if request.endpoint == is_admin_URL + 'organizations.view_logos' %}
-            <div class="active section">Logos</div>
-        {% else %}
-            <a href="{{ url_for(is_admin_URL + 'organizations.view_logos', organization_id=organization.id) }}" class="section">Logos</a>
-            <i class="right angle icon divider"></i>
-        {% endif %}
+    <i class="right angle icon divider"></i>
+    Logos
 {% endblock %}
 
 {% block content %}
-{{ org_renderer.render_organization_dashboard_menu_bar(organization) }}
 
 <h2 class="ui header">
     Logos
-        <a class="ui primary tertiary icon right floated large button" href="{{ url_for(is_admin_URL + 'organizations.add_or_edit_logo', organization_id=organization.id) }}">
+        <a class="ui primary tertiary icon right floated large button" href="{{ url_for('admin.organizations.add_or_edit_logo') }}">
             <i class="add icon"></i> Add Logo
         </a>
 </h2>
@@ -42,17 +32,16 @@
         {% for logo in logos %}
             <div class="card">
                 <div class="ui image">
-                    <img style="height: 128px; object-fit:contain" src="{{ url_for('organizations.download_logo', organization_id=organization.id, logo_id=logo.id, filename=logo.logo_file.filename, thumbnail='thumbnail') }}" />
+                    <img style="height: 128px; object-fit:contain" src="{{ url_for('admin.organizations.download_logo',  logo_id=logo.id, filename=logo.logo_file.filename, thumbnail='thumbnail') }}" />
                 </div>
 
                 <div class="ui content">
                     <div class="header">{{ logo.logo_name }}</div>
                     <div class="owner"><b>Owner : </b>{{ logo.uploaded_by.first_name }} {{ logo.uploaded_by.last_name }}</div>
 
-                    {% if current_user.has_organization_roles("admin", "staff") %}
                         <div class="right floated">
                             <a onclick="showDeleteModal('{{logo.id}}') "><i class="red trash circular colored icon"></i></a>
-                            <a href="{{ url_for(is_admin_URL + 'organizations.add_or_edit_logo', organization_id=organization.id, logo_id=logo.id) }}"><i class="blue pen circular colored icon"></i></a>
+                            <a href="{{ url_for('admin.organizations.add_or_edit_logo', logo_id=logo.id) }}"><i class="blue pen circular colored icon"></i></a>
                         </div>
                         <div class="ui small modal {{logo.id}}">
                             <div class="header">Delete Logo</div>
@@ -60,13 +49,12 @@
                                 <h4 class="ui headers" >
                                     Are you sure you want to delete <span class="ui red text">{{ logo.logo_name }}</span> logo?
                                 </h4>
-                                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for(is_admin_URL + 'organizations.delete_logo', organization_id=organization.id, logo_id=logo.id)}}">
+                                <a class="ui right floated negative button" style="margin-bottom: 1em;" href="{{ url_for('admin.organizations.delete_logo', logo_id=logo.id)}}">
                                     Delete</i>
                                 </a>
                                 <button class="ui right floated button" onclick="showDeleteModal()">Cancel</button>
                             </div>
                         </div>
-                    {% endif %}
                 </div>
             </div>
         {% endfor %}

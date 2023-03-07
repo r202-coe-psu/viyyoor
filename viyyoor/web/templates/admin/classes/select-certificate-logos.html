@@ -1,0 +1,63 @@
+{% extends '/admin/classes/view.html' %}
+{% import '/base/html-renderer.html' as renderer %}
+
+
+{% block dashboard_title %}
+    Select Certificate Logos
+{% endblock %}
+
+{% block breadcrumbs %}
+  {{ super() }}
+  <div class="active section">Select Certificate Logos</div>
+
+{% endblock %}
+
+{% block additional_js %}
+<script>
+  let logos = {{ url_download_logo_images | safe }};
+
+  for (let i = 0; i < {{ LOGO_AMOUNT }}; i++) {
+    logos.forEach((logo, index) => {
+      console.log(logo);
+      console.log(index);
+
+      logo_choices = document.getElementById("certificate_logos-"+ i +"-logo").querySelectorAll('option')
+      for(logo_choice of logo_choices){
+        if(logo_choice.value == logo.id){
+          img = document.createElement("img");
+          img.src = logo.uri;
+          logo_choice.appendChild(img);
+          break;
+        }
+      }
+    }
+    );
+  }
+</script>
+
+{% endblock %}
+
+{% block content %}
+  <div class="ui segment">
+    {% if not logos %}
+      <div class="ui error message">
+        Your organization don't have any <b>Logos</b>
+        <a href="{{ url_for('admin.organizations.add_or_edit_logo') }}">Click Here</a>
+      </div>
+    {% endif %}
+    <form method="POST" class="ui form" enctype="multipart/form-data" action="{{ url_for('admin.classes.submit_certificate_logo_selection', class_id=class_.id, organization_id=request.args.get('organization_id')) }}">
+        {{ form.hidden_tag() }}
+        {% for index in range(LOGO_AMOUNT) %}
+            {% set cert_logo_form = set_certificate_logo_form(form.certificate_logos[index], class_, index) %}
+            {{ cert_logo_form.hidden_tag() }}
+            <div class="two fields">
+                {{ renderer.render_field(cert_logo_form.order) }}
+                {{ renderer.render_select(cert_logo_form.logo) }}
+              </div>
+            <div style="margin-bottom: 2em;"></div>
+        {% endfor %}
+        <button type="submit" class="ui button primary">Submit</button>
+    </form>
+  </div>
+{% endblock %}
+

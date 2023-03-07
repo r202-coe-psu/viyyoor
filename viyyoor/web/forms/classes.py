@@ -83,6 +83,8 @@ BaseParticipantForm = model_form(
         "name": {"label": "Name"},
         "extra": {"label": "Extra"},
         "group": {"label": "Group"},
+        "email": {"label": "Email"},
+        "organization": {"label": "Organization"},
     },
 )
 
@@ -115,3 +117,14 @@ class CertificateTemplateForm(BaseCertificateTemplateForm):
 
 class EndorsementForm(FlaskForm):
     password = fields.PasswordField("Password")
+
+
+class CertificateLogoForm(FlaskForm):
+    order = fields.IntegerField()
+    logo = fields.SelectField()
+
+
+class GroupCertificateLogoForm(FlaskForm):
+    certificate_logos = fields.FieldList(
+        fields.FormField(CertificateLogoForm), validators=[validators.Optional()]
+    )

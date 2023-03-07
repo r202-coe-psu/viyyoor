@@ -18,12 +18,17 @@ from viyyoor import models
 module = Blueprint("organizations", __name__, url_prefix="/organizations")
 
 
+@module.route("/")
+def index():
+    return redirect(url_for("dashboard.index"))
+
+
 @module.route(
-    "/<organization_id>/logos/<logo_id>/download/<filename>",
+    "/logos/<logo_id>/download/<filename>",
     defaults=dict(thumbnail=""),
 )
-@module.route("/<organization_id>/logos/<logo_id>/download/<thumbnail>/<filename>")
-def download_logo(organization_id, logo_id, filename, thumbnail):
+@module.route("/logos/<logo_id>/download/<thumbnail>/<filename>")
+def download_logo(logo_id, filename, thumbnail):
     response = Response()
     response.status_code = 404
     logo = models.Logo.objects.get(id=logo_id)
@@ -44,45 +49,23 @@ def download_logo(organization_id, logo_id, filename, thumbnail):
     return response
 
 
-@module.route("/<organization_id>/logos", methods=["GET", "POST"])
-@acl.organization_roles_required("admin", "staff")
-def view_logos(organization_id):
-    organization = models.Organization.objects.get(id=organization_id)
-    logos = models.Logo.objects(organization=organization)
+@module.route("/logos", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_logos():
+    logos = models.Logo.objects()
     return render_template(
         "/admin/organizations/logos.html",
-        organization=organization,
         logos=logos,
     )
 
 
-@module.route("/<organization_id>/classes", methods=["GET", "POST"])
-@acl.roles_required("admin")
-def view_classes(organization_id):
-    organization = models.Organization.objects.get(
-        id=organization_id,
-        status="active",
-    )
-    classes = models.Class.objects(organization=organization, status="active").order_by(
-        "-issued_date"
-    )
-    return render_template(
-        "/admin/organizations/classes.html",
-        organization=organization,
-        classes=classes,
-    )
-
-
+@module.route("/logos/add", methods=["GET", "POST"], defaults={"logo_id": ""})
 @module.route(
-    "/<organization_id>/logos/add", methods=["GET", "POST"], defaults={"logo_id": ""}
-)
-@module.route(
-    "/<organization_id>/logos/<logo_id>/edit",
+    "/logos/<logo_id>/edit",
     methods=["GET", "POST"],
 )
-@acl.organization_roles_required("staff", "admin")
-def add_or_edit_logo(organization_id, logo_id):
-    organization = models.Organization.objects.get(id=organization_id)
+@acl.roles_required("admin")
+def add_or_edit_logo(logo_id):
     logo = models.Logo()
     form = forms.organizations.LogoForm()
 
@@ -93,7 +76,6 @@ def add_or_edit_logo(organization_id, logo_id):
     if not form.validate_on_submit():
         return render_template(
             "/admin/organizations/add-edit-logo.html",
-            organization=organization,
             form=form,
         )
 
@@ -114,36 +96,28 @@ def add_or_edit_logo(organization_id, logo_id):
                 content_type=form.uploaded_logo_file.data.content_type,
             )
 
-    logo.organization = organization
     logo.uploaded_by = current_user._get_current_object()
     logo.uploaded_date = datetime.datetime.now()
     logo.save()
 
-    return redirect(
-        url_for("admin.organizations.view_logos", organization_id=organization_id)
-    )
+    return redirect(url_for("admin.organizations.view_logos"))
 
 
-@module.route("/<organization_id>/logos/<logo_id>/delete")
-@acl.organization_roles_required("admin")
-def delete_logo(organization_id, logo_id):
+@module.route("/logos/<logo_id>/delete")
+@acl.roles_required("admin")
+def delete_logo(logo_id):
     organization = models.Organization.objects.get(id=organization_id)
     logo = models.Logo.objects.get(id=logo_id)
     logo.delete()
 
-    if "admin" not in request.path:
-        return redirect(
-            url_for("admin.organizations.view_logos", organization_id=organization_id)
-        )
-
     return redirect(
         url_for("admin.organizations.view_logos", organization_id=organization_id)
     )
 
 
-@module.route("/<organization_id>/certificates", methods=["GET", "POST"])
-@acl.organization_roles_required("admin", "staff")
-def view_certificates(organization_id):
+@module.route("/certificates", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def view_certificates():
     organization = models.Organization.objects.get(id=organization_id)
     classes = models.Class.objects(organization=organization)
     certificates = models.Certificate.objects(class___in=classes)
