@@ -9,6 +9,7 @@ import cairosvg
 import qrcode
 import base64
 
+
 PARTICIPANT_GROUP = [
     ("participant", "Participant"),
     ("achievement", "Achievement"),
@@ -197,6 +198,6 @@ class Class(me.Document):
         return completed_certificates
 
     def get_authenticity_text(self):
-        from flask import current_app
+        from . import settings
 
-        return current_app.config.get("DEFAULT_AUTHENTICITY_TEXT", "")
+        return settings.get("DEFAULT_AUTHENTICITY_TEXT", "")

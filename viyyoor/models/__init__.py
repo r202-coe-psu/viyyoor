@@ -1,3 +1,4 @@
+import mongoengine as me
 from flask_mongoengine import MongoEngine
 
 from .users import User
@@ -11,14 +12,17 @@ from .organizations import Logo
 
 db = MongoEngine()
 
+settings = {}
+
 
 def init_db(app):
     db.init_app(app)
 
 
-def init_mongoengine(settings):
-    import mongoengine as me
+def init_mongoengine(config):
+    global settings
 
+    settings.update(config)
     dbname = settings.get("MONGODB_DB")
     host = settings.get("MONGODB_HOST", "localhost")
     port = int(settings.get("MONGODB_PORT", "27017"))

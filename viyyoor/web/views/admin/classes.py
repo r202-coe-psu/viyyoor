@@ -778,3 +778,57 @@ def download(class_id, filename):
     )
 
     return response
+
+
+@module.route("/<class_id>/endorse/force", methods=["GET", "POST"])
+@acl.roles_required("admin")
+def force_endorse(class_id):
+    class_ = models.Class.objects.get(id=class_id)
+
+    certificates = models.Certificate.objects(class_=class_, status="prerelease")
+
+    for certificate in certificates:
+        # sign signature hear1
+        # sign_digital_signature(user, certificate, password)
+
+        for endorser_id, endorser in class_.endorsers.items():
+            endorsement = models.Endorsement(
+                endorser=endorser.user,
+                ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
+                remark=f"force endorsement by {current_user.username} ({current_user.id})",
+            )
+
+            if endorser.endorser_id not in certificate.endorsements:
+                certificate.endorsements[endorser.endorser_id] = endorsement
+
+        check_approval = True
+        for key, endorser in class_.endorsers.items():
+            if endorser.endorser_id not in certificate.endorsements:
+                check_approval = False
+            elif (
+                endorser.endorser_id in certificate.endorsements
+                and endorser.user
+                != certificate.endorsements[endorser.endorser_id].endorser
+            ):
+                check_approval = False
+
+            if not check_approval:
+                break
+
+        if check_approval:
+            certificate.status = "signing"
+
+        certificate.updated_date = datetime.datetime.now()
+        certificate.save()
+
+    issuer_printed_name = current_app.config.get("ISSUER_PRINTED_NAME")
+    issuer_contact_email = current_app.config.get("ISSUER_CONTACT_EMAIL")
+    job = redis_rq.redis_queue.queue.enqueue(
+        digital_signature_utils.sign_certificates,
+        args=(class_id, issuer_printed_name, issuer_contact_email),
+        job_id=f"endorsements_certificates_{class_.id}",
+        timeout=600,
+        job_timeout=600,
+    )
+
+    return redirect(url_for("admin.classes.view", class_id=class_id))
