@@ -200,4 +200,9 @@ class Class(me.Document):
     def get_authenticity_text(self):
         from . import settings
 
+        if not settings:
+            from flask import current_app
+
+            settings = current_app.config
+
         return settings.get("DEFAULT_AUTHENTICITY_TEXT", "")
