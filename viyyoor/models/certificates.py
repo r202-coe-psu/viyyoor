@@ -9,6 +9,8 @@ class Endorsement(me.EmbeddedDocument):
     endorsed_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     ip_address = me.StringField(required=True, default="0.0.0.0")
 
+    remark = me.StringField()
+
 
 class Certificate(me.Document):
     meta = {

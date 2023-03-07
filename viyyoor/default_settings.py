@@ -11,3 +11,6 @@ REDIS_URL = "redis://localhost:6379"
 DEFAULT_AUTHENTICITY_TEXT = (
     "Department of Computer Engineering\n Prince of Songkla University"
 )
+
+ISSUER_PRINTED_NAME = ""
+ISSUER_CONTACT_EMAIL = ""

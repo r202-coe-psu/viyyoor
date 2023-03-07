@@ -26,6 +26,7 @@ from viyyoor.web import acl, forms, redis_rq
 
 from . import pdf_utils
 from . import certificate_utils
+from . import digital_signature_utils
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 

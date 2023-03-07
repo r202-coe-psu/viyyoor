@@ -16,7 +16,7 @@ from .. import forms
 from .. import acl
 from .. import redis_rq
 
-from . import digital_signatures
+from .admin import digital_signature_utils
 from .admin import certificate_utils
 
 module = Blueprint(
@@ -46,7 +46,6 @@ def view(class_id):
 @module.route("/<class_id>/endorse", methods=["GET", "POST"])
 @acl.roles_required("endorser")
 def endorse(class_id):
-
     class_ = models.Class.objects.get(id=class_id)
     # certificates = models.Certificate.objects(class_=class_, status="prerelease")
     # form = forms.classes.EndorsementForm()
@@ -92,14 +91,15 @@ def endorse(class_id):
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
 
+    issuer_printed_name = current_app.config.get("ISSUER_PRINTED_NAME")
+    issuer_contact_email = current_app.config.get("ISSUER_CONTACT_EMAIL")
     job = redis_rq.redis_queue.queue.enqueue(
-        digital_signatures.sign_certificates,
-        args=(class_id,),
+        digital_signature_utils.sign_certificates,
+        args=(class_id, issuer_printed_name, issuer_contact_email),
         job_id=f"endorsements_certificates_{class_.id}",
         timeout=600,
         job_timeout=600,
     )
-    print("submit", job.get_id())
 
     return redirect(url_for("dashboard.index"))
 
