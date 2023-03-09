@@ -241,7 +241,6 @@ def add_endorsers(et, class_, required_signature=True):
             else:
                 parent = endorser_sign_element.getparent()
                 parent.remove(endorser_sign_element)
-                continue
 
         endorser_name_element = element.find(f".//*[@id='endorser_{idx}_name']")
         if endorser_name_element is None:
@@ -282,7 +281,7 @@ def render_certificate(
 
     et = etree.parse(certificate_template.template.file)
 
-    prepare_template(class_, et, required_signature=True)
+    prepare_template(class_, et, required_signature)
 
     certificate = class_.get_certificate(participant_id)
 
