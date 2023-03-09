@@ -1,4 +1,5 @@
 import io
+import urllib.parse
 
 import cairocffi
 from cairosvg.parser import Tree
@@ -25,7 +26,6 @@ def generate_certificates(
     dpi=100,
     validated_url_template="http://localhost/certificates/{certificate_id}",
 ):
-
     output = io.BytesIO()
     surface = cairocffi.PDFSurface(output, 1, 1)
     context = cairocffi.Context(surface)
@@ -39,7 +39,11 @@ def generate_certificates(
             continue
 
         bytestring = certificate_utils.render_certificate(
-            class_, participant.id, "svg", required_signature, validated_url_template
+            class_,
+            participant.id,
+            "svg",
+            required_signature,
+            validated_url_template,
         )
 
         image_surface = RecordingPDFSurface(
@@ -63,7 +67,7 @@ def export_certificates(
     validated_url_template="http://localhost/certificates/{certificate_id}",
 ):
     output = generate_certificates(
-        class_, required_signature, dpi, validated_url_template
+        class_, required_signature, dpi, urllib.parse.unquote(validated_url_template)
     )
 
     if not filename:

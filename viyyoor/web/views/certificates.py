@@ -9,6 +9,7 @@ from flask import (
 )
 from flask_login import current_user, login_required
 import io
+import urllib.parse
 from pdf2image import convert_from_bytes
 
 from .. import models
@@ -71,17 +72,21 @@ def download(certificate_id, extension):
     class_ = certificate.class_
     participant = class_.get_participant(certificate.participant_id)
 
+    if not participant:
+        return response
+
     if extension == "pdf":
         mimetype = "application/pdf"
 
         response = send_file(
             certificate.file,
-            download_name=f"{certificate.class_.issued_date.strftime('%Y%m%d')}-{participant.id}-{participant.name.replace(' ', '-')}.pdf",
-            # as_attachment=True,
+            download_name=urllib.parse.quote(
+                f"{certificate.class_.issued_date.strftime('%Y%m%d')}-{participant.id}-{participant.name.replace(' ', '-')}.pdf"
+            ),
             mimetype=mimetype,
         )
     elif extension == "png":
-        mimetype = "image.png"
+        mimetype = "image/png"
 
         image = convert_from_bytes(certificate.file.read(), dpi=100)
         image_bytes = io.BytesIO()
@@ -90,9 +95,9 @@ def download(certificate_id, extension):
 
         response = send_file(
             image_bytes,
-            # class_.render_certificate(participant.id, extension),
-            download_name=f"{certificate.class_.issued_date.strftime('%Y%m%d')}-{participant.id}-{participant.name.replace(' ', '-')}.png",
-            # as_attachment=True,
+            download_name=urllib.parse.quote(
+                f"{certificate.class_.issued_date.strftime('%Y%m%d')}-{participant.id}-{participant.name.replace(' ', '-')}.png"
+            ),
             mimetype=mimetype,
         )
 

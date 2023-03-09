@@ -319,7 +319,7 @@ def render_certificate(
     add_multiline(et, "certificate_name", certificate_template.name)
     add_multiline(et, "participant_name", participant.name.strip())
     add_multiline(et, "academy", academy)
-    add_multiline(et, "certificate_text", certificate_template.certificate_text, 7)
+    add_multiline(et, "certificate_text", certificate_template.certificate_text, 9)
     add_multiline(et, "validation_url", validation_url)
     add_multiline(et, "class_date", class_date)
 
