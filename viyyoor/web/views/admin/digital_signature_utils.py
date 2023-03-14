@@ -34,6 +34,7 @@ def sign_certificates(class_id, issuer_printed_name, issuer_contact_email):
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
 
+
 def sign_digital_signature(
     certificate, dc, issuer_printed_name="", issuer_contact_email="email@email.local"
 ):
@@ -49,18 +50,17 @@ def sign_digital_signature(
         reason = f"Issued Certificate by {issuer_printed_name}"
 
     now = datetime.datetime.utcnow()
-    # date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
-    date_str = now.strftime("%Y%m%d%H%M%S+00'00'")
+    date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
     box = [25, 0, 350, 5]
     dct = {
         "aligned": 0,
-        "sigflags": 3,
+        "sigflags": 1,
         "sigflagsft": 132,
         "sigpage": 0,
         "sigbutton": True,
-        "sigfield": "Signature",
         "auto_sigfield": True,
         "sigandcertify": True,
+        "sigfield": "Signature",
         "signaturebox": box,
         "signature": issuer_printed_name,
         # "text": {"textalign": "center", "fontsize": 5},
