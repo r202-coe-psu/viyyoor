@@ -457,6 +457,8 @@ def add_participant_from_file(class_id):
 
         if "group" in dfs.columns:
             participant.group = row["group"]
+        else:
+            participant.group = "participant"
 
         class_.participants[str(participant.id)] = participant
         participant_name = ""
@@ -471,10 +473,13 @@ def add_participant_from_file(class_id):
             participant_name = f"{row['title']}{participant_name}"
 
         if "email" in dfs.columns:
-            participant.group = row["email"]
+            participant.email = row["email"]
 
         if "organization" in dfs.columns:
-            participant.group = row["organization"]
+            participant.organization = row["organization"]
+
+        if "academy" in dfs.columns:
+            participant.organization = row["academy"]
 
         participant.name = participant_name
         participant.last_updated_by = current_user._get_current_object()
