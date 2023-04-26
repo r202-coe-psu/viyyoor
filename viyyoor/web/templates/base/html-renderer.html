@@ -40,11 +40,27 @@
 {{ render_field(field, class_='ui dropdown') }}
 {%- endmacro %}
 
+{% macro render_search_select(field) -%}
+{{ render_field(field, class_='ui fluid search selection dropdown') }}
+{%- endmacro %}
 
 {% macro render_multiple_select(field) -%}
 {{ render_field(field, class_='ui fluid dropdown') }}
 {%- endmacro %}
 
+{% macro render_multiple_search_select(field) -%}
+{{ render_field(field, class_='ui fluid search selection dropdown') }}
+{%- endmacro %}
+
+{% macro render_multiple_radio_checkbox(radio_field) -%}
+  <b>{{ radio_field.label }}</b>
+  {% for field in radio_field %} 
+  <div style="margin: 0.25em 0 0 0.5em;">
+    {{ field }} {{ field.label }}
+  </div>
+  {% endfor %}
+  <p></p>
+{%- endmacro %}
 
 
 {% macro render_calendar(field, calendar_id='calendar') -%}

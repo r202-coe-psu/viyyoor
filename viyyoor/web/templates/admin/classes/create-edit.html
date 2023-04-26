@@ -1,9 +1,4 @@
-{% if request.args.get("organization_id") %}
-  {% extends '/organizations/classes.html' %}
-{% else %}
-  {% extends '/admin/classes/index.html' %}
-{% endif %}
-
+{% extends '/admin/classes/index.html' %}
 {% import '/base/html-renderer.html' as renderer %}
 
 
@@ -33,10 +28,6 @@
   <div class="ui segment">
     <form method="POST" class="ui form">
       {{ form.csrf_token }}
-      
-      {% if not organization and "organization" not in request.path and 'edit' not in request.path %}
-        {{ renderer.render_search_select(form.organization) }}<br>
-      {% endif %}
       
       {{ renderer.render_field(form.name) }}
       {{ renderer.render_field(form.printed_name) }}
