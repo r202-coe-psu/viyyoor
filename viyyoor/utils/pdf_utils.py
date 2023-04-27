@@ -39,11 +39,7 @@ def generate_certificates(
             continue
 
         bytestring = certificate_utils.render_certificate(
-            class_,
-            participant.id,
-            "svg",
-            required_signature,
-            validated_url_template,
+            class_, participant.id, "svg", required_signature, validated_url_template
         )
 
         image_surface = RecordingPDFSurface(

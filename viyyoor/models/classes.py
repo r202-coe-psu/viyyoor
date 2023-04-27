@@ -78,6 +78,7 @@ class CertificateTemplate(me.EmbeddedDocument):
         required=True,
         choices=PARTICIPANT_GROUP,
     )
+    remark = me.StringField(default="")
 
     template = me.ReferenceField("Template", required=True)
 
@@ -96,12 +97,21 @@ class CertificateLogo(me.EmbeddedDocument):
     )
 
 
+class Organization:
+    def __init__(self):
+        from viyyoor import default_settings
+
+        self.authenticity_text = default_settings.DEFAULT_AUTHENTICITY_TEXT
+
+
 class Class(me.Document):
     meta = {"collection": "classes"}
 
     name = me.StringField(required=True, max_length=256)
     printed_name = me.StringField(required=True)
     description = me.StringField()
+
+    organization = Organization()
 
     participants = me.MapField(field=me.EmbeddedDocumentField(Participant))
     endorsers = me.MapField(field=me.EmbeddedDocumentField(Endorser))
@@ -117,6 +127,7 @@ class Class(me.Document):
 
     started_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     ended_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    class_date_text = me.StringField(max_length=500, default="")
 
     created_date = me.DateTimeField(required=True, default=datetime.datetime.now)
     updated_date = me.DateTimeField(
@@ -167,6 +178,42 @@ class Class(me.Document):
             class_=self, participant_id=participant_id
         ).first()
 
+    def get_certificate_by_participant_id(self, participant_id):
+        from viyyoor import models
+
+        if not participant_id:
+            return None
+
+        return models.Certificate.objects(
+            class_=self, participant_id=participant_id
+        ).first()
+
+    def get_certificate_template_with_participant_id(self, participant_id):
+        from viyyoor import models
+
+        if not participant_id:
+            return None
+
+        participant = self.get_participant(participant_id)
+        for cert_template in self.certificate_templates.values():
+            if cert_template.group == participant.group:
+                return cert_template
+        return
+
+    def get_prerelease_certificates(self):
+        from viyyoor import models
+
+        return models.Certificate.objects(class_=self, status="prerelease")
+
+    def get_completed_certificates(self):
+        from viyyoor import models
+
+        completed_certificates = models.Certificate.objects(
+            class_=self, status="completed"
+        )
+
+        return completed_certificates
+
     def get_certificates_endorsed_by_user(self, user):
         from viyyoor import models
 
@@ -206,3 +253,6 @@ class Class(me.Document):
             settings = current_app.config
 
         return settings.get("DEFAULT_AUTHENTICITY_TEXT", "")
+
+    def is_quota_enough_to_prepair(self):
+        return True

@@ -32,4 +32,5 @@ BaseTemplateForm = model_form(
 
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
+    # template_file = file.FileField("Template File", validators=[file.FileRequired()])
     template_file = file.FileField("Template File", validators=[file.FileRequired()])

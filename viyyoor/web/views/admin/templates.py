@@ -38,6 +38,8 @@ def create_or_edit(template_id):
     if template_id:
         template = models.Template.objects.get(id=template_id)
         form = forms.templates.TemplateForm(obj=template)
+        form.template_file.validators = []
+        form.template_file.flags = None
 
     if not form.validate_on_submit():
         return render_template(
@@ -60,12 +62,12 @@ def create_or_edit(template_id):
             content_type=form.template_file.data.content_type,
         )
     else:
-
-        template.file.replace(
-            form.template_file.data,
-            filename=form.template_file.data.filename,
-            content_type=form.template_file.data.content_type,
-        )
+        if form.template_file.data:
+            template.file.replace(
+                form.template_file.data,
+                filename=form.template_file.data.filename,
+                content_type=form.template_file.data.content_type,
+            )
 
     template.save()
 

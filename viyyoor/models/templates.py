@@ -7,6 +7,7 @@ class Template(me.Document):
 
     name = me.StringField(required=True, max_length=256)
     description = me.StringField()
+    parameters = me.DictField(default={})
 
     tags = me.ListField(me.StringField(required=True))
 
@@ -21,3 +22,7 @@ class Template(me.Document):
     status = me.StringField(required=True, default="active")
 
     file = me.FileField(required=True)
+
+    @property
+    def template_file(self):
+        return self.file

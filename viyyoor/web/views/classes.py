@@ -17,8 +17,8 @@ from .. import forms
 from .. import acl
 from .. import redis_rq
 
-from .admin import digital_signature_utils
-from .admin import certificate_utils
+from viyyoor.utils import digital_signature_utils
+from viyyoor.utils import certificate_utils
 
 module = Blueprint(
     "classes",
@@ -117,6 +117,11 @@ def render_certificate(class_id, participant_id, extension):
 
     if not certificate_template:
         return response
+
+    class Organization:
+        authenticity_text = current_app.config.get("DEFAULT_AUTHENTICITY_TEXT")
+
+    class_.organization = Organization
 
     image_io = certificate_utils.render_certificate(
         class_,
