@@ -38,6 +38,7 @@ def create_or_edit(template_id):
     if template_id:
         template = models.Template.objects.get(id=template_id)
         form = forms.templates.TemplateForm(obj=template)
+        form.template_file.data = None
         form.template_file.validators = []
         form.template_file.flags = None
 

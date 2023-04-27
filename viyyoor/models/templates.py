@@ -23,8 +23,11 @@ class Template(me.Document):
 
     file = me.FileField(required=True)
 
-    def __get_template_file(self):
+    @property
+    def template_file(self):
         return self.file
 
-    def __set_template_file(self, data):
+    @template_file.setter
+    def template_file(self, data):
+        print("x", data)
         pass
