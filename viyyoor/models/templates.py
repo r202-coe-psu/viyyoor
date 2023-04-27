@@ -29,5 +29,4 @@ class Template(me.Document):
 
     @template_file.setter
     def template_file(self, data):
-        print("x", data)
         pass
