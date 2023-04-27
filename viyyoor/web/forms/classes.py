@@ -110,6 +110,7 @@ BaseCertificateTemplateForm = model_form(
         "organization_name": {"label": "Organization Name"},
         "declaration_text": {"label": "Declaration Text"},
         "class_date": {"label": "Class Date (Option)"},
+        "remark": {"label": "Remark"},
     },
 )
 

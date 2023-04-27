@@ -26,6 +26,9 @@ BaseTemplateForm = model_form(
         "description": {
             "label": "Desctiption",
         },
+        "parameters": {
+            "label": "Render Parameters",
+        },
     },
 )
 
