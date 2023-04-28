@@ -9,6 +9,7 @@ from flask import (
 from flask_login import current_user
 
 import datetime
+import mongoengine as me
 
 from viyyoor import models
 from viyyoor.web import acl, forms
@@ -35,10 +36,10 @@ def index():
 @acl.roles_required("admin")
 def create_or_edit(template_id):
     form = forms.templates.TemplateForm()
+
     if template_id:
         template = models.Template.objects.get(id=template_id)
         form = forms.templates.TemplateForm(obj=template)
-        form.template_file.data = None
         form.template_file.validators = []
         form.template_file.flags = None
 
@@ -63,7 +64,10 @@ def create_or_edit(template_id):
             content_type=form.template_file.data.content_type,
         )
     else:
-        if form.template_file.data:
+        if (
+            form.template_file.data
+            and type(form.template_file.data) != me.fields.GridFSProxy
+        ):
             template.file.replace(
                 form.template_file.data,
                 filename=form.template_file.data.filename,
