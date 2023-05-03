@@ -71,7 +71,6 @@ class CertificateTemplate(me.EmbeddedDocument):
     name = me.StringField(required=True, max_length=256)
     certificate_text = me.StringField(required=True)
     declaration_text = me.StringField(default="")
-    class_date = me.StringField(max_length=256, default="")
 
     organization_name = me.StringField(default="")
     group = me.StringField(
@@ -118,6 +117,8 @@ class Class(me.Document):
     instructors = me.ListField(me.StringField())
 
     issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
+    class_date = me.StringField(max_length=256, default="")
+
     certificate_templates = me.MapField(
         field=me.EmbeddedDocumentField(CertificateTemplate)
     )
