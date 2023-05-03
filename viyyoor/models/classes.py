@@ -117,7 +117,7 @@ class Class(me.Document):
     instructors = me.ListField(me.StringField())
 
     issued_date = me.DateTimeField(required=True, default=datetime.datetime.now)
-    class_date = me.StringField(max_length=256, default="")
+    class_date_text = me.StringField(max_length=512, default="")
 
     certificate_templates = me.MapField(
         field=me.EmbeddedDocumentField(CertificateTemplate)

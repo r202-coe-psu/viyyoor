@@ -26,7 +26,7 @@ BaseClassForm = model_form(
         "description": {
             "label": "Desctiption",
         },
-        "class_date": {"label": "Class Date (Option)"},
+        "class_date_text": {"label": "Class Date Text (Option)"},
         "started_date": {
             "label": "Start Date",
             "format": "%Y-%m-%d",
