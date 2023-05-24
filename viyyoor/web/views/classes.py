@@ -96,7 +96,7 @@ def endorse(class_id):
     issuer_contact_email = current_app.config.get("ISSUER_CONTACT_EMAIL")
     job = redis_rq.redis_queue.queue.enqueue(
         digital_signature_utils.sign_certificates,
-        args=(class_id, class_.config),
+        args=(class_id, issuer_printed_name, issuer_contact_email),
         job_id=f"endorsements_certificates_{class_.id}",
         timeout=600,
         job_timeout=600,
