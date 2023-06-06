@@ -426,9 +426,9 @@ def render_certificate(
     # print(variables)
 
     if extension == "png":
-        output = cairosvg.svg2png(bytestring=data.encode())
+        output = cairosvg.svg2png(bytestring=data.encode(), unsafe=True)
     elif extension == "pdf":
-        output = cairosvg.svg2pdf(bytestring=data.encode(), dpi=100)
+        output = cairosvg.svg2pdf(bytestring=data.encode(), dpi=100, unsafe=True)
     elif extension == "svg":
         output = data.encode()
 
