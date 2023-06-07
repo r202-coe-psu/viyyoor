@@ -716,7 +716,7 @@ def export_certificate_url(class_id):
         writer,
         sheet_name="URL",
     )
-    writer.save()
+    writer.close()
     response = Response(
         output.getvalue(),
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -752,7 +752,7 @@ def export_participant_data(class_id):
         writer,
         sheet_name="Sheet1",
     )
-    writer.save()
+    writer.close()
     response = Response(
         output.getvalue(),
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
