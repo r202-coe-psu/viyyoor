@@ -457,8 +457,6 @@ def add_participant_from_file(class_id):
 
         if "group" in dfs.columns:
             participant.group = row["group"]
-        else:
-            participant.group = "participant"
 
         class_.participants[str(participant.id)] = participant
         participant_name = ""
