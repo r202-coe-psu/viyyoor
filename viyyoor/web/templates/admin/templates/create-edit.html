@@ -46,6 +46,7 @@
       {{ form.csrf_token }}
       {{ renderer.render_field(form.name) }}
       {{ renderer.render_field(form.description) }}
+      {{ renderer.render_field(form.parameters) }}
       {{ renderer.render_field(form.tags) }}
       {{ renderer.render_fileinput(form.template_file) }}
 

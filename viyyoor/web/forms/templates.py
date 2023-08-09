@@ -26,10 +26,14 @@ BaseTemplateForm = model_form(
         "description": {
             "label": "Desctiption",
         },
+        "parameters": {
+            "label": "Render Parameters",
+        },
     },
 )
 
 
 class TemplateForm(BaseTemplateForm):
     tags = TagListField("Tags")
+    # template_file = file.FileField("Template File", validators=[file.FileRequired()])
     template_file = file.FileField("Template File", validators=[file.FileRequired()])

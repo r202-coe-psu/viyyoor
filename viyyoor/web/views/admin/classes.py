@@ -24,9 +24,9 @@ from urllib import parse
 from viyyoor import models
 from viyyoor.web import acl, forms, redis_rq
 
-from . import pdf_utils
-from . import certificate_utils
-from . import digital_signature_utils
+from viyyoor.utils import pdf_utils
+from viyyoor.utils import certificate_utils
+from viyyoor.utils import digital_signature_utils
 
 module = Blueprint("classes", __name__, url_prefix="/classes")
 
@@ -457,8 +457,6 @@ def add_participant_from_file(class_id):
 
         if "group" in dfs.columns:
             participant.group = row["group"]
-        else:
-            participant.group = "participant"
 
         class_.participants[str(participant.id)] = participant
         participant_name = ""
@@ -716,7 +714,7 @@ def export_certificate_url(class_id):
         writer,
         sheet_name="URL",
     )
-    writer.save()
+    writer.close()
     response = Response(
         output.getvalue(),
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -752,7 +750,7 @@ def export_participant_data(class_id):
         writer,
         sheet_name="Sheet1",
     )
-    writer.save()
+    writer.close()
     response = Response(
         output.getvalue(),
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -827,11 +825,9 @@ def force_endorse(class_id):
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
 
-    issuer_printed_name = current_app.config.get("ISSUER_PRINTED_NAME")
-    issuer_contact_email = current_app.config.get("ISSUER_CONTACT_EMAIL")
     job = redis_rq.redis_queue.queue.enqueue(
         digital_signature_utils.sign_certificates,
-        args=(class_id, issuer_printed_name, issuer_contact_email),
+        args=(class_id, current_app.config),
         job_id=f"endorsements_certificates_{class_.id}",
         timeout=600,
         job_timeout=600,

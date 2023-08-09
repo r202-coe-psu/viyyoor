@@ -40,7 +40,6 @@
         {{ renderer.render_select(form.group) }}
         {{ renderer.render_select(form.template) }}
       </div>
-        {{ renderer.render_field(form.class_date) }}
       <button name="create" type="submit" class="ui button primary">{{ 'Add' if 'add' in request.path else 'Edit' }}</button>
     </form>
   </div>

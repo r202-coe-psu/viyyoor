@@ -7,10 +7,21 @@ import io
 
 from viyyoor import models
 
+import logging
 
-def sign_certificates(class_id, issuer_printed_name, issuer_contact_email):
+logger = logging.getLogger(__name__)
+
+
+from . import email_utils
+
+
+def sign_certificates(class_id, settings):
+    issuer_printed_name = settings.get("ISSUER_PRINTED_NAME")
+    issuer_contact_email = settings.get("ISSUER_CONTACT_EMAIL")
+
     class_ = models.Class.objects.get(id=class_id)
     certificates = models.Certificate.objects(class_=class_, status="signing")
+    organization = class_.organization
     now = datetime.datetime.now()
     dc = (
         models.DigitalCertificate.objects(
@@ -23,16 +34,71 @@ def sign_certificates(class_id, issuer_printed_name, issuer_contact_email):
         print("Digital Signature is None")
         raise Exception("Digital Singnature not Found")
 
+    if not class_.is_quota_enough_to_prepair():
+        print("Quota is Out")
+        raise Exception("Quota is Out")
+
+    """
+    quota = models.CertificateQuota.objects(
+        organization=organization, available_number__gt=0, status="active"
+    ).first()
+    if not quota:
+        logger.debug("Quota is Out")
+        raise Exception("Quota is Out")
+
+    quota_usage = models.CertificateQuotaUsage(
+        organization=organization, class_=class_, certificate_quota=quota
+    )
+    """
+
     for certificate in certificates:
+        participant = certificate.get_participant()
         sign_digital_signature(
             certificate, dc, issuer_printed_name, issuer_contact_email
         )
         certificate.signed_date = datetime.datetime.now()
         certificate.status = "completed"
         certificate.privacy = "public"
-
+        """
+        if not certificate.is_sent_email_participant() and participant.email:
+            certificate.emails.create(
+                receiver_email=participant.email,
+                status="waiting",
+                sent_date=datetime.datetime.now(),
+                remark="auto send",
+            )
+        """
         certificate.updated_date = datetime.datetime.now()
         certificate.save()
+
+        """
+        q_usage = models.CertificateQuotaUsage.objects(certificates=certificate).first()
+        if q_usage:
+            continue
+
+        quota.available_number -= 1
+        quota.save()
+
+        quota_usage.certificates.append(certificate)
+        quota_usage.number += 1
+        quota_usage.updated_date = datetime.datetime.now()
+        quota_usage.save()
+
+        if quota.available_number <= 0:
+            quota = models.CertificateQuota.objects(
+                organization=organization, available_number__gt=0, status="active"
+            ).first()
+            quota_usage = models.CertificateQuotaUsage(
+                organization=organization, class_=class_, certificate_quota=quota
+            )
+            if not quota:
+                logging.debug("Quota is Out")
+                raise Exception("Quota is Out")
+        """
+
+    # Send email to participant in every 'completed' certificates
+    # logging.debug("singed completed, sending email")
+    # email_utils.send_email_participant_in_class(class_, settings)
 
 
 def sign_digital_signature(
@@ -50,7 +116,8 @@ def sign_digital_signature(
         reason = f"Issued Certificate by {issuer_printed_name}"
 
     now = datetime.datetime.utcnow()
-    date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
+    # date_str = now.strftime("D:%Y%m%d%H%M%S+00'00'")
+    date_str = now.strftime("%Y%m%d%H%M%S+00'00'")
     box = [25, 0, 350, 5]
     dct = {
         "aligned": 0,

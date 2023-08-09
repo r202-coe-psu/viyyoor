@@ -1,6 +1,5 @@
 import datetime
 
-
 import io
 import cairosvg
 import qrcode
@@ -14,10 +13,22 @@ from lxml import etree
 from jinja2 import Environment, PackageLoader, select_autoescape, Template
 from viyyoor import models
 
+from viyyoor.utils import digital_signature_utils, email_utils
 
 PX_TO_MM = 0.2645833333
 LOGO_SPACE = 2
-ENDORSER_POSSITION_DY = 4
+DY_ENDORSER_POSSITION = 5
+DY_CLASS_NAME = 10
+DY_AUTHENTICITY = 3
+DY_ORGANIZATION_NAME = 10
+DY_DECLARATION_TEXT = 10
+DY_CERTIFICATE_NAME = 10
+DY_PARTICIPANT_NAME = 10
+DY_ACADEMY = 5
+DY_CERTIFICATE_TEXT = 8
+DY_VALIDATION_URL = 4
+DY_CLASS_DATE = 10
+DY_REMARK = 4
 
 
 def create_certificates(
@@ -71,6 +82,48 @@ def create_certificates(
         certificate.status = "prerelease"
         certificate.privacy = "prerelease"
         certificate.save()
+
+
+def create_certificate_endorsement(class_, user, ip_address, config):
+    for certificate in class_.get_certificates():
+        if certificate.status != "prerelease":
+            continue
+
+        # Endorse Certifcate after prepair
+        for endorser_id, endorser in class_.endorsers.items():
+            if endorser.endorse_requirement == "required":
+                continue
+
+            endorsement = models.Endorsement(
+                endorser=endorser.user,
+                ip_address=ip_address,
+                remark=f"this endorser is current not required to endorse certificate",
+            )
+
+            if endorser.endorser_id not in certificate.endorsements:
+                certificate.endorsements[endorser.endorser_id] = endorsement
+
+            check_approval = True
+            for key, endorser in certificate.class_.endorsers.items():
+                if endorser.endorser_id not in certificate.endorsements:
+                    check_approval = False
+                elif (
+                    endorser.endorser_id in certificate.endorsements
+                    and endorser.user
+                    != certificate.endorsements[endorser.endorser_id].endorser
+                ):
+                    check_approval = False
+
+                if not check_approval:
+                    break
+
+            if check_approval:
+                certificate.status = "signing"
+
+            certificate.updated_date = datetime.datetime.now()
+            certificate.save()
+
+    digital_signature_utils.sign_certificates(class_.id, config)
 
 
 def add_certificate_logo(et, class_):
@@ -257,7 +310,7 @@ def add_endorsers(et, class_, required_signature=True):
             endorser_pos_element = copy.deepcopy(template_element)
             endorser_pos_element.set("id", f"endorser_{idx}_position_{possition_id}")
             endorser_pos_element.text = text
-            endorser_pos_element.set("dy", str(ENDORSER_POSSITION_DY))
+            endorser_pos_element.set("dy", str(DY_ENDORSER_POSSITION))
             endorser_element.append(endorser_pos_element)
 
     return element
@@ -277,13 +330,13 @@ def render_certificate(
     if not certificate_template:
         return None
 
-    certificate_template.template.file.seek(0)
+    certificate_template.template.template_file.seek(0)
 
-    et = etree.parse(certificate_template.template.file)
+    et = etree.parse(certificate_template.template.template_file)
 
     prepare_template(class_, et, required_signature)
 
-    certificate = class_.get_certificate(participant_id)
+    certificate = class_.get_certificate_by_participant_id(participant_id)
 
     validation_url = validated_url_template.format(certificate_id="test")
     if certificate:
@@ -291,36 +344,58 @@ def render_certificate(
 
     certificate_template = class_.certificate_templates.get(participant.group)
 
-    class_date = certificate_template.class_date
-    if not class_date:
-        class_date = class_.started_date.strftime("%-d %B %Y")
+    class_date_text = class_.class_date_text
+    if not class_date_text:
+        class_date_text = class_.started_date.strftime("%-d %B %Y")
         if class_.started_date != class_.ended_date:
             if (
                 class_.started_date.year == class_.ended_date.year
                 and class_.started_date.month == class_.ended_date.month
             ):
-                class_date = "{sdate} - {edate} {month} {year}".format(
+                class_date_text = "{sdate} - {edate} {month} {year}".format(
                     sdate=class_.started_date.strftime("%-d"),
                     edate=class_.ended_date.strftime("%-d"),
                     month=class_.ended_date.strftime("%B"),
                     year=class_.ended_date.year,
                 )
             else:
-                class_date += " - " + class_.ended_date.strftime("%-d %B %Y")
-
-    academy = participant.organization.strip() or participant.extra.get("academy", "")
+                class_date_text += " - " + class_.ended_date.strftime("%-d %B %Y")
 
     add_qrcode(et, validation_url)
-    add_multiline(et, "class_name", class_.printed_name, 10)
-    add_multiline(et, "authenticity", class_.get_authenticity_text(), 3)
-    add_multiline(et, "organization_name", certificate_template.organization_name, 9)
-    add_multiline(et, "declaration_text", certificate_template.declaration_text, 5)
-    add_multiline(et, "certificate_name", certificate_template.name)
-    add_multiline(et, "participant_name", participant.name.strip())
-    add_multiline(et, "academy", academy)
-    add_multiline(et, "certificate_text", certificate_template.certificate_text, 9)
-    add_multiline(et, "validation_url", validation_url)
-    add_multiline(et, "class_date", class_date)
+
+    render_parameters = [
+        ("class_name", class_.printed_name, DY_CLASS_NAME),
+        ("authenticity", class_.organization.authenticity_text, DY_AUTHENTICITY),
+        (
+            "organization_name",
+            certificate_template.organization_name,
+            DY_ORGANIZATION_NAME,
+        ),
+        (
+            "declaration_text",
+            certificate_template.declaration_text,
+            DY_DECLARATION_TEXT,
+        ),
+        ("certificate_name", certificate_template.name, DY_CERTIFICATE_TEXT),
+        ("participant_name", participant.name.strip(), DY_PARTICIPANT_NAME),
+        ("academy", participant.organization.strip(), DY_ACADEMY),
+        (
+            "certificate_text",
+            certificate_template.certificate_text,
+            DY_CERTIFICATE_TEXT,
+        ),
+        ("validation_url", validation_url, DY_VALIDATION_URL),
+        ("class_date", class_date_text, DY_CLASS_DATE),
+        ("remark", certificate_template.remark, DY_REMARK),
+    ]
+    for k, v, dy in render_parameters:
+        # print(type(certificate_template))
+        add_multiline(
+            et,
+            k,
+            v,
+            certificate_template.template.parameters.get(f"dy_{k}", dy),
+        )
 
     data = etree.tostring(et.getroot(), encoding="utf-8", method="xml").decode("utf-8")
 
@@ -344,15 +419,16 @@ def render_certificate(
 
         printed_text = [f"<tspan>{text[0]}</tspan>"]
         for i, t in enumerate(text[1:]):
-            printed_text.append(f'<tspan x="50%" dy="{10*(i+1)}">{t.strip()}</tspan>')
+            printed_text.append(f'<tspan dy="{10*(i+1)}">{t.strip()}</tspan>')
         variables[k] = "".join(printed_text)
 
     data = template.render(**variables)
+    # print(variables)
 
     if extension == "png":
-        output = cairosvg.svg2png(bytestring=data.encode())
+        output = cairosvg.svg2png(bytestring=data.encode(), unsafe=True)
     elif extension == "pdf":
-        output = cairosvg.svg2pdf(bytestring=data.encode(), dpi=100)
+        output = cairosvg.svg2pdf(bytestring=data.encode(), dpi=100, unsafe=True)
     elif extension == "svg":
         output = data.encode()
 

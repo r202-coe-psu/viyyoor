@@ -39,6 +39,7 @@
         {{ renderer.render_calendar(form.issued_date, calendar_id='issued_date_calendar') }}
       </div>
 
+      {{ renderer.render_field(form.class_date_text) }}
       <div class="two fields">
         {{ renderer.render_field(form.instructors) }}
         {{ renderer.render_field(form.tags) }}

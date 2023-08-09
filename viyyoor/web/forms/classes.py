@@ -26,6 +26,7 @@ BaseClassForm = model_form(
         "description": {
             "label": "Desctiption",
         },
+        "class_date_text": {"label": "Class Date Text (Option)"},
         "started_date": {
             "label": "Start Date",
             "format": "%Y-%m-%d",
@@ -109,7 +110,7 @@ BaseCertificateTemplateForm = model_form(
         "group": {"label": "Group"},
         "organization_name": {"label": "Organization Name"},
         "declaration_text": {"label": "Declaration Text"},
-        "class_date": {"label": "Class Date (Option)"},
+        "remark": {"label": "Remark"},
     },
 )
 
