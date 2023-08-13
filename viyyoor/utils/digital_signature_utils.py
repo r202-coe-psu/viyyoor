@@ -1,6 +1,7 @@
 from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.serialization import pkcs12
 from endesive.pdf import cms
+from psusigner import PSUSigner
 
 import datetime
 import io
@@ -138,10 +139,44 @@ def sign_digital_signature(
         "reason": reason,
     }
 
+    if dc.type_ == "self":
+        sign_by_self(dct, dc, certificate)
+    elif dc.type_ == "psusigner":
+        sign_by_psusigner(
+            dct,
+            dc,
+            certificate,
+            ref1=str(certificate.id),
+            ref2=certificate.class_.printed_name,
+            remark=reason,
+        )
+
+    certificate.save()
+
+
+def sign_by_psusigner(dct, dc, certificate, **kwargs):
+    signer = PSUSigner(
+        code=dc.signer_api.code,
+        secret=dc.decrypt_password(dc.signer_api.secret).decode(),
+        agent_key=dc.decrypt_password(dc.signer_api.agent_key).decode(),
+        jwt_secret=dc.decrypt_password(dc.signer_api.jwt_secret).decode(),
+        api_url=dc.signer_api.api_url,
+    )
+
+    signed_byte = signer.sign_byte(certificate.file.read(), dct, **kwargs)
+    certificate.file.replace(signed_byte)
+
+
+def sign_by_self(dct, dc, certificate):
+    password = dc.decrypt_password(dc.password)
+    dc.file.seek(0)
+    p12 = pkcs12.load_key_and_certificates(
+        dc.file.read(), password, backends.default_backend()
+    )
+
     signed_file = sign_cms(certificate.file, p12, dct)
     certificate.file.replace(signed_file)
     certificate.ca_download_url = dc.ca_download_url
-    certificate.save()
 
 
 def sign_cms(document_fp, p12, dct):

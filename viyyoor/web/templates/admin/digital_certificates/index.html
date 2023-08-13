@@ -3,61 +3,72 @@
 {% import '/base/html-renderer.html' as renderer %}
 
 {% block title %}
-  Digital Certificate
+  {{ "Digital Certificate" }}
 {% endblock %}
 
 {% block dashboard_title %}
-  Digital Certificate
+  {{ "Digital Certificate" }}
 {% endblock %}
 
 
 {% block breadcrumbs %}
 {% if request.endpoint == 'admin.digital_certificates.index' %}
-  <div class="active section">Digital Certificate</div>
+  <div class="active section">{{ ("Digital Certificate") }}</div>
 {% else %}
-  <a href="{{ url_for('admin.digital_certificates.index')}}" class="section">Digital Certificate</a>
+  <a href="{{ url_for('admin.digital_certificates.index')}}" class="section">{{ ("Digital Certificate") }}</a>
 {% endif %}
 {% endblock %}
 
 
 {% block content %}
 <div class="ui segment">
-  <a class="ui primary icon button" href="{{ url_for('admin.digital_certificates.add') }}"><i class="fingerprint icon"></i> Add Digital ID</a>
-  <table class="ui celled table">
+  <a class="ui primary icon button" href="{{ url_for('admin.digital_certificates.add_or_edit') }}"><i class="fingerprint icon"></i> {{ _("Add Digital ID") }}</a>
+  <table class="ui celled table top aligned">
     <thead>
         <tr>
-          <th>Filename</th>
-          <th>Date</th>
-          <th>Subject</th>
-          <th>Issuer</th>
-          <th>Started Data</th>
-          <th>Expired Date</th>
-          <th>CA Download URL</th>
-          <th>Status</th>
-          <th>Operation</th>
+          <th>{{ ("Type and Filename") }}</th>
+          <th>{{ ("Created Date") }}</th>
+          <th>{{ ("Subject and Issuer") }}</th>
+          <th>{{ ("Date") }}</th>
+          <th>{{ ("Status") }}</th>
+          <th>{{ ("Operation") }}</th>
         </tr>
       </thead>
       <tbody>
         {% for certificate in digital_certificates %}
         <tr>
-          <td class="popupmsg" data-title="Filename" data-position="top left">{{ certificate.file.filename }}</td>
+          <td class="popupmsg" data-title="Type and Filename" data-position="top left">
+            {{ certificate.get_type__display() }}
+            {% if certificate.file %}
+              {{ certificate.file.filename }}
+            {% endif %}
+          </td>
           <td class="popupmsg" data-title="Upload Date" data-position="top left">{{ certificate.created_date }}</td>
-          <td class="popupmsg" data-title="Subject" data-position="top left">{{ certificate.subject }}</td>
-          <td class="popupmsg" data-title="Issuer" data-position="top left">{{ certificate.issuer }}</td>
-          <td class="popupmsg" data-title="Started Date" data-position="top left">{{ certificate.started_date }}</td>
-          <td class="popupmsg" data-title="Expired Date" data-position="top left">{{ certificate.expired_date }}</td>
-          <td><a target="_blank" class="ui button circular icon primary popupmsg"  href="{{ certificate.ca_download_url }}" data-content="{{ certificate.ca_download_url }}" data-position="right center"><i class="linkify icon"></i></a></td>
+          <td class="popupmsg" data-title="Subject and Issuer" data-position="top left">
+            {% if certificate.type_ == 'self' %}
+              Subject: {{ certificate.subject }} <br/>
+              Type: {{ certificate.issuer }} <br/>
+              {% if certificate.ca_download_url %}
+                CA: <a target="_blank" class="ui button circular icon primary popupmsg"  href="{{ certificate.ca_download_url }}" data-content="{{ certificate.ca_download_url }}" data-position="right center"><i class="linkify icon"></i></a>
+              {% endif %}
+            {% elif certificate.type_ == 'psusigner' %}
+              Code: {{ certificate.signer_api.code }} <br/>
+              API URL: {{ certificate.signer_api.api_url }} <br/>
+            {% endif %}
+          </td>
+          <td class="popupmsg" data-title="Date" data-position="top left">
+            Started Date: {{ certificate.started_date }}<br/>
+            Expired Date: {{ certificate.expired_date }}
+          </td>
           <td class="popupmsg" data-title="Status" data-position="top left">{{ certificate.status.title() }}</td>
-          <td>
+          <td class="ui single line">
             {% if certificate.status == "active" %}
             <a class="ui grey circular icon popupmsg button" href="{{ url_for('admin.digital_certificates.action', digital_certificate_id=certificate.id, action='deactivate') }}" data-content="Deactivate"><i class="ban icon"></i></a>
             {% else %}
             <a class="ui green circular icon popupmsg button" href="{{ url_for('admin.digital_certificates.action', digital_certificate_id=certificate.id, action='activate') }}" data-content="Activate"><i class="certificate icon"></i></a>
             {% endif %}
-            {#
-              <a href="{{ url_for('admin.digital_certificates.action', action='delete', digital_certificate_id=certificate.id) }}" class="ui negative circular icon popupmsg button" data-content="Delete"><i class="trash icon"></i></a>
-            #}
-              
+            
+            <a href="{{ url_for('admin.digital_certificates.add_or_edit', digital_certificate_id=certificate.id) }}" class="ui negative circular icon popupmsg button" data-content="Edit"><i class="edit icon"></i></a>
           </td>
         </tr>
         {% endfor %}

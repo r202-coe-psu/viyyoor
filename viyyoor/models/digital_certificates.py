@@ -6,15 +6,32 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+DIGITAL_CERTIFICATE_CHOICES = [("self", "Self Signed"), ("psusigner", "PSU Signer")]
+
+
+class SignerAPI(me.EmbeddedDocument):
+    code = me.StringField(max_length=255)
+    secret = me.BinaryField()
+    agent_key = me.BinaryField()
+    jwt_secret = me.BinaryField()
+    api_url = me.StringField(max_length=1024)
+
 
 class DigitalCertificate(me.Document):
     meta = {"collection": "digital_certificates"}
 
-    file = me.FileField(required=True, collection_name="digital_certificate_fs")
-    password = me.BinaryField(required=True, default=b"")
+    type_ = me.StringField(
+        required=True, choices=DIGITAL_CERTIFICATE_CHOICES, default="self"
+    )
+
+    signer_api = me.EmbeddedDocumentField(SignerAPI, default=SignerAPI())
+
+    file = me.FileField(collection_name="digital_certificate_fs")
+    password = me.BinaryField()
     ca_download_url = me.StringField(max_length=1024)
 
     owner = me.ReferenceField("User", dbref=True, required=True)
+    updated_by = me.ReferenceField("User", dbref=True, required=True)
     status = me.StringField(required=True, default="active")
 
     subject = me.StringField(required=True, default="")
@@ -46,7 +63,10 @@ class DigitalCertificate(me.Document):
     def encrypt_password(self, password):
         key = self.get_key()
         f = Fernet(key)
-        return f.encrypt(password.encode())
+        password_byte = password
+        if type(password) == str:
+            password_byte = password.encode()
+        return f.encrypt(password_byte)
 
     def decrypt_password(self, token):
         key = self.get_key()

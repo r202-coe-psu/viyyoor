@@ -9,21 +9,46 @@
 {% block breadcrumbs %}
 {{ super() }}
 <div class="divider"> / </div>
-<div class="active section">Add Digital Signature</div>
+<div class="active section">{{ "Add Digital Signature" }}</div>
 {% endblock %}
 
 {% block content %}
 <div class="ui content">
   <div class="ui segment">
-    <h2>Add Digital Signature</h2>
+    <h2>{{ _("Add Digital Signature") }}</h2>
     <form method="POST" class="ui form" enctype="multipart/form-data">
       {{ form.csrf_token }}
+      
+      {{ renderer.render_select(form.type_) }}
+
+      <h4 class="ui horizontal left aligned divider header">
+        <i class="cloud icon"></i>
+        Signer API
+      </h4>
+
       <div class="two fields">
-        {{ renderer.render_fileinput(form.digital_certificate_file) }}
-        {{ renderer.render_field(form.password) }}
+        {{ renderer.render_field(form.signer_api.code) }}
+        {{ renderer.render_field(form.signer_api.secret) }}
       </div>
-      {{ renderer.render_field(form.ca_download_url) }}
-      <button name="create" type="submit" class="ui primary button">Add</button>
+      <div class="two fields">
+        {{ renderer.render_field(form.signer_api.agent_key) }}
+        {{ renderer.render_field(form.signer_api.jwt_secret) }}
+      </div>
+      {{ renderer.render_field(form.signer_api.api_url) }}
+
+
+      <h4 class="ui horizontal left aligned divider header">
+        <i class="certificate icon"></i>
+        Self Signer
+      </h4>
+      <div style="margin-bottom: 10px;">
+        <div class="two fields">
+          {{ renderer.render_fileinput(form.digital_certificate_file) }}
+          {{ renderer.render_field(form.password) }}
+        </div>
+        {{ renderer.render_field(form.ca_download_url) }}
+      </div>
+      <button name="create" type="submit" class="ui primary button">{{ _('Add') if 'edit' not in request.path else _('Edit') }}</button>
     </form>
     {% if form.errors | length > 0 %}
       <div class="ui message negative">
